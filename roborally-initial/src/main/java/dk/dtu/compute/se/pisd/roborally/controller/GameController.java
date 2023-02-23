@@ -61,8 +61,8 @@ public class GameController {
         space.setPlayer(board.getCurrentPlayer());
 
         // Increment counter and set new player
-        board.incrementTurnCounter();
-        board.setCurrentPlayer(board.getNextPlayer());
+        incrementTurnCounter();
+        board.setCurrentPlayer(getNextPlayer());
 
         // TODO Assignment V1: method should be implemented by the students:
         // - the current player should be moved to the given space
@@ -72,6 +72,16 @@ public class GameController {
         // - the counter of moves in the game should be increased by one
         // if the player is moved
 
+    }
+
+    public Player getNextPlayer() {
+        int playerId = this.board.getPlayerNumber(this.board.getCurrentPlayer()) + 1;
+        playerId = playerId % this.board.getPlayersNumber();
+        return this.board.getPlayer(playerId);
+    }
+
+    public void incrementTurnCounter() {
+        this.board.setTurnCounter(this.board.getTurnCounter() + 1);
     }
 
     /**
