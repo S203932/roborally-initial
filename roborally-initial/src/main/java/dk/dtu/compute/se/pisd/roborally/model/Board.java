@@ -174,12 +174,6 @@ public class Board extends Subject {
         return current;
     }
 
-    public Player getNextPlayer() {
-        int playerId = getPlayerNumber(getCurrentPlayer()) + 1;
-        playerId = playerId % getPlayersNumber();
-        return getPlayer(playerId);
-    }
-
     /**
      * Set the current active Player
      * 
@@ -312,7 +306,8 @@ public class Board extends Subject {
         return this.turnCounter;
     }
 
-    public void incrementTurnCounter() {
-        this.turnCounter += 1;
+    public void setTurnCounter(int turnCounter) {
+        this.turnCounter = turnCounter;
     }
+
 }
