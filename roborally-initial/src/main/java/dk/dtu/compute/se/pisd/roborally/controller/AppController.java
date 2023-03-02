@@ -27,7 +27,6 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.model.Board;
-import dk.dtu.compute.se.pisd.roborally.model.Phase;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 
 import javafx.application.Platform;
@@ -60,11 +59,6 @@ public class AppController implements Observer {
         this.roboRally = roboRally;
     }
 
-    /**
-     * Initializes the game using an interactive GUI
-     * Creates a Board object, a GameController, the defined number of Player object
-     * and a BoardView
-     */
     public void newGame() {
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
         dialog.setTitle("Player number");
@@ -80,10 +74,9 @@ public class AppController implements Observer {
                 }
             }
 
-            // XXX the board should eventually be created programmatically or loaded from a
-            // file
-            // here we just create an empty board with the required number of players.
-            Board board = new Board(8, 8);
+            // XXX the board should eventually be created programmatically or loaded from a file
+            //     here we just create an empty board with the required number of players.
+            Board board = new Board(8,8);
             gameController = new GameController(board);
             int no = result.get();
             for (int i = 0; i < no; i++) {
@@ -91,23 +84,21 @@ public class AppController implements Observer {
                 board.addPlayer(player);
                 player.setSpace(board.getSpace(i % board.width, i));
             }
-            board.setCurrentPlayer(board.getPlayer(0));
+
+            // XXX: V2
+            // board.setCurrentPlayer(board.getPlayer(0));
+            gameController.startProgrammingPhase();
+
             roboRally.createBoardView(gameController);
         }
     }
 
-    /**
-     * Save the game
-     */
     public void saveGame() {
-        // XXX needs to be implememged eventually
+        // XXX needs to be implemented eventually
     }
 
-    /**
-     * Load a game
-     */
     public void loadGame() {
-        // XXX needs to be implememged eventually
+        // XXX needs to be implemented eventually
         // for now, we just create a new game
         if (gameController == null) {
             newGame();
@@ -136,9 +127,6 @@ public class AppController implements Observer {
         return false;
     }
 
-    /**
-     * "Safely" exit the game
-     */
     public void exit() {
         if (gameController != null) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -158,18 +146,11 @@ public class AppController implements Observer {
         }
     }
 
-    /**
-     * Returns if the game is running
-     * 
-     * @return boolean
-     */
     public boolean isGameRunning() {
         return gameController != null;
     }
 
-    /**
-     * Update something
-     */
+
     @Override
     public void update(Subject subject) {
         // XXX do nothing for now
