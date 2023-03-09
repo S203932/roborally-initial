@@ -57,22 +57,13 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
-    private int turnCounter = 0;
-
-    /**
-     * Create a Board
-     * 
-     * @param width
-     * @param height
-     * @param boardName
-     */
     public Board(int width, int height, @NotNull String boardName) {
         this.boardName = boardName;
         this.width = width;
         this.height = height;
         spaces = new Space[width][height];
         for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+            for(int y = 0; y < height; y++) {
                 Space space = new Space(this, x, y);
                 spaces[x][y] = space;
             }
@@ -80,30 +71,14 @@ public class Board extends Subject {
         this.stepMode = false;
     }
 
-    /**
-     * Create a Board
-     * 
-     * @param width
-     * @param height
-     */
     public Board(int width, int height) {
         this(width, height, "defaultboard");
     }
 
-    /**
-     * Return gameId
-     * 
-     * @return gameId
-     */
     public Integer getGameId() {
         return gameId;
     }
 
-    /**
-     * Set gameId
-     * 
-     * @param gameId
-     */
     public void setGameId(int gameId) {
         if (this.gameId == null) {
             this.gameId = gameId;
@@ -114,13 +89,6 @@ public class Board extends Subject {
         }
     }
 
-    /**
-     * Return a Space
-     * 
-     * @param x
-     * @param y
-     * @return Space
-     */
     public Space getSpace(int x, int y) {
         if (x >= 0 && x < width &&
                 y >= 0 && y < height) {
@@ -130,20 +98,10 @@ public class Board extends Subject {
         }
     }
 
-    /**
-     * Get number of Players
-     * 
-     * @return len(players)
-     */
     public int getPlayersNumber() {
         return players.size();
     }
 
-    /**
-     * Add a player to the Board
-     * 
-     * @param player
-     */
     public void addPlayer(@NotNull Player player) {
         if (player.board == this && !players.contains(player)) {
             players.add(player);
@@ -151,12 +109,6 @@ public class Board extends Subject {
         }
     }
 
-    /**
-     * Return the given Player from ID i
-     * 
-     * @param i
-     * @return players[i] or null
-     */
     public Player getPlayer(int i) {
         if (i >= 0 && i < players.size()) {
             return players.get(i);
@@ -165,20 +117,10 @@ public class Board extends Subject {
         }
     }
 
-    /**
-     * Return the current Player
-     * 
-     * @return current
-     */
     public Player getCurrentPlayer() {
         return current;
     }
 
-    /**
-     * Set the current active Player
-     * 
-     * @param player
-     */
     public void setCurrentPlayer(Player player) {
         if (player != this.current && players.contains(player)) {
             this.current = player;
@@ -186,20 +128,10 @@ public class Board extends Subject {
         }
     }
 
-    /**
-     * Get the current game phase
-     * 
-     * @return phase
-     */
     public Phase getPhase() {
         return phase;
     }
 
-    /**
-     * Set the current game phase
-     * 
-     * @param phase
-     */
     public void setPhase(Phase phase) {
         if (phase != this.phase) {
             this.phase = phase;
@@ -207,20 +139,10 @@ public class Board extends Subject {
         }
     }
 
-    /**
-     * Get the current step
-     * 
-     * @return step
-     */
     public int getStep() {
         return step;
     }
 
-    /**
-     * Set the curret step
-     * 
-     * @param step
-     */
     public void setStep(int step) {
         if (step != this.step) {
             this.step = step;
@@ -253,10 +175,9 @@ public class Board extends Subject {
      * (no walls or obstacles in either of the involved spaces); otherwise,
      * null will be returned.
      *
-     * @param space   the space for which the neighbour should be computed
+     * @param space the space for which the neighbour should be computed
      * @param heading the heading of the neighbour
-     * @return the space in the given direction; null if there is no (reachable)
-     *         neighbour
+     * @return the space in the given direction; null if there is no (reachable) neighbour
      */
     public Space getNeighbour(@NotNull Space space, @NotNull Heading heading) {
         int x = space.x;
@@ -279,35 +200,16 @@ public class Board extends Subject {
         return getSpace(x, y);
     }
 
-    /**
-     * Generate and return a status message
-     * 
-     * @return Status message
-     */
     public String getStatusMessage() {
-        // This is actually a view aspect, but for making the first task easy for
+        // this is actually a view aspect, but for making assignment V1 easy for
         // the students, this method gives a string representation of the current
         // status of the game
 
-        // TODO Assignment V1: this string could eventually be refined
-        // The status line should show more information based on
-        // situation; for now, introduce a counter to the Board,
-        // which is counted up every time a player makes a move; the
-        // status line should show the current player and the number
-        // of the current move!
-        return "Player = " + getCurrentPlayer().getName() + " TurnCounter = " + getTurnCounter();
+        // XXX: V2 changed the status so that it shows the phase, the player and the step
+        return "Phase: " + getPhase().name() +
+                ", Player = " + getCurrentPlayer().getName() +
+                ", Step: " + getStep();
     }
 
-    // TODO Assignment V1: add a counter along with a getter and a setter, so the
-    // state the board (game) contains the number of moves, which then can
-    // be used to extend the status message including the number of
-
-    public int getTurnCounter() {
-        return this.turnCounter;
-    }
-
-    public void setTurnCounter(int turnCounter) {
-        this.turnCounter = turnCounter;
-    }
 
 }
