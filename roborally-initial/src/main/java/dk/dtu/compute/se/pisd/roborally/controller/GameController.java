@@ -53,6 +53,15 @@ public class GameController {
         //   - the counter of moves in the game should be increased by one
         //     if the player is moved
 
+        if (space != null && space.board == board) {
+            Player currentPlayer = board.getCurrentPlayer();
+            if (currentPlayer != null && space.getPlayer() == null) {
+                currentPlayer.setSpace(space);
+                int playerNumber = (board.getPlayerNumber(currentPlayer) + 1) % board.getPlayersNumber();
+                board.setCurrentPlayer(board.getPlayer(playerNumber));
+            }
+        }
+
     }
 
     // XXX: V2
@@ -195,30 +204,39 @@ public class GameController {
         }
     }
 
-    // TODO Assignment V2
+    // TODO: V2
     public void moveForward(@NotNull Player player) {
-        player.setSpace(board.getNeighbour(player.getSpace(),player.getHeading()));
-
-
-
+        Space space = player.getSpace();
+        if (player != null && player.board == board && space != null) {
+            Heading heading = player.getHeading();
+            Space target = board.getNeighbour(space, heading);
+            if (target != null) {
+                // XXX note that this removes an other player from the space, when there
+                //     is another player on the target. Eventually, this needs to be
+                //     implemented in a way so that other players are pushed away!
+                target.setPlayer(player);
+            }
+        }
     }
 
-    // TODO Assignment V2
+    // TODO: V2
     public void fastForward(@NotNull Player player) {
-        player.setSpace(board.getNeighbour(player.getSpace(),player.getHeading()));
-        player.setSpace(board.getNeighbour(player.getSpace(),player.getHeading()));
-
+        moveForward(player);
+        moveForward(player);
     }
 
-    // TODO Assignment V2
+    // TODO: V2
     public void turnRight(@NotNull Player player) {
-        player.setHeading(player.getHeading().next());
-
+        if (player != null && player.board == board) {
+            player.setHeading(player.getHeading().next());
+        }
     }
 
-    // TODO Assignment V2
+    // TODO: V2
     public void turnLeft(@NotNull Player player) {
-        player.setHeading(player.getHeading().prev());
+        if (player != null && player.board == board) {
+            player.setHeading(player.getHeading().prev());
+        }
     }
 
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
