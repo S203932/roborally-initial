@@ -35,7 +35,7 @@ import javafx.stage.Stage;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class RoboRally extends Application {
 
@@ -47,11 +47,13 @@ public class RoboRally extends Application {
 
     // private AppController appController;
 
+    /** {@inheritDoc} */
     @Override
     public void init() throws Exception {
         super.init();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
@@ -78,6 +80,11 @@ public class RoboRally extends Application {
         stage.show();
     }
 
+    /**
+     * <p>createBoardView.</p>
+     *
+     * @param gameController a {@link dk.dtu.compute.se.pisd.roborally.controller.GameController} object.
+     */
     public void createBoardView(GameController gameController) {
         // if present, remove old BoardView
         boardRoot.getChildren().clear();
@@ -91,6 +98,7 @@ public class RoboRally extends Application {
         stage.sizeToScene();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() throws Exception {
         super.stop();
@@ -101,6 +109,11 @@ public class RoboRally extends Application {
         //     so that the AppController can take care of that.
     }
 
+    /**
+     * <p>main.</p>
+     *
+     * @param args an array of {@link java.lang.String} objects.
+     */
     public static void main(String[] args) {
         launch(args);
     }

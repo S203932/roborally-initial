@@ -28,16 +28,26 @@ import org.jetbrains.annotations.NotNull;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class CommandCard extends Subject {
 
     final public Command command;
 
+    /**
+     * <p>Constructor for CommandCard.</p>
+     *
+     * @param command a {@link dk.dtu.compute.se.pisd.roborally.model.Command} object.
+     */
     public CommandCard(@NotNull Command command) {
         this.command = command;
     }
 
+    /**
+     * <p>getName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getName() {
         return command.displayName;
     }

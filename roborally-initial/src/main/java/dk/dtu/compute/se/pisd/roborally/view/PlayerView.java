@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class PlayerView extends Tab implements ViewObserver {
 
@@ -62,6 +62,12 @@ public class PlayerView extends Tab implements ViewObserver {
 
     private GameController gameController;
 
+    /**
+     * <p>Constructor for PlayerView.</p>
+     *
+     * @param gameController a {@link dk.dtu.compute.se.pisd.roborally.controller.GameController} object.
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public PlayerView(@NotNull GameController gameController, @NotNull Player player) {
         super(player.getName());
         this.setStyle("-fx-text-base-color: " + player.getColor() + ";");
@@ -131,7 +137,7 @@ public class PlayerView extends Tab implements ViewObserver {
             update(player.board);
         }
     }
-
+    /** {@inheritDoc} */
     @Override
     public void updateView(Subject subject) {
         if (subject == player.board) {
@@ -203,6 +209,20 @@ public class PlayerView extends Tab implements ViewObserver {
                     //      an interactive command card, and the buttons should represent
                     //      the player's choices of the interactive command card. The
                     //      following is just a mockup showing two options
+
+                    // Adding the while loop for the buttons available to the player
+                    CommandCard card = gameController.board.getCurrentPlayer().getProgramField(gameController.board.getStep()).getCard();
+                    for( int i = 0; card.command.getOptions().size() > i;i++){
+                        int turn = i;
+                        Button optionButton = new Button(card.command.getOptions().get(i).displayName);
+                        optionButton.setOnAction( e -> gameController.executeCommandOptionAndContinue(card.command.getOptions().get(turn)));
+                        optionButton.setDisable(false);
+                        playerInteractionPanel.getChildren().add(optionButton);
+                    }
+
+
+
+                    /*
                     Button optionButton = new Button("Option1");
                     optionButton.setOnAction( e -> gameController.notImplemented());
                     optionButton.setDisable(false);
@@ -212,6 +232,8 @@ public class PlayerView extends Tab implements ViewObserver {
                     optionButton.setOnAction( e -> gameController.notImplemented());
                     optionButton.setDisable(false);
                     playerInteractionPanel.getChildren().add(optionButton);
+
+                     */
                 }
             }
         }

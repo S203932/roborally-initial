@@ -33,7 +33,7 @@ import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class Board extends Subject {
 
@@ -57,6 +57,13 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
+    /**
+     * <p>Constructor for Board.</p>
+     *
+     * @param width a int.
+     * @param height a int.
+     * @param boardName a {@link java.lang.String} object.
+     */
     public Board(int width, int height, @NotNull String boardName) {
         this.boardName = boardName;
         this.width = width;
@@ -71,14 +78,30 @@ public class Board extends Subject {
         this.stepMode = false;
     }
 
+    /**
+     * <p>Constructor for Board.</p>
+     *
+     * @param width a int.
+     * @param height a int.
+     */
     public Board(int width, int height) {
         this(width, height, "defaultboard");
     }
 
+    /**
+     * <p>Getter for the field <code>gameId</code>.</p>
+     *
+     * @return a {@link java.lang.Integer} object.
+     */
     public Integer getGameId() {
         return gameId;
     }
 
+    /**
+     * <p>Setter for the field <code>gameId</code>.</p>
+     *
+     * @param gameId a int.
+     */
     public void setGameId(int gameId) {
         if (this.gameId == null) {
             this.gameId = gameId;
@@ -89,6 +112,13 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>getSpace.</p>
+     *
+     * @param x a int.
+     * @param y a int.
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Space} object.
+     */
     public Space getSpace(int x, int y) {
         if (x >= 0 && x < width &&
                 y >= 0 && y < height) {
@@ -98,10 +128,20 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>getPlayersNumber.</p>
+     *
+     * @return a int.
+     */
     public int getPlayersNumber() {
         return players.size();
     }
 
+    /**
+     * <p>addPlayer.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public void addPlayer(@NotNull Player player) {
         if (player.board == this && !players.contains(player)) {
             players.add(player);
@@ -109,6 +149,12 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>getPlayer.</p>
+     *
+     * @param i a int.
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public Player getPlayer(int i) {
         if (i >= 0 && i < players.size()) {
             return players.get(i);
@@ -117,10 +163,20 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>getCurrentPlayer.</p>
+     *
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public Player getCurrentPlayer() {
         return current;
     }
 
+    /**
+     * <p>setCurrentPlayer.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public void setCurrentPlayer(Player player) {
         if (player != this.current && players.contains(player)) {
             this.current = player;
@@ -128,10 +184,20 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>Getter for the field <code>phase</code>.</p>
+     *
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Phase} object.
+     */
     public Phase getPhase() {
         return phase;
     }
 
+    /**
+     * <p>Setter for the field <code>phase</code>.</p>
+     *
+     * @param phase a {@link dk.dtu.compute.se.pisd.roborally.model.Phase} object.
+     */
     public void setPhase(Phase phase) {
         if (phase != this.phase) {
             this.phase = phase;
@@ -139,10 +205,20 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>Getter for the field <code>step</code>.</p>
+     *
+     * @return a int.
+     */
     public int getStep() {
         return step;
     }
 
+    /**
+     * <p>Setter for the field <code>step</code>.</p>
+     *
+     * @param step a int.
+     */
     public void setStep(int step) {
         if (step != this.step) {
             this.step = step;
@@ -150,10 +226,20 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>isStepMode.</p>
+     *
+     * @return a boolean.
+     */
     public boolean isStepMode() {
         return stepMode;
     }
 
+    /**
+     * <p>Setter for the field <code>stepMode</code>.</p>
+     *
+     * @param stepMode a boolean.
+     */
     public void setStepMode(boolean stepMode) {
         if (stepMode != this.stepMode) {
             this.stepMode = stepMode;
@@ -161,6 +247,12 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * <p>getPlayerNumber.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     * @return a int.
+     */
     public int getPlayerNumber(@NotNull Player player) {
         if (player.board == this) {
             return players.indexOf(player);
@@ -200,6 +292,11 @@ public class Board extends Subject {
         return getSpace(x, y);
     }
 
+    /**
+     * <p>getStatusMessage.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getStatusMessage() {
         // this is actually a view aspect, but for making assignment V1 easy for
         // the students, this method gives a string representation of the current

@@ -28,12 +28,17 @@ import org.jetbrains.annotations.NotNull;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class GameController {
 
     final public Board board;
 
+    /**
+     * <p>Constructor for GameController.</p>
+     *
+     * @param board a {@link dk.dtu.compute.se.pisd.roborally.model.Board} object.
+     */
     public GameController(@NotNull Board board) {
         this.board = board;
     }
@@ -65,6 +70,9 @@ public class GameController {
     }
 
     // XXX: V2
+    /**
+     * <p>startProgrammingPhase.</p>
+     */
     public void startProgrammingPhase() {
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
@@ -95,6 +103,9 @@ public class GameController {
     }
 
     // XXX: V2
+    /**
+     * <p>finishProgrammingPhase.</p>
+     */
     public void finishProgrammingPhase() {
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
@@ -126,12 +137,18 @@ public class GameController {
     }
 
     // XXX: V2
+    /**
+     * <p>executePrograms.</p>
+     */
     public void executePrograms() {
         board.setStepMode(false);
         continuePrograms();
     }
 
     // XXX: V2
+    /**
+     * <p>executeStep.</p>
+     */
     public void executeStep() {
         board.setStepMode(true);
         continuePrograms();
@@ -152,8 +169,13 @@ public class GameController {
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                    Command command = card.command;
-                    executeCommand(currentPlayer, command);
+                    if(card.command.isInteractive()){
+                        board.setPhase(Phase.PLAYER_INTERACTION);
+                        return;
+                    }else{
+                        Command command = card.command;
+                        executeCommand(currentPlayer, command);
+                    }
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
@@ -205,6 +227,11 @@ public class GameController {
     }
 
     // TODO: V2
+    /**
+     * <p>moveForward.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public void moveForward(@NotNull Player player) {
         Space space = player.getSpace();
         if (player != null && player.board == board && space != null) {
@@ -220,12 +247,22 @@ public class GameController {
     }
 
     // TODO: V2
+    /**
+     * <p>fastForward.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public void fastForward(@NotNull Player player) {
         moveForward(player);
         moveForward(player);
     }
 
     // TODO: V2
+    /**
+     * <p>turnRight.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public void turnRight(@NotNull Player player) {
         if (player != null && player.board == board) {
             player.setHeading(player.getHeading().next());
@@ -233,12 +270,24 @@ public class GameController {
     }
 
     // TODO: V2
+    /**
+     * <p>turnLeft.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public void turnLeft(@NotNull Player player) {
         if (player != null && player.board == board) {
             player.setHeading(player.getHeading().prev());
         }
     }
 
+    /**
+     * <p>moveCards.</p>
+     *
+     * @param source a {@link dk.dtu.compute.se.pisd.roborally.model.CommandCardField} object.
+     * @param target a {@link dk.dtu.compute.se.pisd.roborally.model.CommandCardField} object.
+     * @return a boolean.
+     */
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
         CommandCard sourceCard = source.getCard();
         CommandCard targetCard = target.getCard();
@@ -258,6 +307,61 @@ public class GameController {
     public void notImplemented() {
         // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
+    }
+
+
+    /**
+     * A method for excecuting commands that is a variable
+     *
+     * @param command a {@link dk.dtu.compute.se.pisd.roborally.model.Command} object.
+     */
+    public void executeCommandOptionAndContinue(Command command){
+        board.setPhase(Phase.ACTIVATION);
+        Player currentPlayer = board.getCurrentPlayer();
+        if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
+            int step = board.getStep();
+            if (step >= 0 && step < Player.NO_REGISTERS) {
+                CommandCard card = currentPlayer.getProgramField(step).getCard();
+                if (card != null) {
+                        executeCommand(currentPlayer, command);
+                }
+                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                if (nextPlayerNumber < board.getPlayersNumber()) {
+                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+                } else {
+                    step++;
+                    if (step < Player.NO_REGISTERS) {
+                        makeProgramFieldsVisible(step);
+                        board.setStep(step);
+                        board.setCurrentPlayer(board.getPlayer(0));
+                    } else {
+                        startProgrammingPhase();
+                    }
+                }
+            } else {
+                // this should not happen
+                assert false;
+            }
+        } else {
+            // this should not happen
+            assert false;
+        }
+
+        if(!board.isStepMode() && board.getStep() < Player.NO_REGISTERS ){
+            continuePrograms();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 }

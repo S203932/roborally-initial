@@ -44,7 +44,7 @@ import java.util.Optional;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class AppController implements Observer {
 
@@ -55,10 +55,18 @@ public class AppController implements Observer {
 
     private GameController gameController;
 
+    /**
+     * <p>Constructor for AppController.</p>
+     *
+     * @param roboRally a {@link dk.dtu.compute.se.pisd.roborally.RoboRally} object.
+     */
     public AppController(@NotNull RoboRally roboRally) {
         this.roboRally = roboRally;
     }
 
+    /**
+     * <p>newGame.</p>
+     */
     public void newGame() {
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
         dialog.setTitle("Player number");
@@ -93,10 +101,16 @@ public class AppController implements Observer {
         }
     }
 
+    /**
+     * <p>saveGame.</p>
+     */
     public void saveGame() {
         // XXX needs to be implemented eventually
     }
 
+    /**
+     * <p>loadGame.</p>
+     */
     public void loadGame() {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
@@ -127,6 +141,9 @@ public class AppController implements Observer {
         return false;
     }
 
+    /**
+     * <p>exit.</p>
+     */
     public void exit() {
         if (gameController != null) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -146,11 +163,17 @@ public class AppController implements Observer {
         }
     }
 
+    /**
+     * <p>isGameRunning.</p>
+     *
+     * @return a boolean.
+     */
     public boolean isGameRunning() {
         return gameController != null;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public void update(Subject subject) {
         // XXX do nothing for now

@@ -24,9 +24,9 @@ package dk.dtu.compute.se.pisd.designpatterns.observer;
 /**
  * This is the observer of the observer design pattern roughly following
  * the definition of the GoF.
- * 
- * @author Ekkart Kindler, ekki@dtu.dk
  *
+ * @author Ekkart Kindler, ekki@dtu.dk
+ * @version $Id: $Id
  */
 public interface Observer {
 	
@@ -35,7 +35,7 @@ public interface Observer {
 	 * changes. The subject is provided as a parameter in order to
 	 * use the same observer object as an observer for many different
 	 * subjects.
-	 * 
+	 *
 	 * @param subject the subject which changed
 	 */
 	void update(Subject subject);

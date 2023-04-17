@@ -27,7 +27,7 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class CommandCardField extends Subject {
 
@@ -37,16 +37,31 @@ public class CommandCardField extends Subject {
 
     private boolean visible;
 
+    /**
+     * <p>Constructor for CommandCardField.</p>
+     *
+     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+     */
     public CommandCardField(Player player) {
         this.player = player;
         this. card = null;
         this.visible = true;
     }
 
+    /**
+     * <p>Getter for the field <code>card</code>.</p>
+     *
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.CommandCard} object.
+     */
     public CommandCard getCard() {
         return card;
     }
 
+    /**
+     * <p>Setter for the field <code>card</code>.</p>
+     *
+     * @param card a {@link dk.dtu.compute.se.pisd.roborally.model.CommandCard} object.
+     */
     public void setCard(CommandCard card) {
         if (card != this.card) {
             this.card = card;
@@ -54,10 +69,20 @@ public class CommandCardField extends Subject {
         }
     }
 
+    /**
+     * <p>isVisible.</p>
+     *
+     * @return a boolean.
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     * <p>Setter for the field <code>visible</code>.</p>
+     *
+     * @param visible a boolean.
+     */
     public void setVisible(boolean visible) {
         if (visible != this.visible) {
             this.visible = visible;

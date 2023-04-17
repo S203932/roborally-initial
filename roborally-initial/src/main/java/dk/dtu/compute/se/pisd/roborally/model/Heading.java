@@ -25,16 +25,26 @@ package dk.dtu.compute.se.pisd.roborally.model;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public enum Heading {
 
     SOUTH, WEST, NORTH, EAST;
 
+    /**
+     * <p>next.</p>
+     *
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Heading} object.
+     */
     public Heading next() {
         return values()[(this.ordinal() + 1) % values().length];
     }
 
+    /**
+     * <p>prev.</p>
+     *
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Heading} object.
+     */
     public Heading prev() {
         return values()[(this.ordinal() + values().length - 1) % values().length];
     }

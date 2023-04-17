@@ -30,7 +30,7 @@ import javafx.scene.control.MenuItem;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class RoboRallyMenuBar extends MenuBar {
 
@@ -48,6 +48,11 @@ public class RoboRallyMenuBar extends MenuBar {
 
     private MenuItem exitApp;
 
+    /**
+     * <p>Constructor for RoboRallyMenuBar.</p>
+     *
+     * @param appController a {@link dk.dtu.compute.se.pisd.roborally.controller.AppController} object.
+     */
     public RoboRallyMenuBar(AppController appController) {
         this.appController = appController;
 
@@ -79,6 +84,9 @@ public class RoboRallyMenuBar extends MenuBar {
         update();
     }
 
+    /**
+     * <p>update.</p>
+     */
     public void update() {
         if (appController.isGameRunning()) {
             newGame.setVisible(false);

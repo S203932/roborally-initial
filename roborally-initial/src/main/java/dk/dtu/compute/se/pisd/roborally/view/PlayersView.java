@@ -31,7 +31,7 @@ import javafx.scene.control.TabPane;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class PlayersView extends TabPane implements ViewObserver {
 
@@ -39,6 +39,11 @@ public class PlayersView extends TabPane implements ViewObserver {
 
     private PlayerView[] playerViews;
 
+    /**
+     * <p>Constructor for PlayersView.</p>
+     *
+     * @param gameController a {@link dk.dtu.compute.se.pisd.roborally.controller.GameController} object.
+     */
     public PlayersView(GameController gameController) {
         board = gameController.board;
 
@@ -53,6 +58,7 @@ public class PlayersView extends TabPane implements ViewObserver {
         update(board);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void updateView(Subject subject) {
         if (subject == board) {

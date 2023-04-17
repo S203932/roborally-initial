@@ -41,24 +41,33 @@ import org.jetbrains.annotations.NotNull;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public class CardFieldView extends GridPane implements ViewObserver {
 
     // This data format helps avoiding transfers of e.g. Strings from other
     // programs which can copy/paste Strings.
+    /** Constant <code>ROBO_RALLY_CARD</code> */
     final public static  DataFormat ROBO_RALLY_CARD = new DataFormat("games/roborally/cards");
 
+    /** Constant <code>CARDFIELD_WIDTH=65</code> */
     final public static int CARDFIELD_WIDTH = 65;
+    /** Constant <code>CARDFIELD_HEIGHT=100</code> */
     final public static int CARDFIELD_HEIGHT = 100;
 
+    /** Constant <code>BORDER</code> */
     final public static Border BORDER = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
 
+    /** Constant <code>BG_DEFAULT</code> */
     final public static Background BG_DEFAULT = new Background(new BackgroundFill(Color.WHITE, null, null));
+    /** Constant <code>BG_DRAG</code> */
     final public static Background BG_DRAG = new Background(new BackgroundFill(Color.GRAY, null, null));
+    /** Constant <code>BG_DROP</code> */
     final public static Background BG_DROP = new Background(new BackgroundFill(Color.LIGHTGRAY, null, null));
 
+    /** Constant <code>BG_ACTIVE</code> */
     final public static Background BG_ACTIVE = new Background(new BackgroundFill(Color.YELLOW, null, null));
+    /** Constant <code>BG_DONE</code> */
     final public static Background BG_DONE = new Background(new BackgroundFill(Color.GREENYELLOW,  null, null));
 
     private CommandCardField field;
@@ -67,6 +76,12 @@ public class CardFieldView extends GridPane implements ViewObserver {
 
     private GameController gameController;
 
+    /**
+     * <p>Constructor for CardFieldView.</p>
+     *
+     * @param gameController a {@link dk.dtu.compute.se.pisd.roborally.controller.GameController} object.
+     * @param field a {@link dk.dtu.compute.se.pisd.roborally.model.CommandCardField} object.
+     */
     public CardFieldView(@NotNull GameController gameController, @NotNull CommandCardField field) {
         this.gameController = gameController;
         this.field = field;
@@ -140,6 +155,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void updateView(Subject subject) {
         if (subject == field && subject != null) {

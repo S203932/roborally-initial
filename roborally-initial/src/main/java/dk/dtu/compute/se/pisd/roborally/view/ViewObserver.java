@@ -29,12 +29,18 @@ import javafx.application.Platform;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * @version $Id: $Id
  */
 public interface ViewObserver extends Observer {
 
+    /**
+     * <p>updateView.</p>
+     *
+     * @param subject a {@link dk.dtu.compute.se.pisd.designpatterns.observer.Subject} object.
+     */
     void updateView(Subject subject);
 
+    /** {@inheritDoc} */
     @Override
     default void update(Subject subject) {
         // This default implementation of the update method makes sure that ViewObserver implementations
