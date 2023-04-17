@@ -22,6 +22,9 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.model.*;
+
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,7 +47,7 @@ public class GameController {
      *
      * @param space the space to which the current player should move
      */
-    public void moveCurrentPlayerToSpace(@NotNull Space space)  {
+    public void moveCurrentPlayerToSpace(@NotNull Space space) {
         // TODO Assignment V1: method should be implemented by the students:
         //   - the current player should be moved to the given space
         //     (if it is free()
@@ -144,6 +147,90 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
+    public void executeCommandOptionAndContinue(Command optionCommand) {
+        System.out.println("Test");
+        Player currentPlayer = board.getCurrentPlayer();
+
+        this.board.setPhase(Phase.ACTIVATION);
+        executeCommand(currentPlayer, optionCommand);
+        this.board.setStep(this.board.getStep() + 1);
+
+        // int step = board.getStep();
+        // if (step >= 0 && step < Player.NO_REGISTERS) {
+        //     CommandCard card = currentPlayer.getProgramField(step).getCard();
+        //     if (card != null) {
+        //         Command command = card.command;
+
+        //         // Check if the phase should be changed because of the card
+        //         if (command.getOptions().size() != 0) {
+        //             this.board.setPhase(Phase.PLAYER_INTERACTION);
+        //             return;
+        //         }
+        //         executeCommand(currentPlayer, command);
+        //     }
+        //     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+        //     if (nextPlayerNumber < board.getPlayersNumber()) {
+        //         board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+        //     } else {
+        //         step++;
+        //         if (step < Player.NO_REGISTERS) {
+        //             makeProgramFieldsVisible(step);
+        //             board.setStep(step);
+        //             board.setCurrentPlayer(board.getPlayer(0));
+        //         } else {
+        //             startProgrammingPhase();
+        //         }
+        //     }
+        // } else {
+        //     // this should not happen
+        //     assert false;
+        // }
+        // executeNextStep();
+        // executeCommand(currentPlayer, optionCommand);
+
+        // if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
+        //     System.out.println("Test2");
+
+        //     int step = board.getStep();
+        //     if (step >= 0 && step < Player.NO_REGISTERS) {
+        //         CommandCard card = currentPlayer.getProgramField(step).getCard();
+        //         if (card != null) {
+        //             Command command = card.command;
+        //             System.out.println("Test3");
+
+        //             // Check if the phase should be changed because of the card
+        //             if (command.getOptions().size() != 0) {
+        //                 this.board.setPhase(Phase.PLAYER_INTERACTION);
+        //                 return;
+        //             }
+        //             executeCommand(currentPlayer, command);
+        //         }
+        //         int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+        //         if (nextPlayerNumber < board.getPlayersNumber()) {
+        //             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+        //         } else {
+        //             step++;
+        //             if (step < Player.NO_REGISTERS) {
+        //                 makeProgramFieldsVisible(step);
+        //                 board.setStep(step);
+        //                 board.setCurrentPlayer(board.getPlayer(0));
+        //             } else {
+        //                 startProgrammingPhase();
+        //             }
+        //         }
+        //     } else {
+        //         // this should not happen
+        //         assert false;
+        //     }
+        // } else {
+        //     // this should not happen
+        //     assert false;
+        // }
+        // // executeCommand(this.board.getCurrentPlayer(), command);
+
+        return;
+    }
+
     // XXX: V2
     private void executeNextStep() {
         Player currentPlayer = board.getCurrentPlayer();
@@ -153,6 +240,12 @@ public class GameController {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
                     Command command = card.command;
+
+                    // Check if the phase should be changed because of the card
+                    if (command.getOptions().size() != 0) {
+                        this.board.setPhase(Phase.PLAYER_INTERACTION);
+                        return;
+                    }
                     executeCommand(currentPlayer, command);
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
