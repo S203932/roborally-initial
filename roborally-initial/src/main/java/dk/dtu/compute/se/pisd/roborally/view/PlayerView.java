@@ -137,7 +137,9 @@ public class PlayerView extends Tab implements ViewObserver {
             update(player.board);
         }
     }
-    /** {@inheritDoc} */
+    /** A method that updates the players view of the board according to the gamecontroller
+     *
+     * {@inheritDoc} */
     @Override
     public void updateView(Subject subject) {
         if (subject == player.board) {
@@ -221,7 +223,7 @@ public class PlayerView extends Tab implements ViewObserver {
                     }
 
 
-
+                    // Old buttons that are replaced with the above dynamic buttons
                     /*
                     Button optionButton = new Button("Option1");
                     optionButton.setOnAction( e -> gameController.notImplemented());

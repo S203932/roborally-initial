@@ -162,6 +162,12 @@ public class GameController {
     }
 
     // XXX: V2
+
+    /**
+     * A method used for executing the cards in the activation phase. The method goes through a given card
+     * and executes it for the given player.
+     */
+
     private void executeNextStep() {
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
@@ -311,8 +317,8 @@ public class GameController {
 
 
     /**
-     * A method for excecuting commands that is a variable
-     *
+     * A method called when need to execute a command card, that has a variable option that needs a players choice
+     * It sets the phase to Activation phase
      * @param command a {@link dk.dtu.compute.se.pisd.roborally.model.Command} object.
      */
     public void executeCommandOptionAndContinue(Command command){
