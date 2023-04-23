@@ -41,7 +41,14 @@ public enum Command {
     FAST_FORWARD("Fast Fwd"),
 
     // XXX Assignment P3
-    OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT);
+    OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),
+
+    //Damage Cards//
+    SPAM("SPAM"),
+    TROJANHORSE("TROJAN HORSE"),
+    WORM("WORM"),
+    VIRUS("VIRUS");
+
 
     final public String displayName;
 

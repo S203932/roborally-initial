@@ -24,6 +24,8 @@ package dk.dtu.compute.se.pisd.roborally.model;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 
 /**
@@ -50,6 +52,8 @@ public class Player extends Subject {
     private CommandCardField[] program;
     private CommandCardField[] cards;
 
+    private final ArrayList <Command> damagecards;
+
     /**
      * <p>Constructor for Player.</p>
      *
@@ -63,6 +67,8 @@ public class Player extends Subject {
         this.color = color;
 
         this.space = null;
+
+        this.damagecards = new ArrayList<>();
 
         program = new CommandCardField[NO_REGISTERS];
         for (int i = 0; i < program.length; i++) {
@@ -192,6 +198,12 @@ public class Player extends Subject {
      */
     public CommandCardField getCardField(int i) {
         return cards[i];
+    }
+
+
+    public void setDmgcards(Command card){this.damagecards.add(card);}
+    public ArrayList<Command>getDmgcards(){
+        return this.damagecards;
     }
 
 }

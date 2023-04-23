@@ -226,6 +226,8 @@ public class GameController {
                 case FAST_FORWARD:
                     this.fastForward(player);
                     break;
+                case SPAM:
+                    removeSpam(player);
                 default:
                     // DO NOTHING (for now)
             }
@@ -356,18 +358,9 @@ public class GameController {
         if(!board.isStepMode() && board.getStep() < Player.NO_REGISTERS ){
             continuePrograms();
         }
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
+    private void removeSpam(Player player) {
+        player.getDmgcards().remove(Command.SPAM);
+    }
 }
