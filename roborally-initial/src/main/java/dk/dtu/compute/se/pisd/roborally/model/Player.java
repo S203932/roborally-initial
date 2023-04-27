@@ -22,6 +22,8 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
+
 import org.jetbrains.annotations.NotNull;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
@@ -124,7 +126,7 @@ public class Player extends Subject {
     /**
      * <p>Getter for the field <code>space</code>.</p>
      *
-     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Space} object.
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space} object.
      */
     public Space getSpace() {
         return space;
@@ -133,7 +135,7 @@ public class Player extends Subject {
     /**
      * <p>Setter for the field <code>space</code>.</p>
      *
-     * @param space a {@link dk.dtu.compute.se.pisd.roborally.model.Space} object.
+     * @param space a {@link dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space} object.
      */
     public void setSpace(Space space) {
         Space oldSpace = this.space;

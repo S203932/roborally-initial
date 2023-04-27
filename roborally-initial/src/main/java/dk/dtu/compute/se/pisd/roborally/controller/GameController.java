@@ -22,6 +22,8 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,7 +51,7 @@ public class GameController {
      *
      * @param space the space to which the current player should move
      */
-    public void moveCurrentPlayerToSpace(@NotNull Space space)  {
+    public void moveCurrentPlayerToSpace(@NotNull Space space) {
         // TODO Assignment V1: method should be implemented by the students:
         //   - the current player should be moved to the given space
         //     (if it is free()
@@ -169,10 +171,10 @@ public class GameController {
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                    if(card.command.isInteractive()){
+                    if (card.command.isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return;
-                    }else{
+                    } else {
                         Command command = card.command;
                         executeCommand(currentPlayer, command);
                     }
@@ -309,13 +311,12 @@ public class GameController {
         assert false;
     }
 
-
     /**
      * A method for excecuting commands that is a variable
      *
      * @param command a {@link dk.dtu.compute.se.pisd.roborally.model.Command} object.
      */
-    public void executeCommandOptionAndContinue(Command command){
+    public void executeCommandOptionAndContinue(Command command) {
         board.setPhase(Phase.ACTIVATION);
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
@@ -323,7 +324,7 @@ public class GameController {
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                        executeCommand(currentPlayer, command);
+                    executeCommand(currentPlayer, command);
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
@@ -347,20 +348,9 @@ public class GameController {
             assert false;
         }
 
-        if(!board.isStepMode() && board.getStep() < Player.NO_REGISTERS ){
+        if (!board.isStepMode() && board.getStep() < Player.NO_REGISTERS) {
             continuePrograms();
         }
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

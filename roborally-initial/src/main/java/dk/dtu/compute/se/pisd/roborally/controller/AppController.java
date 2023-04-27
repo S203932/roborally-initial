@@ -28,7 +28,7 @@ import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
-
+import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Course;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -36,7 +36,17 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import org.jetbrains.annotations.NotNull;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,32 +83,62 @@ public class AppController implements Observer {
         dialog.setHeaderText("Select number of players");
         Optional<Integer> result = dialog.showAndWait();
 
-        if (result.isPresent()) {
-            if (gameController != null) {
-                // The UI should not allow this, but in case this happens anyway.
-                // give the user the option to save the game or abort this operation!
-                if (!stopGame()) {
-                    return;
-                }
+        // Load courses from json files
+        ArrayList<String> courseNames = new ArrayList<String>();
+        ArrayList<Course> jsonCourses = new ArrayList<Course>();
+
+        try {
+            File courses = new File("courses");
+
+            Gson gson = new Gson();
+            Course jsonCourse = null;
+
+            for (File course : courses.listFiles()) {
+                jsonCourse = gson.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
+                courseNames.add(jsonCourse.game_name);
+                jsonCourses.add(jsonCourse);
             }
 
-            // XXX the board should eventually be created programmatically or loaded from a file
-            //     here we just create an empty board with the required number of players.
-            Board board = new Board(8,8);
-            gameController = new GameController(board);
-            int no = result.get();
-            for (int i = 0; i < no; i++) {
-                Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
-                board.addPlayer(player);
-                player.setSpace(board.getSpace(i % board.width, i));
-            }
+        } catch (JsonIOException e) {
+            // TODO: handle exception
 
-            // XXX: V2
-            // board.setCurrentPlayer(board.getPlayer(0));
-            gameController.startProgrammingPhase();
-
-            roboRally.createBoardView(gameController);
+        } catch (FileNotFoundException e) {
+            // TODO: handle exception
         }
+
+        // Show dialog window
+        ChoiceDialog<String> courseDialog = new ChoiceDialog<>(courseNames.get(0), courseNames);
+        courseDialog.setTitle("Course");
+        courseDialog.setHeaderText("Select a course");
+        String courseResult = courseDialog.showAndWait().get();
+
+        // if (result.isPresent() || courseResult.isPresent()) {
+        //     if (gameController != null) {
+        //         // The UI should not allow this, but in case this happens anyway.
+        //         // give the user the option to save the game or abort this operation!
+        //         if (!stopGame()) {
+        //             return;
+        //         }
+        //     }
+
+        // XXX the board should eventually be created programmatically or loaded from a file
+        //     here we just create an empty board with the required number of players.
+        Course selectedCourse = jsonCourses.get(courseNames.indexOf(courseResult));
+
+        Board board = new Board(selectedCourse);
+        gameController = new GameController(board);
+        int no = result.get();
+        for (int i = 0; i < no; i++) {
+            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
+            board.addPlayer(player);
+            player.setSpace(board.getSpace(i % board.width, i));
+        }
+
+        // XXX: V2
+        // board.setCurrentPlayer(board.getPlayer(0));
+        gameController.startProgrammingPhase();
+
+        roboRally.createBoardView(gameController);
     }
 
     /**
@@ -171,7 +211,6 @@ public class AppController implements Observer {
     public boolean isGameRunning() {
         return gameController != null;
     }
-
 
     /** {@inheritDoc} */
     @Override

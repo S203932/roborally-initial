@@ -19,9 +19,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-package dk.dtu.compute.se.pisd.roborally.model;
+package dk.dtu.compute.se.pisd.roborally.model.SpaceModels;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.Heading;
+import dk.dtu.compute.se.pisd.roborally.model.Player;
 
 /**
  * ...
@@ -35,6 +38,7 @@ public class Space extends Subject {
 
     public final int x;
     public final int y;
+    public final Heading[] edges;
 
     private Player player;
 
@@ -45,10 +49,11 @@ public class Space extends Subject {
      * @param x a int.
      * @param y a int.
      */
-    public Space(Board board, int x, int y) {
+    public Space(Board board, int x, int y, Heading[] edges) {
         this.board = board;
         this.x = x;
         this.y = y;
+        this.edges = edges;
         player = null;
     }
 
@@ -82,7 +87,7 @@ public class Space extends Subject {
         }
     }
 
-    void playerChanged() {
+    public void playerChanged() {
         // This is a minor hack; since some views that are registered with the space
         // also need to update when some player attributes change, the player can
         // notify the space of these changes by calling this method.
