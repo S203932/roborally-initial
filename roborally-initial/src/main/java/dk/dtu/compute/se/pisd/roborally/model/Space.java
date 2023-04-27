@@ -33,6 +33,8 @@ public class Space extends Subject {
 
     public final Board board;
 
+    public final Wall[] wall;
+
     public final int x;
     public final int y;
 
@@ -49,7 +51,34 @@ public class Space extends Subject {
         this.board = board;
         this.x = x;
         this.y = y;
+        this.wall = new Wall[4];
         player = null;
+    }
+
+    public void setWall(Wall wall){
+        boolean apply = true;
+        for(int i = 0; i < 4; i++){
+            if(this.wall[i] == null){
+                for(int j = 0; j < 4; j++){
+                    if(this.wall[j] != null){
+                        if(this.wall[j].getheading() == wall.getheading()){
+                            apply = false;
+                        }
+                    }
+                }
+                if(apply){
+                    this.wall[i] = wall;
+                }
+            }
+        }
+    }
+
+    public Wall[] getWalls(){
+        return this.wall;
+    }
+
+    public Wall getWall(int index){
+        return this.wall[index];
     }
 
     /**

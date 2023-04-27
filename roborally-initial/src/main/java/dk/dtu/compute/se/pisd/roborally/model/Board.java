@@ -45,6 +45,8 @@ public class Board extends Subject {
 
     private Integer gameId;
 
+    private final Wall[] walls = null;
+
     private final Space[][] spaces;
 
     private final List<Player> players = new ArrayList<>();
@@ -68,6 +70,13 @@ public class Board extends Subject {
         this.boardName = boardName;
         this.width = width;
         this.height = height;
+
+        // creating a wall and setting it
+        Space aSpace = new Space(this, width/2, height/2);
+        Wall wall = new Wall(Heading.SOUTH);
+        aSpace.setWall(wall);
+
+
         spaces = new Space[width][height];
         for (int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
@@ -75,6 +84,8 @@ public class Board extends Subject {
                 spaces[x][y] = space;
             }
         }
+        //setting the wall
+        spaces[width/2][height/2] = aSpace;
         this.stepMode = false;
     }
 
