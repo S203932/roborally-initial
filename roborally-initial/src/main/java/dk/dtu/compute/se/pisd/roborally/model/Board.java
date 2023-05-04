@@ -30,6 +30,7 @@ import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Energy;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.GreenConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.LaserStart;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.PriorityAntenna;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.RebootToken;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.StartGear;
@@ -133,6 +134,10 @@ public class Board extends Subject {
                     case checkpoint:
                         space = new Checkpoint(this, x, y, tile.attributes.edges, tile.attributes.number);
                         break;
+                    case priority_antenna:
+                        space = new PriorityAntenna(this, x, y, tile.attributes.edges);
+                        break;
+
                 }
 
                 // Store the created space
