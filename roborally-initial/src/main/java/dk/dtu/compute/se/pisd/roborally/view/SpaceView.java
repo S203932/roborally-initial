@@ -26,10 +26,14 @@ import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import dk.dtu.compute.se.pisd.roborally.model.Wall;
+//import dk.dtu.compute.se.pisd.roborally.image.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
@@ -43,6 +47,8 @@ import javafx.stage.Stage;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+
+import java.io.File;
 
 
 /**
@@ -115,37 +121,116 @@ public class SpaceView extends StackPane implements ViewObserver {
 
     public void updateWall(){
         //this.getChildren().clear();
-        /*
+
         Wall[] walls = space.getWalls();
+        boolean north = false;
+        boolean south = false;
+        boolean east = false;
+        boolean west = false;
         for(int i = 0; i < 4; i++){
             if(walls[i] != null && walls[i].getheading() == Heading.SOUTH){
-                Rectangle rectangle = new Rectangle(0,0,0,20);
-                Polygon polygon = new Polygon(0,10,0,20);
 
-
-                polygon.getPoints().addAll(new Double[]{
-                        200.0, 50.0,
-                        400.0, 50.0,
-                        450.0, 150.0,
-                        400.0, 250.0,
-                        200.0, 250.0,
-                        150.0, 150.0,
-                });
-                polygon.setFill(Color.BLUE);
-
-                rectangle.setFill(Color.ORANGE);
+                Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallSouth.jpg");
+                ImagePattern imagePattern = new ImagePattern(image);
+                Rectangle rectangle = new Rectangle();
+                rectangle.setX(0.0f);
+                rectangle.setY(0.0f);
+                rectangle.setWidth(60.0f);
+                rectangle.setHeight(60.0f);
+                rectangle.setFill(imagePattern);
                 this.getChildren().add(rectangle);
-                this.getChildren().add(polygon);
+
+                south = true;
+
+            }else if(walls[i] != null && walls[i].getheading() == Heading.NORTH){
+
+                Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallNorth.jpg");
+                ImagePattern imagePattern = new ImagePattern(image);
+                Rectangle rectangle = new Rectangle();
+                rectangle.setX(0.0f);
+                rectangle.setY(0.0f);
+                rectangle.setWidth(60.0f);
+                rectangle.setHeight(60.0f);
+                rectangle.setFill(imagePattern);
+                this.getChildren().add(rectangle);
+
+                north = true;
+
+            }else if(walls[i] != null && walls[i].getheading() == Heading.WEST){
+
+                Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallWest.jpg");
+                ImagePattern imagePattern = new ImagePattern(image);
+                Rectangle rectangle = new Rectangle();
+                rectangle.setX(0.0f);
+                rectangle.setY(0.0f);
+                rectangle.setWidth(60.0f);
+                rectangle.setHeight(60.0f);
+                rectangle.setFill(imagePattern);
+                this.getChildren().add(rectangle);
+
+                west = true;
+
+            }else if(walls[i] != null && walls[i].getheading() == Heading.EAST){
+
+                Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallEast.jpg");
+                ImagePattern imagePattern = new ImagePattern(image);
+                Rectangle rectangle = new Rectangle();
+                rectangle.setX(0.0f);
+                rectangle.setY(0.0f);
+                rectangle.setWidth(60.0f);
+                rectangle.setHeight(60.0f);
+                rectangle.setFill(imagePattern);
+                this.getChildren().add(rectangle);
+
+                east = true;
+
             }
         }
 
-         */
-        /*
-        Circle circle = new Circle(20);
-        circle.setFill(Color.ORANGE);
-        this.getChildren().add(circle);
+        if(east && north){
+            Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallEastNorth.jpg");
+            ImagePattern imagePattern = new ImagePattern(image);
+            Rectangle rectangle = new Rectangle();
+            rectangle.setX(0.0f);
+            rectangle.setY(0.0f);
+            rectangle.setWidth(60.0f);
+            rectangle.setHeight(60.0f);
+            rectangle.setFill(imagePattern);
+            this.getChildren().add(rectangle);
+        }else if(north && west){
+            Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallNorthWest.jpg");
+            ImagePattern imagePattern = new ImagePattern(image);
+            Rectangle rectangle = new Rectangle();
+            rectangle.setX(0.0f);
+            rectangle.setY(0.0f);
+            rectangle.setWidth(60.0f);
+            rectangle.setHeight(60.0f);
+            rectangle.setFill(imagePattern);
+            this.getChildren().add(rectangle);
+        }else if(south && east){
+            Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallSouthEast.jpg");
+            ImagePattern imagePattern = new ImagePattern(image);
+            Rectangle rectangle = new Rectangle();
+            rectangle.setX(0.0f);
+            rectangle.setY(0.0f);
+            rectangle.setWidth(60.0f);
+            rectangle.setHeight(60.0f);
+            rectangle.setFill(imagePattern);
+            this.getChildren().add(rectangle);
+        }else if(west && south){
+            Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallWestSouth.jpg");
+            ImagePattern imagePattern = new ImagePattern(image);
+            Rectangle rectangle = new Rectangle();
+            rectangle.setX(0.0f);
+            rectangle.setY(0.0f);
+            rectangle.setWidth(60.0f);
+            rectangle.setHeight(60.0f);
+            rectangle.setFill(imagePattern);
+            this.getChildren().add(rectangle);
+        }
 
-         */
+
+
     }
 
 

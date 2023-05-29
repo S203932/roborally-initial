@@ -74,7 +74,9 @@ public class Board extends Subject {
         // creating a wall and setting it
         Space aSpace = new Space(this, width/2, height/2);
         Wall wall = new Wall(Heading.SOUTH);
+        Wall wall1 = new Wall(Heading.EAST);
         aSpace.setWall(wall);
+        aSpace.setWall(wall1);
 
 
         spaces = new Space[width][height];

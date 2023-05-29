@@ -24,6 +24,8 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.jetbrains.annotations.NotNull;
 
+import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
+
 /**
  * ...
  *
@@ -244,12 +246,33 @@ public class GameController {
         Space space = player.getSpace();
         if (player != null && player.board == board && space != null) {
             Heading heading = player.getHeading();
+            Heading newWallBlockHeading = heading.next().next();
             Space target = board.getNeighbour(space, heading);
+            boolean wallBlock = false;
             if (target != null) {
+                for(int i = 0; i < 4;i++){
+                    if(space.getWall(i) != null){
+                        if(space.getWall(i).getheading() == heading){
+                            wallBlock = true;
+                        }
+                    }
+                }
+
+                for(int i = 0; i < 4;i++){
+                    if(target.getWall(i) != null){
+                        if(target.getWall(i).getheading() == newWallBlockHeading){
+                            wallBlock = true;
+                        }
+                    }
+                }
+
                 // XXX note that this removes an other player from the space, when there
                 //     is another player on the target. Eventually, this needs to be
                 //     implemented in a way so that other players are pushed away!
-                target.setPlayer(player);
+
+                if(!wallBlock){
+                    target.setPlayer(player);
+                }
             }
         }
     }
