@@ -22,6 +22,20 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Course;
+import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Tile;
+import dk.dtu.compute.se.pisd.roborally.model.CourseModel.TileAttributes;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.BlueConveyor;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Energy;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.GreenConveyor;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.LaserStart;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.PriorityAntenna;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.RebootToken;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.StartGear;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,8 +59,6 @@ public class Board extends Subject {
 
     private Integer gameId;
 
-    private final Wall[] walls = null;
-
     private final Space[][] spaces;
 
     private final List<Player> players = new ArrayList<>();
@@ -59,46 +71,82 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
-    /**
-     * <p>Constructor for Board.</p>
-     *
-     * @param width a int.
-     * @param height a int.
-     * @param boardName a {@link java.lang.String} object.
-     */
-    public Board(int width, int height, @NotNull String boardName) {
-        this.boardName = boardName;
-        this.width = width;
-        this.height = height;
+    public Board(Course course) {
 
-        // creating a wall and setting it
-        Space aSpace = new Space(this, width/2, height/2);
-        Wall wall = new Wall(Heading.SOUTH);
-        Wall wall1 = new Wall(Heading.EAST);
-        aSpace.setWall(wall);
-        aSpace.setWall(wall1);
+        this.boardName = course.game_name;
 
+        // Find width from number of elements in the first arraylist inside the main arraylist
+        width = course.board.get(0).size();
+
+        // Find height from number of arraylists
+        height = course.board.size();
 
         spaces = new Space[width][height];
+        Space space = null;
+
+        TileAttributes defaulTileAttributes = new TileAttributes();
+        defaulTileAttributes.edges = new Heading[0];
+
+        // Generate the correct spaces:
         for (int x = 0; x < width; x++) {
-            for(int y = 0; y < height; y++) {
-                Space space = new Space(this, x, y);
+            for (int y = 0; y < height; y++) {
+                Tile tile = course.board.get(y).get(x);
+
+                // Replace null attributes value with empty Heading array
+                if (tile.attributes == null) {
+                    tile.attributes = defaulTileAttributes;
+                }
+
+                // Create the correct space type
+                switch (tile.type) {
+                    case space:
+                        space = new Space(this, x, y, tile.attributes.edges);
+                        break;
+
+                    case green_conveyor:
+                        space = new GreenConveyor(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        break;
+
+                    case blue_conveyor:
+                        space = new BlueConveyor(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        break;
+
+                    case energy:
+                        space = new Energy(this, x, y, tile.attributes.edges);
+                        break;
+
+                    case start_gear:
+                        space = new StartGear(this, x, y, tile.attributes.edges);
+                        break;
+
+                    case wall:
+                        space = new Wall(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        break;
+
+                    case laser_start:
+                        space = new LaserStart(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        break;
+
+                    case reboot_token:
+                        space = new RebootToken(this, x, y, tile.attributes.edges);
+                        break;
+
+                    case checkpoint:
+                        space = new Checkpoint(this, x, y, tile.attributes.edges, tile.attributes.number);
+                        break;
+                    case priority_antenna:
+                        space = new PriorityAntenna(this, x, y, tile.attributes.edges);
+                        break;
+
+                }
+
+                // Store the created space
                 spaces[x][y] = space;
+
             }
         }
-        //setting the wall
-        spaces[width/2][height/2] = aSpace;
-        this.stepMode = false;
-    }
 
-    /**
-     * <p>Constructor for Board.</p>
-     *
-     * @param width a int.
-     * @param height a int.
-     */
-    public Board(int width, int height) {
-        this(width, height, "defaultboard");
+        this.stepMode = false;
     }
 
     /**
@@ -130,7 +178,7 @@ public class Board extends Subject {
      *
      * @param x a int.
      * @param y a int.
-     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.Space} object.
+     * @return a {@link dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space} object.
      */
     public Space getSpace(int x, int y) {
         if (x >= 0 && x < width &&
@@ -320,6 +368,5 @@ public class Board extends Subject {
                 ", Player = " + getCurrentPlayer().getName() +
                 ", Step: " + getStep();
     }
-
 
 }

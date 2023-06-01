@@ -19,9 +19,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-package dk.dtu.compute.se.pisd.roborally.model;
+package dk.dtu.compute.se.pisd.roborally.model.SpaceModels;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.Heading;
+import dk.dtu.compute.se.pisd.roborally.model.Player;
 
 /**
  * ...
@@ -33,10 +36,9 @@ public class Space extends Subject {
 
     public final Board board;
 
-    public final Wall[] wall;
-
     public final int x;
     public final int y;
+    public final Heading[] edges;
 
     private Player player;
 
@@ -47,38 +49,12 @@ public class Space extends Subject {
      * @param x a int.
      * @param y a int.
      */
-    public Space(Board board, int x, int y) {
+    public Space(Board board, int x, int y, Heading[] edges) {
         this.board = board;
         this.x = x;
         this.y = y;
-        this.wall = new Wall[4];
+        this.edges = edges;
         player = null;
-    }
-
-    public void setWall(Wall wall){
-        boolean apply = true;
-        for(int i = 0; i < 4; i++){
-            if(this.wall[i] == null){
-                for(int j = 0; j < 4; j++){
-                    if(this.wall[j] != null){
-                        if(this.wall[j].getheading() == wall.getheading()){
-                            apply = false;
-                        }
-                    }
-                }
-                if(apply){
-                    this.wall[i] = wall;
-                }
-            }
-        }
-    }
-
-    public Wall[] getWalls(){
-        return this.wall;
-    }
-
-    public Wall getWall(int index){
-        return this.wall[index];
     }
 
     /**
@@ -90,10 +66,10 @@ public class Space extends Subject {
         return player;
     }
 
-    /**
-     * <p>Setter for the field <code>player</code>.</p>
-     *
-     * @param player a {@link dk.dtu.compute.se.pisd.roborally.model.Player} object.
+    /**  
+     * <p>Setter fo r the field <code>playe r</code>.</p>
+     *  
+     * @param player a {@l ink dk.dtu.compute.se.pisd.roborally.model.Playe r} object.
      */
     public void setPlayer(Player player) {
         Player oldPlayer = this.player;
@@ -111,7 +87,7 @@ public class Space extends Subject {
         }
     }
 
-    void playerChanged() {
+    public void playerChanged() {
         // This is a minor hack; since some views that are registered with the space
         // also need to update when some player attributes change, the player can
         // notify the space of these changes by calling this method.

@@ -22,9 +22,14 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
+
 import org.jetbrains.annotations.NotNull;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
+
+import java.util.Arrays;
 
 /**
  * ...
@@ -51,7 +56,7 @@ public class GameController {
      *
      * @param space the space to which the current player should move
      */
-    public void moveCurrentPlayerToSpace(@NotNull Space space)  {
+    public void moveCurrentPlayerToSpace(@NotNull Space space) {
         // TODO Assignment V1: method should be implemented by the students:
         //   - the current player should be moved to the given space
         //     (if it is free()
@@ -177,10 +182,10 @@ public class GameController {
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                    if(card.command.isInteractive()){
+                    if (card.command.isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return;
-                    }else{
+                    } else {
                         Command command = card.command;
                         executeCommand(currentPlayer, command);
                     }
@@ -249,30 +254,27 @@ public class GameController {
             Heading newWallBlockHeading = heading.next().next();
             Space target = board.getNeighbour(space, heading);
             boolean wallBlock = false;
-            if (target != null) {
-                for(int i = 0; i < 4;i++){
-                    if(space.getWall(i) != null){
-                        if(space.getWall(i).getheading() == heading){
-                            wallBlock = true;
-                        }
-                    }
+
+            if (target instanceof Wall) {
+                Wall targetWall = (Wall) target;
+
+                if (Arrays.asList(targetWall.getFacing()).contains(newWallBlockHeading)) {
+                    wallBlock = true;
                 }
 
-                for(int i = 0; i < 4;i++){
-                    if(target.getWall(i) != null){
-                        if(target.getWall(i).getheading() == newWallBlockHeading){
-                            wallBlock = true;
-                        }
-                    }
-                }
+            } else if (space instanceof Wall) {
+                Wall wall = (Wall) space;
 
-                // XXX note that this removes an other player from the space, when there
-                //     is another player on the target. Eventually, this needs to be
-                //     implemented in a way so that other players are pushed away!
-
-                if(!wallBlock){
-                    target.setPlayer(player);
+                if (Arrays.asList(wall.getFacing()).contains(heading)) {
+                    wallBlock = true;
                 }
+            }
+
+            // XXX note that this removes an other player from the space, when there
+            //     is another player on the target. Eventually, this needs to be
+            //     implemented in a way so that other players are pushed away!
+            if (!wallBlock) {
+                target.setPlayer(player);
             }
         }
     }
@@ -340,13 +342,12 @@ public class GameController {
         assert false;
     }
 
-
     /**
      * A method called when need to execute a command card, that has a variable option that needs a players choice
      * It sets the phase to Activation phase
      * @param command a {@link dk.dtu.compute.se.pisd.roborally.model.Command} object.
      */
-    public void executeCommandOptionAndContinue(Command command){
+    public void executeCommandOptionAndContinue(Command command) {
         board.setPhase(Phase.ACTIVATION);
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
@@ -354,7 +355,7 @@ public class GameController {
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                        executeCommand(currentPlayer, command);
+                    executeCommand(currentPlayer, command);
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
@@ -378,9 +379,10 @@ public class GameController {
             assert false;
         }
 
-        if(!board.isStepMode() && board.getStep() < Player.NO_REGISTERS ){
+        if (!board.isStepMode() && board.getStep() < Player.NO_REGISTERS) {
             continuePrograms();
         }
+
     }
 
     private void removeSpam(Player player) {
