@@ -27,8 +27,6 @@ import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 
 import org.jetbrains.annotations.NotNull;
 
-import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
-
 import java.util.Arrays;
 
 /**

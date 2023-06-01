@@ -1,0 +1,687 @@
+{
+	"game_name": "Sprint Cramp",
+	"game_length": "Short",
+	"board": [
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH", "WEST"]
+				}
+			},
+			{
+				"type": "start_gear",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"edges": ["NORTH"],
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"edges": ["NORTH"],
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"edges": ["NORTH"],
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "reboot_token",
+				"attributes": {
+					"edges": ["NORTH", "EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"],
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "start_gear",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["SOUTH", "EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "checkpoint",
+				"attributes": {
+					"number": 2
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "priority_antenna",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "start_gear"
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "start_gear"
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "start_gear",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["NORTH", "EAST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"],
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "checkpoint",
+				"attributes": {
+					"number": 1,
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST", "SOUTH"]
+				}
+			},
+			{
+				"type": "start_gear",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"edges": ["SOUTH"],
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "checkpoint",
+				"attributes": {
+					"number": 3,
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"],
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"],
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH", "EAST"]
+				}
+			}
+		]
+	]
+}

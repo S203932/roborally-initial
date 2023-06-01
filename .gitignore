@@ -1,4 +1,5 @@
 roborally-initial/.idea/*
-*/.vscode/*
+.vscode/*
 *.class
 .idea
+*/target/*

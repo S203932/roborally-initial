@@ -65,7 +65,7 @@
 			},
 			{
 				"type": "blue_conveyor",
-				"attributes": { "facing": ["WEST"] }
+				"attributes": { "facing": ["WEST"], "edges": ["EAST"] }
 			}
 		],
 		[
@@ -120,7 +120,7 @@
 				"type": "blue_conveyor",
 				"attributes": { "facing": ["NORTH"] }
 			},
-			{ "type": "checkpoint", "attributes": { "number": 1 } }
+			{ "type": "checkpoint", "attributes": { "number": 1, "edges": ["EAST"] } }
 		],
 		[
 			{ "type": "priority_antenna", "attributes": { "edges": ["WEST"] } },
@@ -144,7 +144,7 @@
 				"type": "blue_conveyor",
 				"attributes": { "facing": ["NORTH"] }
 			},
-			{ "type": "space" }
+			{ "type": "space", "attributes": { "edges": ["EAST"] } }
 		],
 		[
 			{ "type": "space", "attributes": { "edges": ["WEST"] } },
@@ -168,7 +168,7 @@
 				"type": "blue_conveyor",
 				"attributes": { "facing": ["NORTH"] }
 			},
-			{ "type": "space" }
+			{ "type": "space", "attributes": { "edges": ["EAST"] } }
 		],
 		[
 			{ "type": "start_gear", "attributes": { "edges": ["WEST"] } },
@@ -198,7 +198,7 @@
 				"type": "blue_conveyor",
 				"attributes": { "facing": ["NORTH"] }
 			},
-			{ "type": "space" }
+			{ "type": "space", "attributes": { "edges": ["EAST"] } }
 		],
 		[
 			{ "type": "space", "attributes": { "edges": ["WEST"] } },
@@ -222,7 +222,7 @@
 				"type": "blue_conveyor",
 				"attributes": { "facing": ["NORTH"] }
 			},
-			{ "type": "space" }
+			{ "type": "space", "attributes": { "edges": ["EAST"] } }
 		],
 		[
 			{ "type": "space", "attributes": { "edges": ["WEST"] } },
@@ -264,7 +264,7 @@
 				"type": "blue_conveyor",
 				"attributes": { "facing": ["NORTH"] }
 			},
-			{ "type": "space" }
+			{ "type": "space", "attributes": { "edges": ["EAST"] } }
 		],
 		[
 			{ "type": "space", "attributes": { "edges": ["SOUTH", "WEST"] } },
@@ -282,13 +282,13 @@
 			{ "type": "space", "attributes": { "edges": ["SOUTH"] } },
 			{
 				"type": "blue_conveyor",
-				"attributes": { "facing": ["NORTH"] }
+				"attributes": { "facing": ["NORTH"], "edges": ["SOUTH"] }
 			},
 			{
 				"type": "blue_conveyor",
-				"attributes": { "facing": ["NORTH"] }
+				"attributes": { "facing": ["NORTH"], "edges": ["SOUTH"] }
 			},
-			{ "type": "space", "attributes": { "edges": ["SOUTH"] } }
+			{ "type": "space", "attributes": { "edges": ["SOUTH", "EAST"] } }
 		]
 	]
 }
