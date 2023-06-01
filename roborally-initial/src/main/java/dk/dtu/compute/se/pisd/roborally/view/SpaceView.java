@@ -24,6 +24,7 @@ package dk.dtu.compute.se.pisd.roborally.view;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 import javafx.scene.image.Image;
@@ -216,12 +217,26 @@ public class SpaceView extends StackPane implements ViewObserver {
         }
 
     }
-
+    public void updateCheckpoint() {
+        if (space instanceof Checkpoint) {
+            Checkpoint checkpoint = (Checkpoint) space;
+            Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Checkpoint" + checkpoint.getNumber() + ".jpg");
+            ImagePattern imagePattern = new ImagePattern(image);
+            Rectangle rectangle = new Rectangle();
+            rectangle.setX(0.0f);
+            rectangle.setY(0.0f);
+            rectangle.setWidth(60.0f);
+            rectangle.setHeight(60.0f);
+            rectangle.setFill(imagePattern);
+            this.getChildren().add(rectangle);
+        }
+    }
     /** {@inheritDoc} */
     @Override
     public void updateView(Subject subject) {
         this.getChildren().clear();
         updateWall();
+        updateCheckpoint();
         if (subject == this.space) {
             updatePlayer();
 

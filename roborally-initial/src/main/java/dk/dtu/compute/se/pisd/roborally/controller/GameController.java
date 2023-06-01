@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 
@@ -186,6 +187,13 @@ public class GameController {
                     } else {
                         Command command = card.command;
                         executeCommand(currentPlayer, command);
+                    }
+                    if (currentPlayer.getSpace()instanceof Checkpoint)
+                    {
+                        Checkpoint checkpoint = (Checkpoint) currentPlayer.getSpace();
+                        if (currentPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)){
+                            currentPlayer.setCheckpointCount(currentPlayer.getCheckpointCount() + 1);
+                        }
                     }
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;

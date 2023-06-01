@@ -71,6 +71,7 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
+    private int boardCheckpoints = 0;
     public Board(Course course) {
 
         this.boardName = course.game_name;
@@ -133,6 +134,7 @@ public class Board extends Subject {
 
                     case checkpoint:
                         space = new Checkpoint(this, x, y, tile.attributes.edges, tile.attributes.number);
+                        setBoardCheckpoints(boardCheckpoints + 1);
                         break;
                     case priority_antenna:
                         space = new PriorityAntenna(this, x, y, tile.attributes.edges);
@@ -369,4 +371,11 @@ public class Board extends Subject {
                 ", Step: " + getStep();
     }
 
+    public int getBoardCheckpoints(){
+        return boardCheckpoints;
+    }
+
+    public void setBoardCheckpoints(int boardCheckpoints){
+        this.boardCheckpoints = boardCheckpoints;
+    }
 }

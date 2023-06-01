@@ -56,6 +56,7 @@ public class Player extends Subject {
 
     private final ArrayList <Command> damagecards;
 
+    private int checkpointCount = 0;
     /**
      * <p>Constructor for Player.</p>
      *
@@ -207,5 +208,11 @@ public class Player extends Subject {
     public ArrayList<Command>getDmgcards(){
         return this.damagecards;
     }
+    public int getCheckpointCount(){
+        return checkpointCount;
+    }
 
+    public void setCheckpointCount(int checkpointCount){
+        this.checkpointCount = checkpointCount;
+    }
 }

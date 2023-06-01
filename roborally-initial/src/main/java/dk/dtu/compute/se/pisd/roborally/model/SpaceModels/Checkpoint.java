@@ -12,5 +12,7 @@ public class Checkpoint extends Space {
         this.number = number;
         //TODO Auto-generated constructor stub
     }
-
+    public int getNumber(){
+        return number;
+    }
 }
