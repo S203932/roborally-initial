@@ -1,0 +1,691 @@
+{
+	"game_name": "Dizzy Highway ft. Gears",
+	"game_length": "Short",
+	"board": [
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH", "WEST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"edges": ["NORTH"],
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"edges": ["NORTH"],
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"edges": ["NORTH"],
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["NORTH"]
+				}
+			},
+			{
+				"type": "energy",
+				"attributes": {
+					"edges": ["NORTH", "EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "start_gear"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "gear",
+				"attributes": {
+					"clockwise": false
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"],
+					"turns": ["EAST", "NORTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"],
+					"turns": ["NORTH", "EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"],
+					"turns": ["EAST", "SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["WEST"],
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "gear",
+				"attributes": {
+					"clockwise": true
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"],
+					"turns": ["EAST", "SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"edges": ["EAST"],
+					"facing": ["WEST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "start_gear",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "reboot_token"
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "checkpoint",
+				"attributes": {
+					"number": 1,
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "priority_antenna",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "start_gear"
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "start_gear"
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "start_gear",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "laser_start",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "wall",
+				"attributes": {
+					"facing": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["SOUTH"],
+					"turns": ["NORTH", "WEST"]
+				}
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "energy"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["WEST"]
+				}
+			},
+			{
+				"type": "start_gear"
+			},
+			{
+				"type": "space"
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"],
+					"turns": ["WEST", "NORTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["EAST"],
+					"turns": ["WEST", "SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"],
+					"turns": ["SOUTH", "WEST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["EAST"]
+				}
+			}
+		],
+		[
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH", "WEST"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "green_conveyor",
+				"attributes": {
+					"edges": ["SOUTH"],
+					"facing": ["EAST"]
+				}
+			},
+			{
+				"type": "energy",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"],
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "blue_conveyor",
+				"attributes": {
+					"facing": ["NORTH"],
+					"edges": ["SOUTH"]
+				}
+			},
+			{
+				"type": "space",
+				"attributes": {
+					"edges": ["SOUTH", "EAST"]
+				}
+			}
+		]
+	]
+}

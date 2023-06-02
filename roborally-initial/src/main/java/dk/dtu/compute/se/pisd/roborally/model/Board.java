@@ -28,6 +28,7 @@ import dk.dtu.compute.se.pisd.roborally.model.CourseModel.TileAttributes;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.BlueConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Energy;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.GreenConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.LaserStart;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.PriorityAntenna;
@@ -139,10 +140,14 @@ public class Board extends Subject {
                         space = new Checkpoint(this, x, y, tile.attributes.edges, tile.attributes.number);
                         setBoardCheckpoints(boardCheckpoints + 1);
                         break;
+
                     case priority_antenna:
                         space = new PriorityAntenna(this, x, y, tile.attributes.edges);
                         break;
 
+                    case gear:
+                        space = new Gear(this, x, y, tile.attributes.edges, tile.attributes.clockwise);
+                        break;
                 }
 
                 // Store the created space
@@ -372,7 +377,7 @@ public class Board extends Subject {
         return "Phase: " + getPhase().name() +
                 ", Player = " + getCurrentPlayer().getName() +
                 ", Step: " + getStep() +
-                ", Checkpoints: "+ getCurrentPlayer().getCheckpointCount();
+                ", Checkpoints: " + getCurrentPlayer().getCheckpointCount();
     }
 
     public int getBoardCheckpoints() {

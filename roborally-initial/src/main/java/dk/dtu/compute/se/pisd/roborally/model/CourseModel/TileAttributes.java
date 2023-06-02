@@ -7,4 +7,5 @@ public class TileAttributes {
     public Heading[] facing;
     public int number;
     public Heading[] turns;
+    public boolean clockwise;
 }

@@ -26,6 +26,7 @@ import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.BlueConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Energy;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.GreenConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.LaserStart;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.PriorityAntenna;
@@ -199,6 +200,19 @@ public class SpaceView extends StackPane implements ViewObserver {
         }
     }
 
+    public void updateGear() {
+        if (space instanceof Gear) {
+            Gear gear = (Gear) space;
+            if (gear.clockwise) {
+                setImage(
+                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/GearClockwise.jpg");
+            } else {
+                setImage(
+                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/GearCounterClockwise.jpg");
+            }
+        }
+    }
+
     /** 
      * Wrap board image code in function for simplification
      * @param imagePath
@@ -228,6 +242,7 @@ public class SpaceView extends StackPane implements ViewObserver {
         updateLaserStart();
         updateRebootToken();
         updatePriorityAntenna();
+        updateGear();
         if (subject == this.space) {
             updatePlayer();
 
