@@ -102,40 +102,43 @@ public class AppController implements Observer {
         } catch (FileNotFoundException e) {
             // TODO: handle exception
         }
+        if (!result.isEmpty()) {
+            // Show dialog window
+            ChoiceDialog<String> courseDialog = new ChoiceDialog<>(courseNames.get(0), courseNames);
+            courseDialog.setTitle("Course");
+            courseDialog.setHeaderText("Select a course");
+            Optional<String> courseResult = courseDialog.showAndWait();
 
-        // Show dialog window
-        ChoiceDialog<String> courseDialog = new ChoiceDialog<>(courseNames.get(0), courseNames);
-        courseDialog.setTitle("Course");
-        courseDialog.setHeaderText("Select a course");
-        String courseResult = courseDialog.showAndWait().get();
+            if (!courseResult.isEmpty()) {
+                // if (result.isPresent() || courseResult.isPresent()) {
+                //     if (gameController != null) {
+                //         // The UI should not allow this, but in case this happens anyway.
+                //         // give the user the option to save the game or abort this operation!
+                //         if (!stopGame()) {
+                //             return;
+                //         }
+                //     }
 
-        // if (result.isPresent() || courseResult.isPresent()) {
-        //     if (gameController != null) {
-        //         // The UI should not allow this, but in case this happens anyway.
-        //         // give the user the option to save the game or abort this operation!
-        //         if (!stopGame()) {
-        //             return;
-        //         }
-        //     }
+                // XXX the board should eventually be created programmatically or loaded from a file
+                //     here we just create an empty board with the required number of players.
+                Course selectedCourse = jsonCourses.get(courseNames.indexOf(courseResult.get()));
 
-        // XXX the board should eventually be created programmatically or loaded from a file
-        //     here we just create an empty board with the required number of players.
-        Course selectedCourse = jsonCourses.get(courseNames.indexOf(courseResult));
+                Board board = new Board(selectedCourse);
+                gameController = new GameController(board);
+                int no = result.get();
+                for (int i = 0; i < no; i++) {
+                    Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
+                    board.addPlayer(player);
+                    player.setSpace(board.getSpace(i % board.width, i));
+                }
 
-        Board board = new Board(selectedCourse);
-        gameController = new GameController(board);
-        int no = result.get();
-        for (int i = 0; i < no; i++) {
-            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
-            board.addPlayer(player);
-            player.setSpace(board.getSpace(i % board.width, i));
+                // XXX: V2
+                // board.setCurrentPlayer(board.getPlayer(0));
+                gameController.startProgrammingPhase();
+
+                roboRally.createBoardView(gameController);
+            }
         }
-
-        // XXX: V2
-        // board.setCurrentPlayer(board.getPlayer(0));
-        gameController.startProgrammingPhase();
-
-        roboRally.createBoardView(gameController);
     }
 
     /**
