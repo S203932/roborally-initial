@@ -6,4 +6,5 @@ public class TileAttributes {
     public Heading[] edges;
     public Heading[] facing;
     public int number;
+    public Heading[] turns;
 }

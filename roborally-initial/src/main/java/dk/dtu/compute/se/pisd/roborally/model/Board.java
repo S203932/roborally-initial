@@ -85,8 +85,8 @@ public class Board extends Subject {
         spaces = new Space[width][height];
         Space space = null;
 
-        TileAttributes defaulTileAttributes = new TileAttributes();
-        defaulTileAttributes.edges = new Heading[0];
+        TileAttributes defaultTileAttributes = new TileAttributes();
+        defaultTileAttributes.edges = new Heading[0];
 
         // Generate the correct spaces:
         for (int x = 0; x < width; x++) {
@@ -95,7 +95,7 @@ public class Board extends Subject {
 
                 // Replace null attributes value with empty Heading array
                 if (tile.attributes == null) {
-                    tile.attributes = defaulTileAttributes;
+                    tile.attributes = defaultTileAttributes;
                 }
 
                 // Create the correct space type
@@ -105,11 +105,13 @@ public class Board extends Subject {
                         break;
 
                     case green_conveyor:
-                        space = new GreenConveyor(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        space = new GreenConveyor(this, x, y, tile.attributes.edges, tile.attributes.facing[0],
+                                tile.attributes.turns);
                         break;
 
                     case blue_conveyor:
-                        space = new BlueConveyor(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        space = new BlueConveyor(this, x, y, tile.attributes.edges, tile.attributes.facing[0],
+                                tile.attributes.turns);
                         break;
 
                     case energy:

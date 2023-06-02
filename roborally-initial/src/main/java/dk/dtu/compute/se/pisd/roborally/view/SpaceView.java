@@ -22,8 +22,10 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
-import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.BlueConveyor;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.GreenConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
@@ -33,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -99,144 +102,90 @@ public class SpaceView extends StackPane implements ViewObserver {
         }
     }
 
-    public void updateWall() {
-        // this.getChildren().clear();
+    /**
+     * Add graphic to the conveyor belts on the board
+     */
+    public void updateConveyor() {
 
-        if (space instanceof Wall) {
-            Wall wall = (Wall) space;
-            boolean north = false;
-            boolean south = false;
-            boolean east = false;
-            boolean west = false;
+        // Ensure that the space is a conveyor
+        if (space instanceof Conveyor) {
 
-            for (Heading facing : wall.getFacing()) {
-                if (facing == Heading.SOUTH) {
-                    Image image = new Image(
-                            "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallSouth.jpg");
-                    ImagePattern imagePattern = new ImagePattern(image);
-                    Rectangle rectangle = new Rectangle();
-                    rectangle.setX(0.0f);
-                    rectangle.setY(0.0f);
-                    rectangle.setWidth(60.0f);
-                    rectangle.setHeight(60.0f);
-                    rectangle.setFill(imagePattern);
-                    this.getChildren().add(rectangle);
+            Conveyor conveyor = (Conveyor) space;
 
-                    south = true;
+            // Get the color
+            String color = "";
 
-                } else if (facing == Heading.WEST) {
-                    Image image = new Image(
-                            "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallWest.jpg");
-                    ImagePattern imagePattern = new ImagePattern(image);
-                    Rectangle rectangle = new Rectangle();
-                    rectangle.setX(0.0f);
-                    rectangle.setY(0.0f);
-                    rectangle.setWidth(60.0f);
-                    rectangle.setHeight(60.0f);
-                    rectangle.setFill(imagePattern);
-                    this.getChildren().add(rectangle);
-
-                    west = true;
-
-                } else if (facing == Heading.NORTH) {
-                    Image image = new Image(
-                            "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallNorth.jpg");
-                    ImagePattern imagePattern = new ImagePattern(image);
-                    Rectangle rectangle = new Rectangle();
-                    rectangle.setX(0.0f);
-                    rectangle.setY(0.0f);
-                    rectangle.setWidth(60.0f);
-                    rectangle.setHeight(60.0f);
-                    rectangle.setFill(imagePattern);
-                    this.getChildren().add(rectangle);
-
-                    north = true;
-
-                } else if (facing == Heading.EAST) {
-                    Image image = new Image(
-                            "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallEast.jpg");
-                    ImagePattern imagePattern = new ImagePattern(image);
-                    Rectangle rectangle = new Rectangle();
-                    rectangle.setX(0.0f);
-                    rectangle.setY(0.0f);
-                    rectangle.setWidth(60.0f);
-                    rectangle.setHeight(60.0f);
-                    rectangle.setFill(imagePattern);
-                    this.getChildren().add(rectangle);
-
-                    east = true;
-                }
+            if (space instanceof BlueConveyor) {
+                color = "Blue";
+            } else if (space instanceof GreenConveyor) {
+                color = "Green";
             }
 
-            if (east && north) {
-                Image image = new Image(
-                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallEastNorth.jpg");
-                ImagePattern imagePattern = new ImagePattern(image);
-                Rectangle rectangle = new Rectangle();
-                rectangle.setX(0.0f);
-                rectangle.setY(0.0f);
-                rectangle.setWidth(60.0f);
-                rectangle.setHeight(60.0f);
-                rectangle.setFill(imagePattern);
-                this.getChildren().add(rectangle);
-            } else if (north && west) {
-                Image image = new Image(
-                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallNorthWest.jpg");
-                ImagePattern imagePattern = new ImagePattern(image);
-                Rectangle rectangle = new Rectangle();
-                rectangle.setX(0.0f);
-                rectangle.setY(0.0f);
-                rectangle.setWidth(60.0f);
-                rectangle.setHeight(60.0f);
-                rectangle.setFill(imagePattern);
-                this.getChildren().add(rectangle);
-            } else if (south && east) {
-                Image image = new Image(
-                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallSouthEast.jpg");
-                ImagePattern imagePattern = new ImagePattern(image);
-                Rectangle rectangle = new Rectangle();
-                rectangle.setX(0.0f);
-                rectangle.setY(0.0f);
-                rectangle.setWidth(60.0f);
-                rectangle.setHeight(60.0f);
-                rectangle.setFill(imagePattern);
-                this.getChildren().add(rectangle);
-            } else if (west && south) {
-                Image image = new Image(
-                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/WallWestSouth.jpg");
-                ImagePattern imagePattern = new ImagePattern(image);
-                Rectangle rectangle = new Rectangle();
-                rectangle.setX(0.0f);
-                rectangle.setY(0.0f);
-                rectangle.setWidth(60.0f);
-                rectangle.setHeight(60.0f);
-                rectangle.setFill(imagePattern);
-                this.getChildren().add(rectangle);
-            }
+            // Get the image based on direction and turns
+            if (conveyor.turns == null) {
+                setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
+                        + color + "Conveyor" + conveyor.facing + ".jpg");
 
+            } else {
+                setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
+                        + color + "Conveyor" + conveyor.getTurnsString() + ".jpg");
+            }
         }
 
     }
+
+    /**
+     * Add graphic to the walls on the board
+     */
+    public void updateWall() {
+        if (space instanceof Wall) {
+            Wall wall = (Wall) space;
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Wall"
+                    + wall.getFacingString() + ".jpg");
+        }
+    }
+
+    /**
+     * Add graphic to the Space on the board
+     */
+    public void updateSpace() {
+        if (space.getClass() == Space.class) {
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Space.jpg");
+        }
+    }
+
     public void updateCheckpoint() {
         if (space instanceof Checkpoint) {
             Checkpoint checkpoint = (Checkpoint) space;
-            Image image = new Image("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Checkpoint" + checkpoint.getNumber() + ".jpg");
-            ImagePattern imagePattern = new ImagePattern(image);
-            Rectangle rectangle = new Rectangle();
-            rectangle.setX(0.0f);
-            rectangle.setY(0.0f);
-            rectangle.setWidth(60.0f);
-            rectangle.setHeight(60.0f);
-            rectangle.setFill(imagePattern);
-            this.getChildren().add(rectangle);
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Checkpoint"
+                    + checkpoint.getNumber() + ".jpg");
         }
     }
+
+    /** 
+     * Wrap board image code in function for simplification
+     * @param imagePath
+     */
+    private void setImage(String imagePath) {
+        Image image = new Image(imagePath);
+        ImagePattern imagePattern = new ImagePattern(image);
+        Rectangle rectangle = new Rectangle();
+        rectangle.setX(0.0f);
+        rectangle.setY(0.0f);
+        rectangle.setWidth(60.0f);
+        rectangle.setHeight(60.0f);
+        rectangle.setFill(imagePattern);
+        this.getChildren().add(rectangle);
+    }
+
     /** {@inheritDoc} */
     @Override
     public void updateView(Subject subject) {
         this.getChildren().clear();
         updateWall();
         updateCheckpoint();
+        updateConveyor();
+        updateSpace();
         if (subject == this.space) {
             updatePlayer();
 

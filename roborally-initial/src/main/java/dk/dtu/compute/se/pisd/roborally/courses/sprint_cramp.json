@@ -116,7 +116,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["SOUTH"]
+					"facing": ["SOUTH"],
+					"turns": ["EAST"]
 				}
 			},
 			{
@@ -128,7 +129,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["WEST"]
+					"facing": ["WEST"],
+					"turns": ["SOUTH"]
 				}
 			},
 			{
@@ -137,7 +139,8 @@
 			{
 				"type": "blue_conveyor",
 				"attributes": {
-					"facing": ["NORTH"]
+					"facing": ["NORTH"],
+					"turns": ["EAST"]
 				}
 			},
 			{
@@ -179,7 +182,8 @@
 			{
 				"type": "blue_conveyor",
 				"attributes": {
-					"facing": ["WEST"]
+					"facing": ["WEST"],
+					"turns": ["NORTH"]
 				}
 			},
 			{
@@ -241,13 +245,15 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["NORTH"]
+					"facing": ["SOUTH"],
+					"turns": ["EAST"]
 				}
 			},
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["SOUTH"]
+					"facing": ["NORTH"],
+					"turns": ["WEST"]
 				}
 			},
 			{
@@ -256,7 +262,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["EAST"]
+					"facing": ["EAST"],
+					"turns": ["NORTH"]
 				}
 			},
 			{
@@ -274,7 +281,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["WEST"]
+					"facing": ["WEST"],
+					"turns": ["SOUTH"]
 				}
 			},
 			{
@@ -306,13 +314,15 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["SOUTH"]
+					"facing": ["SOUTH"],
+					"turns": ["EAST"]
 				}
 			},
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["NORTH"]
+					"facing": ["NORTH"],
+					"turns": ["WEST"]
 				}
 			},
 			{
@@ -386,13 +396,15 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["SOUTH"]
+					"facing": ["SOUTH"],
+					"turns": ["EAST"]
 				}
 			},
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["NORTH"]
+					"facing": ["NORTH"],
+					"turns": ["WEST"]
 				}
 			},
 			{
@@ -421,7 +433,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["EAST"]
+					"facing": ["EAST"],
+					"turns": ["NORTH"]
 				}
 			},
 			{
@@ -439,7 +452,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["WEST"]
+					"facing": ["WEST"],
+					"turns": ["SOUTH"]
 				}
 			},
 			{
@@ -448,13 +462,15 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["SOUTH"]
+					"facing": ["SOUTH"],
+					"turns": ["EAST"]
 				}
 			},
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["NORTH"]
+					"facing": ["NORTH"],
+					"turns": ["WEST"]
 				}
 			},
 			{
@@ -516,7 +532,8 @@
 			{
 				"type": "blue_conveyor",
 				"attributes": {
-					"facing": ["EAST"]
+					"facing": ["EAST"],
+					"turns": ["SOUTH"]
 				}
 			},
 			{
@@ -558,7 +575,8 @@
 			{
 				"type": "blue_conveyor",
 				"attributes": {
-					"facing": ["SOUTH"]
+					"facing": ["SOUTH"],
+					"turns": ["WEST"]
 				}
 			},
 			{
@@ -567,7 +585,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["EAST"]
+					"facing": ["EAST"],
+					"turns": ["NORTH"]
 				}
 			},
 			{
@@ -579,7 +598,8 @@
 			{
 				"type": "green_conveyor",
 				"attributes": {
-					"facing": ["NORTH"]
+					"facing": ["NORTH"],
+					"turns": ["WEST"]
 				}
 			},
 			{
