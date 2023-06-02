@@ -23,6 +23,7 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 
@@ -252,6 +253,7 @@ public class GameController {
                         startEndGamePhase(tempPlayer);
                     }
                 }
+
                 if(board.getPhase() != Phase.END_GAME){
                     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                     if (nextPlayerNumber < board.getPlayersNumber()) {
@@ -267,6 +269,21 @@ public class GameController {
                         }
                     }
                 }
+
+                for(int i = 0; i < board.getPlayersNumber(); i++){
+                    if(board.getPlayer(i).getSpace() instanceof Gear){
+                        Gear gear = (Gear) board.getPlayer(i).getSpace();
+                        gear.getClockwise();
+                        if(gear.getClockwise() == true){
+                           board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
+                        }
+                        else {
+                            board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().prev());
+                        }
+                    }
+                }
+
+
 
             } else {
                 // this should not happen

@@ -12,4 +12,7 @@ public class Gear extends Space {
         this.clockwise = clockwise;
         //TODO Auto-generated constructor stub
     }
+    public boolean getClockwise(){
+        return clockwise;
+    }
 }
