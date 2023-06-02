@@ -25,9 +25,14 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.BlueConveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Energy;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.GreenConveyor;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.LaserStart;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.PriorityAntenna;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.RebootToken;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.StartGear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -162,6 +167,38 @@ public class SpaceView extends StackPane implements ViewObserver {
         }
     }
 
+    public void updateStartGear() {
+        if (space instanceof StartGear) {
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/StartGear.jpg");
+        }
+    }
+
+    public void updateEnergyCube() {
+        if (space instanceof Energy) {
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/EnergyCube.jpg");
+        }
+    }
+
+    public void updateLaserStart() {
+        if (space instanceof LaserStart) {
+            LaserStart laserStart = (LaserStart) space;
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/LaserStart"
+                    + laserStart.facing.toString() + ".jpg");
+        }
+    }
+
+    public void updatePriorityAntenna() {
+        if (space instanceof PriorityAntenna) {
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/PriorityAntenna.jpg");
+        }
+    }
+
+    public void updateRebootToken() {
+        if (space instanceof RebootToken) {
+            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/RebootToken.jpg");
+        }
+    }
+
     /** 
      * Wrap board image code in function for simplification
      * @param imagePath
@@ -186,6 +223,11 @@ public class SpaceView extends StackPane implements ViewObserver {
         updateCheckpoint();
         updateConveyor();
         updateSpace();
+        updateStartGear();
+        updateEnergyCube();
+        updateLaserStart();
+        updateRebootToken();
+        updatePriorityAntenna();
         if (subject == this.space) {
             updatePlayer();
 

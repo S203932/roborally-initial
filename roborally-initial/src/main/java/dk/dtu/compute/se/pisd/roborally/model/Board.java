@@ -72,6 +72,7 @@ public class Board extends Subject {
     private boolean stepMode;
 
     private int boardCheckpoints = 0;
+
     public Board(Course course) {
 
         this.boardName = course.game_name;
@@ -127,7 +128,7 @@ public class Board extends Subject {
                         break;
 
                     case laser_start:
-                        space = new LaserStart(this, x, y, tile.attributes.edges, tile.attributes.facing);
+                        space = new LaserStart(this, x, y, tile.attributes.edges, tile.attributes.facing[0]);
                         break;
 
                     case reboot_token:
@@ -374,11 +375,11 @@ public class Board extends Subject {
                 ", Checkpoint:" + getCurrentPlayer().getCheckpointCount();
     }
 
-    public int getBoardCheckpoints(){
+    public int getBoardCheckpoints() {
         return boardCheckpoints;
     }
 
-    public void setBoardCheckpoints(int boardCheckpoints){
+    public void setBoardCheckpoints(int boardCheckpoints) {
         this.boardCheckpoints = boardCheckpoints;
     }
 }
