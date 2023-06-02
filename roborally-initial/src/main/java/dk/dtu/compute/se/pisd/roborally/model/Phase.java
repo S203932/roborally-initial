@@ -28,5 +28,5 @@ package dk.dtu.compute.se.pisd.roborally.model;
  * @version $Id: $Id
  */
 public enum Phase {
-    INITIALISATION, PROGRAMMING, ACTIVATION, PLAYER_INTERACTION
+    INITIALISATION, PROGRAMMING, ACTIVATION, PLAYER_INTERACTION, END_GAME
 }

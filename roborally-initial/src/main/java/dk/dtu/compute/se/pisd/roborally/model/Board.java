@@ -371,8 +371,8 @@ public class Board extends Subject {
         // XXX: V2 changed the status so that it shows the phase, the player and the step
         return "Phase: " + getPhase().name() +
                 ", Player = " + getCurrentPlayer().getName() +
-                ", Step: " + getStep()+
-                ", Checkpoint:" + getCurrentPlayer().getCheckpointCount();
+                ", Step: " + getStep() +
+                ", Checkpoints: "+ getCurrentPlayer().getCheckpointCount();
     }
 
     public int getBoardCheckpoints() {

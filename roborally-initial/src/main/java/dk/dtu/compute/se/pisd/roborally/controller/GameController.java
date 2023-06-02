@@ -26,8 +26,11 @@ import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -120,6 +123,48 @@ public class GameController {
         board.setStep(0);
     }
 
+    public void startEndGamePhase(Player playerWon){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Highscore Table:");
+        Player[] players = new Player[board.getPlayersNumber()+1];
+        for(int i = 0; i <players.length; i++){
+            players[i] = null;
+        }
+        //players[0] = board.getPlayer(0);
+        int counter = 0;
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            if(board.getPlayer(i) != null){
+                Player tempPlayer = board.getPlayer(i);
+                counter = 0;
+                while(counter <= board.getPlayersNumber()){
+                    if(players[counter] == null){
+                        players[counter] = tempPlayer;
+                        break;
+                    }else if(tempPlayer.getCheckpointCount() > players[counter].getCheckpointCount()){
+                        Player tempPlayer2 = players[counter];
+                        players[counter] = tempPlayer;
+                        tempPlayer = tempPlayer2;
+                    }
+                    counter++;
+                }
+            }
+        }
+
+
+        String scores = "";
+        for(int i = 0; i < players.length; i++){
+            if(players[i] != null){
+                scores = scores + (i+1+": "+players[i].getName() + "\t checkpoints: "+players[i].getCheckpointCount());
+                scores = scores + "\n";
+            }
+
+        }
+        alert.setContentText(scores);
+        alert.show();
+
+
+    }
+
     // XXX: V2
     private void makeProgramFieldsVisible(int register) {
         if (register >= 0 && register < Player.NO_REGISTERS) {
@@ -188,27 +233,41 @@ public class GameController {
                         Command command = card.command;
                         executeCommand(currentPlayer, command);
                     }
-                    if (currentPlayer.getSpace()instanceof Checkpoint)
-                    {
-                        Checkpoint checkpoint = (Checkpoint) currentPlayer.getSpace();
-                        if (currentPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)){
-                            currentPlayer.setCheckpointCount(currentPlayer.getCheckpointCount() + 1);
+                }
+                for(int i = 0; i < board.getPlayersNumber(); i++){
+                    Player tempPlayer = board.getPlayer(i);
+                    if (tempPlayer.getSpace()instanceof Checkpoint){
+                        Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
+                        if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)){
+                            tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
                         }
                     }
                 }
-                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-                if (nextPlayerNumber < board.getPlayersNumber()) {
-                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-                } else {
-                    step++;
-                    if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step);
-                        board.setStep(step);
-                        board.setCurrentPlayer(board.getPlayer(0));
-                    } else {
-                        startProgrammingPhase();
+
+                //Check if any of the players have reached the last checkpoint
+                for(int i = 0; i < board.getPlayersNumber(); i++){
+                    Player tempPlayer = board.getPlayer(i);
+                    if(tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
+                        board.setPhase(Phase.END_GAME);
+                        startEndGamePhase(tempPlayer);
                     }
                 }
+                if(board.getPhase() != Phase.END_GAME){
+                    int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                    if (nextPlayerNumber < board.getPlayersNumber()) {
+                        board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+                    } else {
+                        step++;
+                        if (step < Player.NO_REGISTERS) {
+                            makeProgramFieldsVisible(step);
+                            board.setStep(step);
+                            board.setCurrentPlayer(board.getPlayer(0));
+                        } else {
+                            startProgrammingPhase();
+                        }
+                    }
+                }
+
             } else {
                 // this should not happen
                 assert false;
