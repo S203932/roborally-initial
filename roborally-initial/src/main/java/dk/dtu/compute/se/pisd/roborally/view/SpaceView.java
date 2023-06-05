@@ -128,9 +128,9 @@ public class SpaceView extends StackPane implements ViewObserver {
             }
 
             // Get the image based on direction and turns
-            if (conveyor.turns == null) {
+            if (conveyor.getTurns() == null) {
                 setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
-                        + color + "Conveyor" + conveyor.facing + ".jpg");
+                        + color + "Conveyor" + conveyor.getFacing() + ".jpg");
 
             } else {
                 setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/"

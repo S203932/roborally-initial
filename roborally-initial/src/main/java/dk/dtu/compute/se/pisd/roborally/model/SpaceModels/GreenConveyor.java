@@ -7,6 +7,7 @@ public class GreenConveyor extends Conveyor {
 
     public GreenConveyor(Board board, int x, int y, Heading[] edges, Heading facing, Heading[] turns) {
         super(board, x, y, edges, facing, turns);
+        this.speed = 1;
         //TODO Auto-generated constructor stub
     }
 

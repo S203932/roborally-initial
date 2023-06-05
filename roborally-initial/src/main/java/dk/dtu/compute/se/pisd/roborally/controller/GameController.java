@@ -24,14 +24,13 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceDialog;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -124,24 +123,24 @@ public class GameController {
         board.setStep(0);
     }
 
-    public void startEndGamePhase(Player playerWon){
+    public void startEndGamePhase(Player playerWon) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Highscore Table:");
-        Player[] players = new Player[board.getPlayersNumber()+1];
-        for(int i = 0; i <players.length; i++){
+        Player[] players = new Player[board.getPlayersNumber() + 1];
+        for (int i = 0; i < players.length; i++) {
             players[i] = null;
         }
         //players[0] = board.getPlayer(0);
         int counter = 0;
-        for(int i = 0; i < board.getPlayersNumber(); i++){
-            if(board.getPlayer(i) != null){
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            if (board.getPlayer(i) != null) {
                 Player tempPlayer = board.getPlayer(i);
                 counter = 0;
-                while(counter <= board.getPlayersNumber()){
-                    if(players[counter] == null){
+                while (counter <= board.getPlayersNumber()) {
+                    if (players[counter] == null) {
                         players[counter] = tempPlayer;
                         break;
-                    }else if(tempPlayer.getCheckpointCount() > players[counter].getCheckpointCount()){
+                    } else if (tempPlayer.getCheckpointCount() > players[counter].getCheckpointCount()) {
                         Player tempPlayer2 = players[counter];
                         players[counter] = tempPlayer;
                         tempPlayer = tempPlayer2;
@@ -151,18 +150,17 @@ public class GameController {
             }
         }
 
-
         String scores = "";
-        for(int i = 0; i < players.length; i++){
-            if(players[i] != null){
-                scores = scores + (i+1+": "+players[i].getName() + "\t checkpoints: "+players[i].getCheckpointCount());
+        for (int i = 0; i < players.length; i++) {
+            if (players[i] != null) {
+                scores = scores
+                        + (i + 1 + ": " + players[i].getName() + "\t checkpoints: " + players[i].getCheckpointCount());
                 scores = scores + "\n";
             }
 
         }
         alert.setContentText(scores);
         alert.show();
-
 
     }
 
@@ -235,26 +233,80 @@ public class GameController {
                         executeCommand(currentPlayer, command);
                     }
                 }
-                for(int i = 0; i < board.getPlayersNumber(); i++){
+
+                // Check if a player should be moved on a conveyor
+                if (currentPlayer.getSpace() instanceof Conveyor && step == 0) {
+                    Conveyor conveyor = (Conveyor) currentPlayer.getSpace();
+                    Conveyor previousConveyor = null;
+
+                    for (int i = 0; i < conveyor.getSpeed(); i++) {
+                        // Move player to the neighbor
+                        Space newSpace = board.getNeighbour(conveyor, conveyor.getFacing());
+                        currentPlayer.setSpace(newSpace);
+
+                        // Check if the tile is still a conveyor and should still move the player
+                        if (currentPlayer.getSpace() instanceof Conveyor) {
+                            previousConveyor = conveyor;
+                            conveyor = (Conveyor) currentPlayer.getSpace();
+
+                        } else {
+                            break;
+                        }
+                    }
+                    // Check if the player should be rotated 90 degrees in the direction of the conveyor's turn
+                    if (conveyor.shouldTurn() && conveyor.getFacing() != previousConveyor.getFacing()) {
+
+                        // Check which direction the player should be rotated 
+                        // This could probably be done more efficiently but is left as is for now
+                        int rotatePrev = 0;
+                        int rotateNext = 0;
+                        Heading tempFacing = previousConveyor.getFacing();
+
+                        while (tempFacing != conveyor.getFacing()) {
+                            tempFacing = tempFacing.next();
+                            rotateNext++;
+                        }
+
+                        tempFacing = previousConveyor.getFacing();
+
+                        while (tempFacing != conveyor.getFacing()) {
+                            tempFacing = tempFacing.prev();
+                            rotatePrev++;
+                        }
+
+                        // Rotate next direction
+                        if (rotateNext < rotatePrev) {
+                            currentPlayer.setHeading(currentPlayer.getHeading().next());
+
+                        }
+                        // Rotate prev direction
+                        else {
+                            currentPlayer.setHeading(currentPlayer.getHeading().prev());
+                        }
+                    }
+                }
+
+                // Check if a player should get checkpoint
+                for (int i = 0; i < board.getPlayersNumber(); i++) {
                     Player tempPlayer = board.getPlayer(i);
-                    if (tempPlayer.getSpace()instanceof Checkpoint){
+                    if (tempPlayer.getSpace() instanceof Checkpoint) {
                         Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
-                        if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)){
+                        if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
                             tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
                         }
                     }
                 }
 
                 //Check if any of the players have reached the last checkpoint
-                for(int i = 0; i < board.getPlayersNumber(); i++){
+                for (int i = 0; i < board.getPlayersNumber(); i++) {
                     Player tempPlayer = board.getPlayer(i);
-                    if(tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
+                    if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
                         board.setPhase(Phase.END_GAME);
                         startEndGamePhase(tempPlayer);
                     }
                 }
 
-                if(board.getPhase() != Phase.END_GAME){
+                if (board.getPhase() != Phase.END_GAME) {
                     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                     if (nextPlayerNumber < board.getPlayersNumber()) {
                         board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
@@ -270,20 +322,17 @@ public class GameController {
                     }
                 }
 
-                for(int i = 0; i < board.getPlayersNumber(); i++){
-                    if(board.getPlayer(i).getSpace() instanceof Gear){
+                for (int i = 0; i < board.getPlayersNumber(); i++) {
+                    if (board.getPlayer(i).getSpace() instanceof Gear) {
                         Gear gear = (Gear) board.getPlayer(i).getSpace();
                         gear.getClockwise();
-                        if(gear.getClockwise() == true){
-                           board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
-                        }
-                        else {
+                        if (gear.getClockwise() == true) {
+                            board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
+                        } else {
                             board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().prev());
                         }
                     }
                 }
-
-
 
             } else {
                 // this should not happen
@@ -317,6 +366,7 @@ public class GameController {
                     break;
                 case SPAM:
                     removeSpam(player);
+                    break;
                 default:
                     // DO NOTHING (for now)
             }
@@ -331,10 +381,12 @@ public class GameController {
      */
     public void moveForward(@NotNull Player player) {
         Space space = player.getSpace();
+
         if (player != null && player.board == board && space != null) {
             Heading heading = player.getHeading();
             Heading newWallBlockHeading = heading.next().next();
             Space target = board.getNeighbour(space, heading);
+
             boolean wallBlock = false;
 
             if (target instanceof Wall) {

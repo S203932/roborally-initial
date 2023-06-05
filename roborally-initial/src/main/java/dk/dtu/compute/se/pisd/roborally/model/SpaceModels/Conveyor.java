@@ -8,8 +8,9 @@ import dk.dtu.compute.se.pisd.roborally.model.Heading;
 
 abstract public class Conveyor extends Space {
 
-    public final Heading facing;
-    public final Heading[] turns;
+    private final Heading facing;
+    private final Heading[] turns;
+    protected int speed;
 
     public Conveyor(Board board, int x, int y, Heading[] edges, Heading facing, Heading[] turns) {
         super(board, x, y, edges);
@@ -33,4 +34,22 @@ abstract public class Conveyor extends Space {
         return list.toString().replace(",", "").replace("[", "").replace("]", "").replace(" ", "") + facing.toString();
     }
 
+    public int getSpeed() {
+        return speed;
+    }
+
+    public boolean shouldTurn() {
+        if (turns != null && turns.length >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public Heading getFacing() {
+        return facing;
+    }
+
+    public Heading[] getTurns() {
+        return turns;
+    }
 }
