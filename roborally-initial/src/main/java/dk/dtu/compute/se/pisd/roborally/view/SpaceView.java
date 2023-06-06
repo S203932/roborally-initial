@@ -37,9 +37,7 @@ import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.StartGear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
 import org.jetbrains.annotations.NotNull;
@@ -90,21 +88,21 @@ public class SpaceView extends StackPane implements ViewObserver {
     }
 
     private void updatePlayer() {
-        //this.getChildren().clear();
-
         Player player = space.getPlayer();
-        if (player != null) {
-            Polygon arrow = new Polygon(0.0, 0.0,
-                    10.0, 20.0,
-                    20.0, 0.0);
-            try {
-                arrow.setFill(Color.valueOf(player.getColor()));
-            } catch (Exception e) {
-                arrow.setFill(Color.MEDIUMPURPLE);
-            }
 
-            arrow.setRotate((90 * player.getHeading().ordinal()) % 360);
-            this.getChildren().add(arrow);
+        if (player != null) {
+            Image image = new Image(
+                    "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Robot" + player.getId()
+                            + ".png");
+            ImagePattern imagePattern = new ImagePattern(image);
+            Rectangle rectangle = new Rectangle();
+            rectangle.setX(0.0f);
+            rectangle.setY(0.0f);
+            rectangle.setWidth(60.0f);
+            rectangle.setHeight(60.0f);
+            rectangle.setFill(imagePattern);
+            rectangle.setRotate((90 * player.getHeading().ordinal()) % 360);
+            this.getChildren().add(rectangle);
         }
     }
 

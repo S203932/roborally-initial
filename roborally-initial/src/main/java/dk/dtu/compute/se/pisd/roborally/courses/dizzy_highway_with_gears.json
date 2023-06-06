@@ -16,7 +16,7 @@
 				}
 			},
 			{
-				"type": "green_conveyor",
+				"type": "blue_conveyor",
 				"attributes": {
 					"edges": ["NORTH"],
 					"facing": ["EAST"]

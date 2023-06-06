@@ -45,6 +45,8 @@ public class Player extends Subject {
 
     final public Board board;
 
+    final private int id;
+
     private String name;
     private String color;
 
@@ -54,9 +56,10 @@ public class Player extends Subject {
     private CommandCardField[] program;
     private CommandCardField[] cards;
 
-    private final ArrayList <Command> damagecards;
+    private final ArrayList<Command> damagecards;
 
     private int checkpointCount = 0;
+
     /**
      * <p>Constructor for Player.</p>
      *
@@ -64,10 +67,11 @@ public class Player extends Subject {
      * @param color a {@link java.lang.String} object.
      * @param name a {@link java.lang.String} object.
      */
-    public Player(@NotNull Board board, String color, @NotNull String name) {
+    public Player(@NotNull Board board, String color, @NotNull String name, int id) {
         this.board = board;
         this.name = name;
         this.color = color;
+        this.id = id;
 
         this.space = null;
 
@@ -106,6 +110,10 @@ public class Player extends Subject {
                 space.playerChanged();
             }
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**
@@ -203,16 +211,19 @@ public class Player extends Subject {
         return cards[i];
     }
 
+    public void setDmgcards(Command card) {
+        this.damagecards.add(card);
+    }
 
-    public void setDmgcards(Command card){this.damagecards.add(card);}
-    public ArrayList<Command>getDmgcards(){
+    public ArrayList<Command> getDmgcards() {
         return this.damagecards;
     }
-    public int getCheckpointCount(){
+
+    public int getCheckpointCount() {
         return checkpointCount;
     }
 
-    public void setCheckpointCount(int checkpointCount){
+    public void setCheckpointCount(int checkpointCount) {
         this.checkpointCount = checkpointCount;
     }
 }

@@ -80,29 +80,30 @@ public class AppController implements Observer {
         dialog.setHeaderText("Select number of players");
         Optional<Integer> result = dialog.showAndWait();
 
-        // Load courses from json files
-        ArrayList<String> courseNames = new ArrayList<String>();
-        ArrayList<Course> jsonCourses = new ArrayList<Course>();
+        if (!result.isEmpty()) {
+            // Load courses from json files
+            ArrayList<String> courseNames = new ArrayList<String>();
+            ArrayList<Course> jsonCourses = new ArrayList<Course>();
 
-        try {
-            File courses = new File("roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
+            try {
+                File courses = new File("roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
 
-            Gson gson = new Gson();
-            Course jsonCourse = null;
+                Gson gson = new Gson();
+                Course jsonCourse = null;
 
-            for (File course : courses.listFiles()) {
-                jsonCourse = gson.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
-                courseNames.add(jsonCourse.game_name);
-                jsonCourses.add(jsonCourse);
+                for (File course : courses.listFiles()) {
+                    jsonCourse = gson.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
+                    courseNames.add(jsonCourse.game_name);
+                    jsonCourses.add(jsonCourse);
+                }
+
+            } catch (JsonIOException e) {
+                // TODO: handle exception
+
+            } catch (FileNotFoundException e) {
+                // TODO: handle exception
             }
 
-        } catch (JsonIOException e) {
-            // TODO: handle exception
-
-        } catch (FileNotFoundException e) {
-            // TODO: handle exception
-        }
-        if (!result.isEmpty()) {
             // Show dialog window
             ChoiceDialog<String> courseDialog = new ChoiceDialog<>(courseNames.get(0), courseNames);
             courseDialog.setTitle("Course");
@@ -127,7 +128,7 @@ public class AppController implements Observer {
                 gameController = new GameController(board);
                 int no = result.get();
                 for (int i = 0; i < no; i++) {
-                    Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
+                    Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
                     board.addPlayer(player);
                     player.setSpace(board.getSpace(i % board.width, i));
                 }
