@@ -111,26 +111,16 @@ public class AppController implements Observer {
             Optional<String> courseResult = courseDialog.showAndWait();
 
             if (!courseResult.isEmpty()) {
-                // if (result.isPresent() || courseResult.isPresent()) {
-                //     if (gameController != null) {
-                //         // The UI should not allow this, but in case this happens anyway.
-                //         // give the user the option to save the game or abort this operation!
-                //         if (!stopGame()) {
-                //             return;
-                //         }
-                //     }
-
-                // XXX the board should eventually be created programmatically or loaded from a file
-                //     here we just create an empty board with the required number of players.
                 Course selectedCourse = jsonCourses.get(courseNames.indexOf(courseResult.get()));
 
                 Board board = new Board(selectedCourse);
                 gameController = new GameController(board);
                 int no = result.get();
+
                 for (int i = 0; i < no; i++) {
                     Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
                     board.addPlayer(player);
-                    player.setSpace(board.getSpace(i % board.width, i));
+                    player.setSpace(board.getStartGear(i));
                 }
 
                 // XXX: V2

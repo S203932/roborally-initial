@@ -74,6 +74,8 @@ public class Board extends Subject {
 
     private int boardCheckpoints = 0;
 
+    private ArrayList<Space> startGears = new ArrayList<Space>();
+
     public Board(Course course) {
 
         this.boardName = course.game_name;
@@ -122,6 +124,7 @@ public class Board extends Subject {
 
                     case start_gear:
                         space = new StartGear(this, x, y, tile.attributes.edges);
+                        startGears.add(space);
                         break;
 
                     case wall:
@@ -166,6 +169,10 @@ public class Board extends Subject {
      */
     public Integer getGameId() {
         return gameId;
+    }
+
+    public Space getStartGear(int id) {
+        return startGears.get(id);
     }
 
     /**
