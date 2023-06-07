@@ -104,6 +104,9 @@ public class GameController {
         }
     }
 
+    /** 
+     * @return CommandCard
+     */
     // XXX: V2
     private CommandCard generateRandomCommandCard() {
         Command[] commands = Command.values();
@@ -211,7 +214,106 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
-    // XXX: V2
+    /**
+     * Check if a player should get a checkpoint and if a player has reached all checkpoints
+     */
+    private void checkCheckpoint() {
+        // Check if a player should get checkpoint
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player tempPlayer = board.getPlayer(i);
+            if (tempPlayer.getSpace() instanceof Checkpoint) {
+                Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
+                if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
+                    tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
+                }
+            }
+        }
+
+        // Check if any of the players have reached the last checkpoint
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player tempPlayer = board.getPlayer(i);
+            if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
+                board.setPhase(Phase.END_GAME);
+                startEndGamePhase(tempPlayer);
+            }
+        }
+
+    }
+
+    /** 
+     * Check if any players are on a conveyor and move them accordingly.
+     * @param player
+     */
+    private void checkConveyor(Player player) {
+        // Check if a player should be moved on a conveyor
+        if (player.getSpace() instanceof Conveyor) {
+            Conveyor conveyor = (Conveyor) player.getSpace();
+            Conveyor previousConveyor = null;
+
+            for (int i = 0; i < conveyor.getSpeed(); i++) {
+                // Move player to the neighbor
+                Space newSpace = board.getNeighbour(conveyor, conveyor.getFacing());
+                player.setSpace(newSpace);
+
+                // Check if the tile is still a conveyor and should still move the player
+                if (player.getSpace() instanceof Conveyor) {
+                    previousConveyor = conveyor;
+                    conveyor = (Conveyor) player.getSpace();
+
+                } else {
+                    break;
+                }
+            }
+            // Check if the player should be rotated 90 degrees in the direction of the conveyor's turn
+            if (conveyor.shouldTurn() && conveyor.getFacing() != previousConveyor.getFacing()) {
+
+                // Check which direction the player should be rotated 
+                // This could probably be done more efficiently but is left as is for now
+                int rotatePrev = 0;
+                int rotateNext = 0;
+                Heading tempFacing = previousConveyor.getFacing();
+
+                while (tempFacing != conveyor.getFacing()) {
+                    tempFacing = tempFacing.next();
+                    rotateNext++;
+                }
+
+                tempFacing = previousConveyor.getFacing();
+
+                while (tempFacing != conveyor.getFacing()) {
+                    tempFacing = tempFacing.prev();
+                    rotatePrev++;
+                }
+
+                // Rotate next direction
+                if (rotateNext < rotatePrev) {
+                    player.setHeading(player.getHeading().next());
+
+                }
+                // Rotate prev direction
+                else {
+                    player.setHeading(player.getHeading().prev());
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if a player is on a gear and should be rotated.
+     */
+    private void checkGear() {
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            if (board.getPlayer(i).getSpace() instanceof Gear) {
+                Gear gear = (Gear) board.getPlayer(i).getSpace();
+                gear.getClockwise();
+                if (gear.getClockwise() == true) {
+                    board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
+                } else {
+                    board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().prev());
+                }
+            }
+        }
+    }
 
     /**
      * A method used for executing the cards in the activation phase. The method goes through a given card
@@ -234,77 +336,11 @@ public class GameController {
                     }
                 }
 
-                // Check if a player should be moved on a conveyor
-                if (currentPlayer.getSpace() instanceof Conveyor && step == 0) {
-                    Conveyor conveyor = (Conveyor) currentPlayer.getSpace();
-                    Conveyor previousConveyor = null;
-
-                    for (int i = 0; i < conveyor.getSpeed(); i++) {
-                        // Move player to the neighbor
-                        Space newSpace = board.getNeighbour(conveyor, conveyor.getFacing());
-                        currentPlayer.setSpace(newSpace);
-
-                        // Check if the tile is still a conveyor and should still move the player
-                        if (currentPlayer.getSpace() instanceof Conveyor) {
-                            previousConveyor = conveyor;
-                            conveyor = (Conveyor) currentPlayer.getSpace();
-
-                        } else {
-                            break;
-                        }
-                    }
-                    // Check if the player should be rotated 90 degrees in the direction of the conveyor's turn
-                    if (conveyor.shouldTurn() && conveyor.getFacing() != previousConveyor.getFacing()) {
-
-                        // Check which direction the player should be rotated 
-                        // This could probably be done more efficiently but is left as is for now
-                        int rotatePrev = 0;
-                        int rotateNext = 0;
-                        Heading tempFacing = previousConveyor.getFacing();
-
-                        while (tempFacing != conveyor.getFacing()) {
-                            tempFacing = tempFacing.next();
-                            rotateNext++;
-                        }
-
-                        tempFacing = previousConveyor.getFacing();
-
-                        while (tempFacing != conveyor.getFacing()) {
-                            tempFacing = tempFacing.prev();
-                            rotatePrev++;
-                        }
-
-                        // Rotate next direction
-                        if (rotateNext < rotatePrev) {
-                            currentPlayer.setHeading(currentPlayer.getHeading().next());
-
-                        }
-                        // Rotate prev direction
-                        else {
-                            currentPlayer.setHeading(currentPlayer.getHeading().prev());
-                        }
-                    }
+                if (step == 0) {
+                    checkConveyor(currentPlayer);
                 }
 
-                // Check if a player should get checkpoint
-                for (int i = 0; i < board.getPlayersNumber(); i++) {
-                    Player tempPlayer = board.getPlayer(i);
-                    if (tempPlayer.getSpace() instanceof Checkpoint) {
-                        Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
-                        if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
-                            tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
-                        }
-                    }
-                }
-
-                //Check if any of the players have reached the last checkpoint
-                for (int i = 0; i < board.getPlayersNumber(); i++) {
-                    Player tempPlayer = board.getPlayer(i);
-                    if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
-                        board.setPhase(Phase.END_GAME);
-                        startEndGamePhase(tempPlayer);
-                    }
-                }
+                checkCheckpoint();
 
                 if (board.getPhase() != Phase.END_GAME) {
                     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
@@ -321,18 +357,7 @@ public class GameController {
                         }
                     }
                 }
-
-                for (int i = 0; i < board.getPlayersNumber(); i++) {
-                    if (board.getPlayer(i).getSpace() instanceof Gear) {
-                        Gear gear = (Gear) board.getPlayer(i).getSpace();
-                        gear.getClockwise();
-                        if (gear.getClockwise() == true) {
-                            board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
-                        } else {
-                            board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().prev());
-                        }
-                    }
-                }
+                checkGear();
 
             } else {
                 // this should not happen

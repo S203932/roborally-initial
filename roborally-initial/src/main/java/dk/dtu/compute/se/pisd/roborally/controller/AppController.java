@@ -56,7 +56,8 @@ import java.util.Optional;
 public class AppController implements Observer {
 
     final private List<Integer> PLAYER_NUMBER_OPTIONS = Arrays.asList(2, 3, 4, 5, 6);
-    final private List<String> PLAYER_COLORS = Arrays.asList("red", "brown", "orange", "yellow", "blue", "green");
+    final private List<String> PLAYER_COLORS = Arrays.asList("red", "saddlebrown", "orange", "yellow", "blue",
+            "green");
 
     final private RoboRally roboRally;
 
