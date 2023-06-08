@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import com.google.gson.annotations.Expose;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 
@@ -39,25 +40,31 @@ import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 public class Player extends Subject {
 
     /** Constant <code>NO_REGISTERS=5</code> */
+    @Expose
     final public static int NO_REGISTERS = 5;
     /** Constant <code>NO_CARDS=8</code> */
+    @Expose
     final public static int NO_CARDS = 8;
 
-    final public Board board;
+    public Board board;
 
+    @Expose
     final private int id;
-
+    @Expose
     private String name;
+    @Expose
     private String color;
-
+    @Expose
     private Space space;
+    @Expose
     private Heading heading = SOUTH;
-
+    @Expose
     private CommandCardField[] program;
+    @Expose
     private CommandCardField[] cards;
-
+    @Expose
     private final ArrayList<Command> damagecards;
-
+    @Expose
     private int checkpointCount = 0;
 
     /**
@@ -86,6 +93,38 @@ public class Player extends Subject {
         for (int i = 0; i < cards.length; i++) {
             cards[i] = new CommandCardField(this);
         }
+    }
+
+    public void setCards(CommandCardField[] cards){
+        for (int i = 0; i < cards.length; i++) {
+            CommandCardField cardField = new CommandCardField(this);
+            if(cards[i].getCard() != null){
+                CommandCard commandCard = new CommandCard(cards[i].getCard().command);
+                cardField.setCard(commandCard);
+            }
+            cardField.setVisible(cards[i].isVisible());
+            this.cards[i] = cardField;
+        }
+    }
+
+    public void setProgram(CommandCardField[] program){
+        for (int i = 0; i < program.length; i++) {
+            CommandCardField cardField = new CommandCardField(this);
+            if(program[i].getCard() != null){
+                CommandCard commandCard = new CommandCard(program[i].getCard().command);
+                cardField.setCard(commandCard);
+            }
+            cardField.setVisible(program[i].isVisible());
+            this.program[i] = cardField;
+        }
+    }
+
+    public CommandCardField[] getPrograms(){
+        return this.program;
+    }
+
+    public CommandCardField[] getCards(){
+        return this.cards;
     }
 
     /**
@@ -165,6 +204,10 @@ public class Player extends Subject {
             }
             notifyChange();
         }
+    }
+
+    public void setBoard(Board board){
+        this.board = board;
     }
 
     /**

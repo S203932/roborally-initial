@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import com.google.gson.annotations.Expose;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
@@ -40,8 +41,8 @@ import java.util.Arrays;
  * @version $Id: $Id
  */
 public class GameController {
-
-    final public Board board;
+    @Expose
+    public Board board;
 
     /**
      * <p>Constructor for GameController.</p>
@@ -389,9 +390,11 @@ public class GameController {
                 case FAST_FORWARD:
                     this.fastForward(player);
                     break;
-                case SPAM:
+                /*case SPAM:
                     removeSpam(player);
                     break;
+
+                 */
                 default:
                     // DO NOTHING (for now)
             }
@@ -544,7 +547,13 @@ public class GameController {
 
     }
 
+    public Board getBoard(){
+        return this.board;
+    }
+    /*
     private void removeSpam(Player player) {
         player.getDmgcards().remove(Command.SPAM);
     }
+
+     */
 }

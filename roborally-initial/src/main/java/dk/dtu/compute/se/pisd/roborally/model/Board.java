@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import com.google.gson.annotations.Expose;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Course;
 import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Tile;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
 
@@ -51,29 +53,29 @@ import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
  * @version $Id: $Id
  */
 public class Board extends Subject {
-
+    @Expose
     public final int width;
-
+    @Expose
     public final int height;
-
+    @Expose
     public final String boardName;
-
+    @Expose
     private Integer gameId;
-
+    @Expose
     private final Space[][] spaces;
-
+    @Expose
     private final List<Player> players = new ArrayList<>();
-
+    @Expose
     private Player current;
-
+    @Expose
     private Phase phase = INITIALISATION;
-
+    @Expose
     private int step = 0;
-
+    @Expose
     private boolean stepMode;
-
+    @Expose
     private int boardCheckpoints = 0;
-
+    @Expose
     private ArrayList<Space> startGears = new ArrayList<Space>();
 
     public Board(Course course) {
@@ -160,6 +162,68 @@ public class Board extends Subject {
         }
 
         this.stepMode = false;
+    }
+
+    public void recreateBoardstate(Player currentPlayer, Phase phase, List<Player> players, int step, boolean stepMode){
+
+        //Setting phase
+        this.phase = phase;
+
+        //Setting gameId
+        //this.gameId = gameId;
+
+        //Setting step
+        this.step = step;
+
+        //Setting stepmode
+        this.stepMode = stepMode;
+
+
+
+        for(int i = 0; i < players.size(); i++){
+            Player player = new Player(this,players.get(i).getColor(), players.get(i).getName(), players.get(i).getId());
+            player.setCheckpointCount(players.get(i).getCheckpointCount());
+            player.setHeading(players.get(i).getHeading());
+            player.setProgram(players.get(i).getPrograms());
+            player.setCards(players.get(i).getCards());
+
+            this.players.add(player);
+
+        }
+
+        for(int i = 0; i < players.size(); i++){
+            if(this.players.get(i).getName().equals(currentPlayer.getName())){
+                this.current = this.players.get(i);
+            }
+        }
+
+        setPlayersOnSpaces(players);
+
+
+    }
+
+
+
+    public void setPlayersOnSpaces(List<Player> oldPlayers){
+        for(int i = 0; i < players.size(); i++){
+            players.get(i).setBoard(this);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    if(oldPlayers.get(i).getSpace().x == x && oldPlayers.get(i).getSpace().y == y){
+                        players.get(i).setSpace(spaces[x][y]);
+                        //spaces[x][y].setPlayer(players.get(i));
+                    }
+                }
+            }
+        }
+    }
+
+    public List<Player> getPlayers(){
+        return players;
+    }
+
+    public boolean getStepmode(){
+        return  this.stepMode;
     }
 
     /**

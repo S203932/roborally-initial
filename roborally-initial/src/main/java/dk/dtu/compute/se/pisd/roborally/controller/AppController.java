@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import com.google.gson.GsonBuilder;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
@@ -34,14 +35,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.TextInputDialog;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -138,6 +139,55 @@ public class AppController implements Observer {
      */
     public void saveGame() {
         // XXX needs to be implemented eventually
+        GsonBuilder gb = new GsonBuilder();
+        Gson gson = gb
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setTitle("Save game");
+        inputDialog.setContentText("Please state the name of the file to save to:");
+        Optional<String> result = inputDialog.showAndWait();
+        if(!(result.isEmpty())){
+            String tempFilePath = "roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
+            String newFileName = result.get();
+
+            for(int i = 0; i < newFileName.length();i++){
+                if((newFileName.charAt(i) == '.' && i != newFileName.length()-5) || newFileName.charAt(i) == ' '
+                        || (newFileName.charAt(i) <'0' && newFileName.charAt(i) != '.') || (newFileName.charAt(i) > '9'
+                        && newFileName.charAt(i) < 'A') || (newFileName.charAt(i) > 'Z' && newFileName.charAt(i)<'a')
+                        || newFileName.charAt(i) > 'z' || (i == newFileName.length()-5 && newFileName.charAt(i) == '.'
+                        && (newFileName.charAt(i+1) != 'j' || newFileName.charAt(i+2) != 's' || newFileName.charAt(i+3) != 'o'
+                        || newFileName.charAt(i+4) != 'n'))){
+                    newFileName = "Default.json";
+                    break;
+                }
+            }
+
+            if(newFileName == ""){
+                newFileName = "Default.json";
+            }else if((newFileName.length() >= 5 && newFileName.charAt(newFileName.length()-5) != '.') || newFileName.length()<5){
+                newFileName += ".json";
+            }
+            try{
+                File newFile = new File(tempFilePath+newFileName);
+                newFile.createNewFile();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            try{
+                FileWriter fileWriter = new FileWriter(tempFilePath+newFileName);
+                String boardString = gson.toJson(this.gameController.getBoard());
+                for (int i = 0; i < boardString.length(); i++)
+                    fileWriter.write(boardString.charAt(i));
+                fileWriter.flush();
+                fileWriter.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
     /**
@@ -146,9 +196,90 @@ public class AppController implements Observer {
     public void loadGame() {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
-        if (gameController == null) {
-            newGame();
+        GsonBuilder gb = new GsonBuilder();
+        Gson gson = gb
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+
+        String tempFilePath = "roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
+
+        File files = new File(tempFilePath);
+        File[] fileArray = files.listFiles();
+        List<String> fileOptions = new ArrayList<String>();
+        for(int i = 0; i < fileArray.length;i++){
+            if(fileArray[i].isFile()){
+                fileOptions.add(fileArray[i].getName());
+            }
         }
+
+
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(fileOptions.get(0), fileOptions);
+        dialog.setTitle("Files");
+        dialog.setHeaderText("Please select a file to load");
+        Optional<String> fileName = dialog.showAndWait();
+        File file = null;
+        String boardString = null;
+        if(fileName.isPresent()){
+            for(int i = 0; i < fileArray.length;i++){
+                if(fileArray[i].getName().equals(fileName.get())){
+                    file = fileArray[i];
+                }
+            }
+
+            try{
+
+                boardString = Files.readString(file.toPath());
+
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            Board oldboard = gson.fromJson(boardString,Board.class);
+
+
+            gameController = new GameController(oldboard);
+
+            ArrayList<String> courseNames = new ArrayList<String>();
+            ArrayList<Course> jsonCourses = new ArrayList<Course>();
+
+            try {
+                File courses = new File("roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
+
+                Gson gson1 = new Gson();
+                Course jsonCourse = null;
+
+                for (File course : courses.listFiles()) {
+                    jsonCourse = gson1.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
+                    courseNames.add(jsonCourse.game_name);
+                    jsonCourses.add(jsonCourse);
+                }
+
+            } catch (JsonIOException e) {
+                // TODO: handle exception
+
+            } catch (FileNotFoundException e) {
+                // TODO: handle exception
+            }
+
+            Course selectedCourse = jsonCourses.get(courseNames.indexOf(oldboard.boardName));
+
+            Board board = new Board(selectedCourse);
+
+            gameController = new GameController(board);
+
+
+            gameController.board.recreateBoardstate(oldboard.getCurrentPlayer(), oldboard.getPhase(), oldboard.getPlayers(), oldboard.getStep(), oldboard.getStepmode());
+
+
+
+            roboRally.createBoardView(gameController);
+        }
+
+
+
     }
 
     /**
@@ -164,7 +295,7 @@ public class AppController implements Observer {
         if (gameController != null) {
 
             // here we save the game (without asking the user).
-            saveGame();
+            //saveGame();
 
             gameController = null;
             roboRally.createBoardView(null);
@@ -208,6 +339,10 @@ public class AppController implements Observer {
     @Override
     public void update(Subject subject) {
         // XXX do nothing for now
+    }
+
+    public GameController getGameController(){
+        return this.gameController;
     }
 
 }

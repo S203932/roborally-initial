@@ -21,6 +21,8 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,15 +43,15 @@ public enum Command {
     FAST_FORWARD("Fast Fwd"),
 
     // XXX Assignment P3
-    OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),
+    OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT);
 
     //Damage Cards//
-    SPAM("SPAM"),
-    TROJANHORSE("TROJAN HORSE"),
-    WORM("WORM"),
-    VIRUS("VIRUS");
+    //SPAM("SPAM"),
+    //TROJANHORSE("TROJAN HORSE"),
+    //WORM("WORM"),
+    //VIRUS("VIRUS");
 
-
+    @Expose
     final public String displayName;
 
     // XXX Assignment P3
@@ -58,7 +60,7 @@ public enum Command {
     // }
     //
     // replaced by the code below:
-
+    @Expose
     final private List<Command> options;
 
     Command(String displayName, Command... options) {
