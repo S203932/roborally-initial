@@ -1,5 +1,8 @@
 roborally-initial/.idea/*
-.vscode/*
+*/.vscode/*
+*/.vscode/
+*/.vscode/launch.json
+*/.vscode/settings.json
 *.class
 .idea
 */target/*

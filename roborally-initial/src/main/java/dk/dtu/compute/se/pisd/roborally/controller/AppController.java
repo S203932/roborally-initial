@@ -22,29 +22,46 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
-
+import dk.dtu.compute.se.pisd.roborally.ServerClient;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.Lobby;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyPlayer;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Course;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.io.File;
+import java.io.FileReader;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +80,9 @@ public class AppController implements Observer {
     final private RoboRally roboRally;
 
     private GameController gameController;
+    private ServerClient client;
+
+    private final String createLobby = "Create a lobby";
 
     /**
      * <p>Constructor for AppController.</p>
@@ -71,6 +91,205 @@ public class AppController implements Observer {
      */
     public AppController(@NotNull RoboRally roboRally) {
         this.roboRally = roboRally;
+    }
+
+    /**
+     * Dialog for connecting to a RoboRally server
+     */
+    public void connectServer() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Connect to a RoboRally server");
+        dialog.setHeaderText("Enter the server's address");
+
+        Optional<String> result = dialog.showAndWait();
+
+        if (!result.isEmpty() && result.get().length() != 0) {
+            String pingResult = null;
+            client = new ServerClient(result.get());
+
+            try {
+                pingResult = client.getPong();
+            } catch (Exception e) {
+                // Show error dialog
+            }
+
+            // Check if the result is as expected
+            if (pingResult != null && pingResult.equals("pong")) {
+                lobbyBrowser();
+                return;
+            }
+            showAlert("Invalid server address", "Try again with a valid address");
+        }
+
+    }
+
+    /**
+     * Lobby browser for a RoboRally server
+     */
+    public void lobbyBrowser() {
+
+        // Create player object
+        // Get player name
+        LobbyPlayer player = new LobbyPlayer();
+        Optional<String> result = null;
+
+        TextInputDialog nameDialog = new TextInputDialog();
+        nameDialog.setTitle("Set name");
+        nameDialog.setHeaderText("Enter your username (1-32 characters long)");
+        do {
+            result = nameDialog.showAndWait();
+        } while (result.isEmpty() || !result.isEmpty() && (result.get().length() == 0 || result.get().length() > 32));
+
+        player.setName(result.get());
+
+        // Show lobbies
+        HashMap<String, Lobby> lobbies = refreshLobbies();
+        ChoiceDialog<String> lobbyDialog = new ChoiceDialog<String>(createLobby,
+                new ArrayList<String>(lobbies.keySet()));
+        lobbyDialog.setTitle("Lobby browser");
+        lobbyDialog.setHeaderText("Select or start a new lobby");
+        result = lobbyDialog.showAndWait();
+
+        if (!result.isEmpty()) {
+            Lobby lobby = null;
+            // Check if a new game should be made
+            if (result.get().equals(createLobby)) {
+                try {
+                    do {
+                        lobby = createLobby();
+                    } while (lobby == null);
+
+                    client.createLobby(lobby);
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
+            }
+            // Try to join the selected game
+            else {
+                lobby = lobbies.get(result.get());
+                System.out.println("Joining game");
+                System.out.println(lobby);
+            }
+            try {
+                System.out.println(client.playerJoinLobby(lobby.getId(), player));
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+
+        }
+    }
+
+    /**
+     * Show a dialog for creating a lobby
+     * @return 
+     */
+    private Lobby createLobby() {
+        // Create a custom Dialog that will return two strings
+
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Create a lobby");
+        dialog.setHeaderText("Customize your lobby");
+
+        ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+
+        // Create grid for placing text fields
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(20, 150, 10, 10));
+
+        // Add text fields and labels
+        TextField lobbyName = new TextField();
+        TextField lobbyMaxPlayerCount = new TextField();
+
+        gridPane.add(new Label("Lobby name:"), 0, 0);
+        gridPane.add(lobbyName, 1, 0);
+        gridPane.add(new Label("Max player count (2-6):"), 0, 1);
+        gridPane.add(lobbyMaxPlayerCount, 1, 1);
+
+        // Add content to dialog
+        dialog.getDialogPane().setContent(gridPane);
+
+        // Ensure that the text fields are returned as a result and not the buttons
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == okButton) {
+                return new Pair<>(lobbyName.getText(), lobbyMaxPlayerCount.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        // Ensure that the input is usable
+        if (!result.isEmpty() && result.get().getKey().length() > 0 && result.get().getValue().length() > 0) {
+            // Check if the max number of players is an int
+            int maxPlayerCount;
+
+            try {
+                maxPlayerCount = Integer.parseInt(result.get().getValue());
+            } catch (NumberFormatException e) {
+                // TODO: handle exception
+                return null;
+            }
+            if (maxPlayerCount >= 2 && maxPlayerCount <= 6) {
+                return new Lobby(result.get().getKey(), getLobbyId(), maxPlayerCount);
+            }
+
+        }
+        showAlert("Invalid server configuration", "Try again with a valid configuration");
+        return null;
+    }
+
+    private void showAlert(String header, String content) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error dialog");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    /**
+     * Get the first available and unique ID from list of lobbies
+     */
+    private int getLobbyId() {
+        ArrayList<Lobby> lobbies = new ArrayList<Lobby>();
+        int lobbyId = 0;
+
+        try {
+            lobbies.addAll(client.getLobbies());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        for (int index = 0; index < lobbies.size(); index++) {
+            if (lobbies.get(index).getId() == lobbyId) {
+                lobbyId++;
+                index = 0;
+            }
+        }
+        return lobbyId;
+    }
+
+    private HashMap<String, Lobby> refreshLobbies() {
+
+        HashMap<String, Lobby> lobbiesHashMap = new HashMap<String, Lobby>();
+
+        try {
+            ArrayList<Lobby> lobbies = client.getLobbies();
+
+            // Add an empty option for creating a lobby
+            lobbiesHashMap.put(createLobby, null);
+
+            for (Lobby lobby : lobbies) {
+                lobbiesHashMap.put("Lobby: " + lobby.getId() + " - " + lobby.getName() + " " + lobby.getPlayerCount()
+                        + "/" + lobby.getMaxPlayerCount() + " players", lobby);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return lobbiesHashMap;
     }
 
     /**
@@ -88,7 +307,9 @@ public class AppController implements Observer {
             ArrayList<Course> jsonCourses = new ArrayList<Course>();
 
             try {
-                File courses = new File("roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
+                System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
+                File courses = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
 
                 Gson gson = new Gson();
                 Course jsonCourse = null;
@@ -99,11 +320,8 @@ public class AppController implements Observer {
                     jsonCourses.add(jsonCourse);
                 }
 
-            } catch (JsonIOException e) {
-                // TODO: handle exception
-
-            } catch (FileNotFoundException e) {
-                // TODO: handle exception
+            } catch (Exception e) {
+                // Should not be any exceptions with valid JSON files
             }
 
             // Show dialog window
@@ -147,46 +365,48 @@ public class AppController implements Observer {
         inputDialog.setTitle("Save game");
         inputDialog.setContentText("Please state the name of the file to save to:");
         Optional<String> result = inputDialog.showAndWait();
-        if(!(result.isEmpty())){
-            String tempFilePath = "roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
+        if (!(result.isEmpty())) {
+            String tempFilePath = "src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
             String newFileName = result.get();
 
-            for(int i = 0; i < newFileName.length();i++){
-                if((newFileName.charAt(i) == '.' && i != newFileName.length()-5) || newFileName.charAt(i) == ' '
-                        || (newFileName.charAt(i) <'0' && newFileName.charAt(i) != '.') || (newFileName.charAt(i) > '9'
-                        && newFileName.charAt(i) < 'A') || (newFileName.charAt(i) > 'Z' && newFileName.charAt(i)<'a')
-                        || newFileName.charAt(i) > 'z' || (i == newFileName.length()-5 && newFileName.charAt(i) == '.'
-                        && (newFileName.charAt(i+1) != 'j' || newFileName.charAt(i+2) != 's' || newFileName.charAt(i+3) != 'o'
-                        || newFileName.charAt(i+4) != 'n'))){
+            for (int i = 0; i < newFileName.length(); i++) {
+                if ((newFileName.charAt(i) == '.' && i != newFileName.length() - 5) || newFileName.charAt(i) == ' '
+                        || (newFileName.charAt(i) < '0' && newFileName.charAt(i) != '.') || (newFileName.charAt(i) > '9'
+                                && newFileName.charAt(i) < 'A')
+                        || (newFileName.charAt(i) > 'Z' && newFileName.charAt(i) < 'a')
+                        || newFileName.charAt(i) > 'z' || (i == newFileName.length() - 5 && newFileName.charAt(i) == '.'
+                                && (newFileName.charAt(i + 1) != 'j' || newFileName.charAt(i + 2) != 's'
+                                        || newFileName.charAt(i + 3) != 'o'
+                                        || newFileName.charAt(i + 4) != 'n'))) {
                     newFileName = "Default.json";
                     break;
                 }
             }
 
-            if(newFileName == ""){
+            if (newFileName == "") {
                 newFileName = "Default.json";
-            }else if((newFileName.length() >= 5 && newFileName.charAt(newFileName.length()-5) != '.') || newFileName.length()<5){
+            } else if ((newFileName.length() >= 5 && newFileName.charAt(newFileName.length() - 5) != '.')
+                    || newFileName.length() < 5) {
                 newFileName += ".json";
             }
-            try{
-                File newFile = new File(tempFilePath+newFileName);
+            try {
+                File newFile = new File(tempFilePath + newFileName);
                 newFile.createNewFile();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            try{
-                FileWriter fileWriter = new FileWriter(tempFilePath+newFileName);
+            try {
+                FileWriter fileWriter = new FileWriter(tempFilePath + newFileName);
                 String boardString = gson.toJson(this.gameController.getBoard());
                 for (int i = 0; i < boardString.length(); i++)
                     fileWriter.write(boardString.charAt(i));
                 fileWriter.flush();
                 fileWriter.close();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
 
     }
 
@@ -201,18 +421,16 @@ public class AppController implements Observer {
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
 
-        String tempFilePath = "roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
+        String tempFilePath = "src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
 
         File files = new File(tempFilePath);
         File[] fileArray = files.listFiles();
         List<String> fileOptions = new ArrayList<String>();
-        for(int i = 0; i < fileArray.length;i++){
-            if(fileArray[i].isFile()){
+        for (int i = 0; i < fileArray.length; i++) {
+            if (fileArray[i].isFile()) {
                 fileOptions.add(fileArray[i].getName());
             }
         }
-
-
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(fileOptions.get(0), fileOptions);
         dialog.setTitle("Files");
@@ -220,25 +438,24 @@ public class AppController implements Observer {
         Optional<String> fileName = dialog.showAndWait();
         File file = null;
         String boardString = null;
-        if(fileName.isPresent()){
-            for(int i = 0; i < fileArray.length;i++){
-                if(fileArray[i].getName().equals(fileName.get())){
+        if (fileName.isPresent()) {
+            for (int i = 0; i < fileArray.length; i++) {
+                if (fileArray[i].getName().equals(fileName.get())) {
                     file = fileArray[i];
                 }
             }
 
-            try{
+            try {
 
                 boardString = Files.readString(file.toPath());
 
-            }catch (FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            Board oldboard = gson.fromJson(boardString,Board.class);
-
+            Board oldboard = gson.fromJson(boardString, Board.class);
 
             gameController = new GameController(oldboard);
 
@@ -246,7 +463,7 @@ public class AppController implements Observer {
             ArrayList<Course> jsonCourses = new ArrayList<Course>();
 
             try {
-                File courses = new File("roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
+                File courses = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
 
                 Gson gson1 = new Gson();
                 Course jsonCourse = null;
@@ -270,15 +487,11 @@ public class AppController implements Observer {
 
             gameController = new GameController(board);
 
-
-            gameController.board.recreateBoardstate(oldboard.getCurrentPlayer(), oldboard.getPhase(), oldboard.getPlayers(), oldboard.getStep(), oldboard.getStepmode());
-
-
+            gameController.board.recreateBoardstate(oldboard.getCurrentPlayer(), oldboard.getPhase(),
+                    oldboard.getPlayers(), oldboard.getStep(), oldboard.getStepmode());
 
             roboRally.createBoardView(gameController);
         }
-
-
 
     }
 
@@ -341,7 +554,7 @@ public class AppController implements Observer {
         // XXX do nothing for now
     }
 
-    public GameController getGameController(){
+    public GameController getGameController() {
         return this.gameController;
     }
 

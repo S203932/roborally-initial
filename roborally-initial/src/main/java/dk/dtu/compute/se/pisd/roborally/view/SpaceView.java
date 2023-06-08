@@ -92,7 +92,7 @@ public class SpaceView extends StackPane implements ViewObserver {
 
         if (player != null) {
             Image image = new Image(
-                    "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Robot" + player.getId()
+                    "file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/Robot" + player.getId()
                             + ".png");
             ImagePattern imagePattern = new ImagePattern(image);
             Rectangle rectangle = new Rectangle();
@@ -127,11 +127,11 @@ public class SpaceView extends StackPane implements ViewObserver {
 
             // Get the image based on direction and turns
             if (conveyor.getTurns() == null) {
-                setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
+                setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
                         + color + "Conveyor" + conveyor.getFacing() + ".jpg");
 
             } else {
-                setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
+                setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/"
                         + color + "Conveyor" + conveyor.getTurnsString() + ".jpg");
             }
         }
@@ -144,7 +144,7 @@ public class SpaceView extends StackPane implements ViewObserver {
     public void updateWall() {
         if (space instanceof Wall) {
             Wall wall = (Wall) space;
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Wall"
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/Wall"
                     + wall.getFacingString() + ".jpg");
         }
     }
@@ -154,47 +154,47 @@ public class SpaceView extends StackPane implements ViewObserver {
      */
     public void updateSpace() {
         if (space.getClass() == Space.class) {
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Space.jpg");
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/Space.jpg");
         }
     }
 
     public void updateCheckpoint() {
         if (space instanceof Checkpoint) {
             Checkpoint checkpoint = (Checkpoint) space;
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/Checkpoint"
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/Checkpoint"
                     + checkpoint.getNumber() + ".jpg");
         }
     }
 
     public void updateStartGear() {
         if (space instanceof StartGear) {
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/StartGear.jpg");
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/StartGear.jpg");
         }
     }
 
     public void updateEnergyCube() {
         if (space instanceof Energy) {
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/EnergyCube.jpg");
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/EnergyCube.jpg");
         }
     }
 
     public void updateLaserStart() {
         if (space instanceof LaserStart) {
             LaserStart laserStart = (LaserStart) space;
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/LaserStart"
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/LaserStart"
                     + laserStart.facing.toString() + ".jpg");
         }
     }
 
     public void updatePriorityAntenna() {
         if (space instanceof PriorityAntenna) {
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/PriorityAntenna.jpg");
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/PriorityAntenna.jpg");
         }
     }
 
     public void updateRebootToken() {
         if (space instanceof RebootToken) {
-            setImage("file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/RebootToken.jpg");
+            setImage("file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/RebootToken.jpg");
         }
     }
 
@@ -203,10 +203,10 @@ public class SpaceView extends StackPane implements ViewObserver {
             Gear gear = (Gear) space;
             if (gear.clockwise) {
                 setImage(
-                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/GearClockwise.jpg");
+                        "file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/GearClockwise.jpg");
             } else {
                 setImage(
-                        "file:roborally-initial/src/main/java/dk/dtu/compute/se/pisd/roborally/image/GearCounterClockwise.jpg");
+                        "file:src/main/java/dk/dtu/compute/se/pisd/roborally/image/GearCounterClockwise.jpg");
             }
         }
     }

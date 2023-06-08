@@ -79,7 +79,6 @@ public class GameController {
 
     }
 
-    // XXX: V2
     /**
      * <p>startProgrammingPhase.</p>
      */
@@ -108,14 +107,12 @@ public class GameController {
     /** 
      * @return CommandCard
      */
-    // XXX: V2
     private CommandCard generateRandomCommandCard() {
         Command[] commands = Command.values();
         int random = (int) (Math.random() * commands.length);
         return new CommandCard(commands[random]);
     }
 
-    // XXX: V2
     /**
      * <p>finishProgrammingPhase.</p>
      */
@@ -168,7 +165,6 @@ public class GameController {
 
     }
 
-    // XXX: V2
     private void makeProgramFieldsVisible(int register) {
         if (register >= 0 && register < Player.NO_REGISTERS) {
             for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -179,7 +175,6 @@ public class GameController {
         }
     }
 
-    // XXX: V2
     private void makeProgramFieldsInvisible() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -190,7 +185,6 @@ public class GameController {
         }
     }
 
-    // XXX: V2
     /**
      * <p>executePrograms.</p>
      */
@@ -199,7 +193,6 @@ public class GameController {
         continuePrograms();
     }
 
-    // XXX: V2
     /**
      * <p>executeStep.</p>
      */

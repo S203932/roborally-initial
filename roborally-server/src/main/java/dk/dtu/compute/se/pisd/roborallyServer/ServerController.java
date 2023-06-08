@@ -1,0 +1,79 @@
+package dk.dtu.compute.se.pisd.roborallyServer;
+
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import dk.dtu.compute.se.pisd.roborallyServer.model.Lobby;
+import dk.dtu.compute.se.pisd.roborallyServer.model.LobbyPlayer;
+import dk.dtu.compute.se.pisd.roborallyServer.model.State;
+
+@RestController
+public class ServerController {
+
+    private final String successful = "Successful!";
+    private final String unsuccessful = "Unsuccessful!";
+
+    @Autowired
+    private IServerService gameService;
+    String response;
+
+    @GetMapping(value = "/ping")
+    public ResponseEntity<String> getPong() {
+        String result = gameService.getPong();
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping(value = "/state")
+    public ResponseEntity<State> getState() {
+        State state = gameService.getState();
+        return ResponseEntity.ok().body(state);
+    }
+
+    @PostMapping(value = "/lobby/{id}")
+    public ResponseEntity<String> playerJoinLobby(@PathVariable int id, @RequestBody LobbyPlayer player) {
+        if (gameService.playerJoinLobby(id, player)) {
+            response = successful;
+        } else {
+            response = unsuccessful;
+        }
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping(value = "/lobby")
+    public ResponseEntity<String> createLobby(@RequestBody Lobby lobby) {
+        if (gameService.createLobby(lobby)) {
+            response = successful;
+        } else {
+            response = unsuccessful;
+        }
+
+        return ResponseEntity.ok().body(response);
+
+    }
+
+    @DeleteMapping(value = "/lobby/{id}")
+    public ResponseEntity<String> deleteLobby(@PathVariable int id) {
+        if (gameService.deleteLobby(id)) {
+            response = successful;
+        } else {
+            response = unsuccessful;
+        }
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping(value = "/lobbies")
+    public ResponseEntity<ArrayList<Lobby>> getLobbies() {
+        ArrayList<Lobby> lobbies = gameService.getLobbies();
+        return ResponseEntity.ok().body(lobbies);
+    }
+}
