@@ -37,18 +37,17 @@ import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Course;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +57,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.io.File;
 import java.io.FileReader;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -186,7 +184,7 @@ public class AppController implements Observer {
     private Lobby createLobby() {
         // Create a custom Dialog that will return two strings
 
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        Dialog<Pair<String, Integer>> dialog = new Dialog<>();
         dialog.setTitle("Create a lobby");
         dialog.setHeaderText("Customize your lobby");
 
@@ -199,14 +197,17 @@ public class AppController implements Observer {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
-        // Add text fields and labels
+        // Add text field, choice box and labels
         TextField lobbyName = new TextField();
-        TextField lobbyMaxPlayerCount = new TextField();
+        ChoiceBox<Integer> lobbyPlayerCount = new ChoiceBox<Integer>();
+        lobbyPlayerCount.getItems().addAll(PLAYER_NUMBER_OPTIONS);
+        lobbyPlayerCount.setValue(PLAYER_NUMBER_OPTIONS.get(0));
 
         gridPane.add(new Label("Lobby name:"), 0, 0);
         gridPane.add(lobbyName, 1, 0);
-        gridPane.add(new Label("Max player count (2-6):"), 0, 1);
-        gridPane.add(lobbyMaxPlayerCount, 1, 1);
+
+        gridPane.add(new Label("Max player count:"), 0, 1);
+        gridPane.add(lobbyPlayerCount, 1, 1);
 
         // Add content to dialog
         dialog.getDialogPane().setContent(gridPane);
@@ -214,29 +215,18 @@ public class AppController implements Observer {
         // Ensure that the text fields are returned as a result and not the buttons
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == okButton) {
-                return new Pair<>(lobbyName.getText(), lobbyMaxPlayerCount.getText());
+                return new Pair<>(lobbyName.getText(), lobbyPlayerCount.getValue());
             }
             return null;
         });
 
-        Optional<Pair<String, String>> result = dialog.showAndWait();
+        Optional<Pair<String, Integer>> result = dialog.showAndWait();
 
         // Ensure that the input is usable
-        if (!result.isEmpty() && result.get().getKey().length() > 0 && result.get().getValue().length() > 0) {
-            // Check if the max number of players is an int
-            int maxPlayerCount;
-
-            try {
-                maxPlayerCount = Integer.parseInt(result.get().getValue());
-            } catch (NumberFormatException e) {
-                // TODO: handle exception
-                return null;
-            }
-            if (maxPlayerCount >= 2 && maxPlayerCount <= 6) {
-                return new Lobby(result.get().getKey(), getLobbyId(), maxPlayerCount);
-            }
-
+        if (!result.isEmpty() && result.get().getKey().length() > 0) {
+            return new Lobby(result.get().getKey(), getLobbyId(), result.get().getValue());
         }
+
         showAlert("Invalid server configuration", "Try again with a valid configuration");
         return null;
     }
@@ -301,55 +291,62 @@ public class AppController implements Observer {
         dialog.setHeaderText("Select number of players");
         Optional<Integer> result = dialog.showAndWait();
 
-        if (!result.isEmpty()) {
-            // Load courses from json files
-            ArrayList<String> courseNames = new ArrayList<String>();
-            ArrayList<Course> jsonCourses = new ArrayList<Course>();
+        // Select a course
+        Course course = null;
+        do {
+            course = selectCourse();
 
-            try {
-                System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        } while (course == null);
 
-                File courses = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
+        Board board = new Board(course);
+        gameController = new GameController(board);
+        int no = result.get();
 
-                Gson gson = new Gson();
-                Course jsonCourse = null;
-
-                for (File course : courses.listFiles()) {
-                    jsonCourse = gson.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
-                    courseNames.add(jsonCourse.game_name);
-                    jsonCourses.add(jsonCourse);
-                }
-
-            } catch (Exception e) {
-                // Should not be any exceptions with valid JSON files
-            }
-
-            // Show dialog window
-            ChoiceDialog<String> courseDialog = new ChoiceDialog<>(courseNames.get(0), courseNames);
-            courseDialog.setTitle("Course");
-            courseDialog.setHeaderText("Select a course");
-            Optional<String> courseResult = courseDialog.showAndWait();
-
-            if (!courseResult.isEmpty()) {
-                Course selectedCourse = jsonCourses.get(courseNames.indexOf(courseResult.get()));
-
-                Board board = new Board(selectedCourse);
-                gameController = new GameController(board);
-                int no = result.get();
-
-                for (int i = 0; i < no; i++) {
-                    Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
-                    board.addPlayer(player);
-                    player.setSpace(board.getStartGear(i));
-                }
-
-                // XXX: V2
-                // board.setCurrentPlayer(board.getPlayer(0));
-                gameController.startProgrammingPhase();
-
-                roboRally.createBoardView(gameController);
-            }
+        for (int i = 0; i < no; i++) {
+            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
+            board.addPlayer(player);
+            player.setSpace(board.getStartGear(i));
         }
+
+        // XXX: V2
+        // board.setCurrentPlayer(board.getPlayer(0));
+        gameController.startProgrammingPhase();
+
+        roboRally.createBoardView(gameController);
+    }
+
+    private Course selectCourse() {
+        // Load courses from json files
+        ArrayList<String> courseNames = new ArrayList<String>();
+        ArrayList<Course> jsonCourses = new ArrayList<Course>();
+
+        try {
+            File courses = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses");
+
+            Gson gson = new Gson();
+            Course jsonCourse = null;
+
+            for (File course : courses.listFiles()) {
+                jsonCourse = gson.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
+                courseNames.add(jsonCourse.game_name);
+                jsonCourses.add(jsonCourse);
+            }
+
+        } catch (Exception e) {
+            // Should not be any exceptions with valid JSON files
+        }
+
+        // Show dialog window
+        ChoiceDialog<String> courseDialog = new ChoiceDialog<>(courseNames.get(0), courseNames);
+        courseDialog.setTitle("Course");
+        courseDialog.setHeaderText("Select a course");
+        Optional<String> courseResult = courseDialog.showAndWait();
+
+        if (!courseResult.isEmpty()) {
+            Course selectedCourse = jsonCourses.get(courseNames.indexOf(courseResult.get()));
+            return selectedCourse;
+        }
+        return null;
     }
 
     /**
