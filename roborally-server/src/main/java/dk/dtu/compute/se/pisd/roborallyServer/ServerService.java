@@ -1,10 +1,15 @@
 package dk.dtu.compute.se.pisd.roborallyServer;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import dk.dtu.compute.se.pisd.roborallyServer.model.Lobby;
 import dk.dtu.compute.se.pisd.roborallyServer.model.LobbyPlayer;
@@ -17,6 +22,8 @@ public class ServerService implements IServerService {
 
     public State state = new State("Initial");
     public HashMap<Integer, Lobby> lobbies = new HashMap<Integer, Lobby>();
+
+    Gson gson = new GsonBuilder().create();
 
     @Override
     public String getPong() {
@@ -35,7 +42,11 @@ public class ServerService implements IServerService {
 
     @Override
     public boolean playerJoinLobby(int id, LobbyPlayer player) {
-        return lobbies.get(id).addPlayer(player);
+        if (lobbies.get(id).getPlayer(id) != null) {
+            return false;
+        } else {
+            return lobbies.get(id).addPlayer(player);
+        }
     }
 
     @Override
@@ -73,6 +84,25 @@ public class ServerService implements IServerService {
     @Override
     public ArrayList<Lobby> getLobbies() {
         return new ArrayList<Lobby>(lobbies.values());
+    }
+
+    @Override
+    public boolean saveLobbyGame(Lobby lobby) {
+        if (lobbies.containsKey(lobby.getId())) {
+            try {
+                String lobbyFileName = lobby.getId() + "-" + lobby.getName() + ".json";
+
+                FileWriter fileWriter = new FileWriter(
+                        "src/main/java/dk/dtu/compute/se/pisd/roborallyServer/savedGames/" + lobbyFileName);
+                gson.toJson(lobby, fileWriter);
+                fileWriter.flush();
+                fileWriter.close();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
 }

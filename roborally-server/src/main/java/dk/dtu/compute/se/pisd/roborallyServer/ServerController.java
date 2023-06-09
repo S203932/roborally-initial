@@ -38,6 +38,17 @@ public class ServerController {
         return ResponseEntity.ok().body(state);
     }
 
+    @PutMapping(value = "/lobby/save")
+    public ResponseEntity<String> saveLobbyGame(@RequestBody Lobby lobby) {
+        if (gameService.saveLobbyGame(lobby)) {
+            response = successful;
+        } else {
+            response = unsuccessful;
+        }
+
+        return ResponseEntity.ok().body(response);
+    }
+
     @PostMapping(value = "/lobby/{id}")
     public ResponseEntity<String> playerJoinLobby(@PathVariable int id, @RequestBody LobbyPlayer player) {
         if (gameService.playerJoinLobby(id, player)) {

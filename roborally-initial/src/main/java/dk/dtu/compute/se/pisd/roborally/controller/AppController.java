@@ -62,6 +62,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * ...
@@ -106,7 +108,7 @@ public class AppController implements Observer {
 
         Optional<String> result = dialog.showAndWait();
 
-        if (!result.isEmpty() && result.get().length() != 0) {
+        if (!result.isEmpty() && result.get().length() > 0) {
             String pingResult = null;
             client = new ServerClient(result.get());
 
@@ -137,7 +139,9 @@ public class AppController implements Observer {
         nameDialog.setHeaderText("Enter your username (1-32 characters long)");
 
         result = nameDialog.showAndWait();
-        if (result.isEmpty() || !result.isEmpty() && (result.get().length() == 0 || result.get().length() > 32)) {
+        if (result.isEmpty()) {
+            return;
+        } else if (!validName(result.get())) {
             showAlert("Invalid name", "Try again with a valid name");
             return;
         }
@@ -288,6 +292,8 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
+                        System.out.println(client.saveLobbyGame(lobby));
+
                         break;
 
                     case RIGHT:
@@ -352,11 +358,14 @@ public class AppController implements Observer {
         Optional<Pair<String, Integer>> result = dialog.showAndWait();
 
         // Ensure that the input is usable
-        if (!result.isEmpty() && result.get().getKey().length() > 0) {
-            return new Lobby(result.get().getKey(), getLobbyId(), result.get().getValue());
+        if (!result.isEmpty()) {
+            if (validName(result.get().getKey())) {
+                return new Lobby(result.get().getKey(), getLobbyId(), result.get().getValue());
+            } else {
+                showAlert("Invalid server configuration", "Try again with a valid configuration");
+            }
         }
 
-        showAlert("Invalid server configuration", "Try again with a valid configuration");
         return null;
     }
 
@@ -470,6 +479,18 @@ public class AppController implements Observer {
         return null;
     }
 
+    /***
+     * Check if a name is valid for a lobby, saved game and player name
+     * @param name
+     * @return
+     */
+    private boolean validName(String name) {
+
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9- æøåÆØÅ]{1,32}$");
+        Matcher matcher = pattern.matcher(name);
+        return matcher.find();
+    }
+
     /**
      * <p>saveGame.</p>
      */
@@ -483,47 +504,20 @@ public class AppController implements Observer {
         inputDialog.setTitle("Save game");
         inputDialog.setContentText("Please state the name of the file to save to:");
         Optional<String> result = inputDialog.showAndWait();
-        if (!(result.isEmpty())) {
+        if (!(result.isEmpty()) && validName(result.get())) {
             String tempFilePath = "src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
-            String newFileName = result.get();
-
-            for (int i = 0; i < newFileName.length(); i++) {
-                if ((newFileName.charAt(i) == '.' && i != newFileName.length() - 5) || newFileName.charAt(i) == ' '
-                        || (newFileName.charAt(i) < '0' && newFileName.charAt(i) != '.') || (newFileName.charAt(i) > '9'
-                                && newFileName.charAt(i) < 'A')
-                        || (newFileName.charAt(i) > 'Z' && newFileName.charAt(i) < 'a')
-                        || newFileName.charAt(i) > 'z' || (i == newFileName.length() - 5 && newFileName.charAt(i) == '.'
-                                && (newFileName.charAt(i + 1) != 'j' || newFileName.charAt(i + 2) != 's'
-                                        || newFileName.charAt(i + 3) != 'o'
-                                        || newFileName.charAt(i + 4) != 'n'))) {
-                    newFileName = "Default.json";
-                    break;
-                }
-            }
-
-            if (newFileName == "") {
-                newFileName = "Default.json";
-            } else if ((newFileName.length() >= 5 && newFileName.charAt(newFileName.length() - 5) != '.')
-                    || newFileName.length() < 5) {
-                newFileName += ".json";
-            }
-            try {
-                File newFile = new File(tempFilePath + newFileName);
-                newFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String newFileName = result.get() + ".json";
 
             try {
                 FileWriter fileWriter = new FileWriter(tempFilePath + newFileName);
-                String boardString = gson.toJson(this.gameController.getBoard());
-                for (int i = 0; i < boardString.length(); i++)
-                    fileWriter.write(boardString.charAt(i));
+                gson.toJson(this.gameController.getBoard(), fileWriter);
                 fileWriter.flush();
                 fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            showAlert("Invalid name", "Choose a valid name to save the game");
         }
 
     }

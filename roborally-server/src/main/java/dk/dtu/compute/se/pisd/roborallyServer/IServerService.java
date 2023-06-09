@@ -12,6 +12,8 @@ public interface IServerService {
 
     public State getState();
 
+    public boolean saveLobbyGame(Lobby lobby);
+
     public void putState(State state);
 
     public boolean playerJoinLobby(int id, LobbyPlayer player);
