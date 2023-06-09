@@ -71,6 +71,23 @@ public class ServerController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping(value = "/lobby/{id}/{playerId}")
+    public ResponseEntity<String> removePlayerFromLobby(@PathVariable int id, @PathVariable int playerId) {
+        if (gameService.removePlayerFromLobby(id, playerId)) {
+            response = successful;
+        } else {
+            response = unsuccessful;
+        }
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping(value = "/lobby/{id}")
+    public ResponseEntity<Lobby> getLobby(@PathVariable int id) {
+        Lobby lobby = gameService.getLobby(id);
+        return ResponseEntity.ok().body(lobby);
+    }
+
     @GetMapping(value = "/lobbies")
     public ResponseEntity<ArrayList<Lobby>> getLobbies() {
         ArrayList<Lobby> lobbies = gameService.getLobbies();

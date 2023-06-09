@@ -20,6 +20,10 @@ public interface IServerService {
 
     public boolean deleteLobby(int id);
 
+    public boolean removePlayerFromLobby(int id, int playerId);
+
+    public Lobby getLobby(int id);
+
     public ArrayList<Lobby> getLobbies();
 
 }

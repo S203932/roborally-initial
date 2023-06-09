@@ -58,6 +58,19 @@ public class ServerService implements IServerService {
     }
 
     @Override
+    public boolean removePlayerFromLobby(int id, int playerId) {
+        if (lobbies.containsKey(id)) {
+            return lobbies.get(id).removePlayer(lobbies.get(id).getPlayer(playerId));
+        }
+        return false;
+    }
+
+    @Override
+    public Lobby getLobby(int id) {
+        return lobbies.get(id);
+    }
+
+    @Override
     public ArrayList<Lobby> getLobbies() {
         return new ArrayList<Lobby>(lobbies.values());
     }

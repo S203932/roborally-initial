@@ -3,15 +3,14 @@ package dk.dtu.compute.se.pisd.roborallyServer.model;
 public class LobbyPlayer {
 
     private String name;
-    private int id;
+    private int id = 0;
 
     public LobbyPlayer() {
 
     }
 
-    public LobbyPlayer(String name, int id) {
+    public LobbyPlayer(String name) {
         this.name = name;
-        this.id = id;
     }
 
     public int getId() {
