@@ -39,18 +39,42 @@ public class Lobby {
         return players;
     }
 
+    public LobbyPlayer getPlayer(int id) {
+        for (LobbyPlayer lobbyPlayer : players) {
+            if (lobbyPlayer.getId() == id) {
+                return lobbyPlayer;
+            }
+        }
+        return null;
+    }
+
     public int getPlayersCount() {
         return players.size();
     }
 
     public boolean addPlayer(LobbyPlayer player) {
         // Ensure that not too many players get into the lobby
-        if (players.size() == playerCount) {
+        if (isFull()) {
             return false;
         }
-        // Check if 
+
+        // Ensure players have unique IDs
+        if (getPlayer(player.getId()) != null) {
+            return false;
+        }
+
         players.add(player);
         return true;
+    }
+
+    public boolean removePlayer(LobbyPlayer lobbyPlayer) {
+
+        // Ensure that the player exists
+        if (getPlayer(lobbyPlayer.getId()) != null) {
+            players.remove(lobbyPlayer);
+            return true;
+        }
+        return false;
     }
 
     public int getPlayerCount() {

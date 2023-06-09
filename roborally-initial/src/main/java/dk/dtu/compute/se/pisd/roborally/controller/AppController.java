@@ -164,7 +164,6 @@ public class AppController implements Observer {
 
                 // Leave player ID to set to lobby host (0)
                 client.createLobby(lobby);
-
             }
 
             // Try to join the selected game
@@ -189,7 +188,6 @@ public class AppController implements Observer {
             } while (!client.playerJoinLobby(lobby.getId(), lobbyPlayer));
 
             waitingRoom();
-
         }
     }
 
@@ -198,31 +196,39 @@ public class AppController implements Observer {
      */
     private void waitingRoom() {
         if (lobbyPlayer.getId() == LOBBY_HOST) {
-            waitingRoomHost();
+            waitingRoom(true);
         } else {
-            waitingRoomNonHost();
+            waitingRoom(false);
+            // waitingRoomNonHost();
         }
 
         // Start the game here upon button
 
     }
 
-    private void waitingRoomHost() {
+    private void waitingRoom(boolean host) {
         Course course = null;
         while (true) {
             // Create a custom Dialog that will return a string and an int
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle(lobby.getName() + " lobby");
-            dialog.setHeaderText("Configure your game");
+            if (host) {
+                dialog.setHeaderText("Configure your game");
+            } else {
+                dialog.setHeaderText("Waiting for host to configure and start game");
+            }
 
-            ButtonType startGameButton = new ButtonType("Start game", ButtonData.OK_DONE);
-            ButtonType deleteLobbyButton = new ButtonType("Delete lobby", ButtonData.CANCEL_CLOSE);
-            ButtonType selectCourseButton = new ButtonType("Select course", ButtonData.OTHER);
             ButtonType refreshLobbyButton = new ButtonType("Refresh lobby", ButtonData.LEFT);
-            dialog.getDialogPane().getButtonTypes().addAll(startGameButton, deleteLobbyButton, selectCourseButton,
-                    refreshLobbyButton);
-
-            selectCourseButton.getButtonData();
+            if (host) {
+                ButtonType startGameButton = new ButtonType("Start game", ButtonData.OK_DONE);
+                ButtonType deleteLobbyButton = new ButtonType("Delete lobby", ButtonData.CANCEL_CLOSE);
+                ButtonType selectCourseButton = new ButtonType("Select course", ButtonData.OTHER);
+                dialog.getDialogPane().getButtonTypes().addAll(startGameButton, deleteLobbyButton, selectCourseButton,
+                        refreshLobbyButton);
+            } else {
+                ButtonType exitLobbyButton = new ButtonType("Exit lobby", ButtonData.RIGHT);
+                dialog.getDialogPane().getButtonTypes().addAll(exitLobbyButton, refreshLobbyButton);
+            }
 
             // Create grid for placing text fields
             GridPane gridPane = new GridPane();
@@ -232,6 +238,10 @@ public class AppController implements Observer {
 
             // Update lobby
             lobby = client.getLobby(lobby.getId());
+            if (lobby == null) {
+                showAlert("Invalid lobby", "The server host has closed the server");
+                return;
+            }
 
             // Add lobbyLabel
             String lobbyLabelString = "Currently joined players: " + lobby.getPlayersCount() + "/"
@@ -248,7 +258,7 @@ public class AppController implements Observer {
             String playerStrings = "";
             for (LobbyPlayer lobbyPlayer : lobby.getPlayers()) {
                 playerStrings = playerStrings.concat(lobbyPlayer.getId() + " - " + lobbyPlayer.getName()
-                        + (lobbyPlayer.getId() == LOBBY_HOST ? " (host)" : "(non-host)")
+                        + (lobbyPlayer.getId() == LOBBY_HOST ? " (host)" : " (non-host)")
                         + (lobbyPlayer.getId() != lobby.getPlayerCount() - 1 ? "\n" : ""));
             }
             gridPane.add(new Label(playerStrings), 0, 1);
@@ -257,7 +267,6 @@ public class AppController implements Observer {
             dialog.getDialogPane().setContent(gridPane);
 
             Optional<ButtonType> result = dialog.showAndWait();
-            System.out.println(result);
 
             if (!result.isEmpty()) {
                 switch (result.get().getButtonData()) {
@@ -266,6 +275,7 @@ public class AppController implements Observer {
                             showAlert("Select course", "Game cannot be started without a selecting a course");
                         } else if (lobby.getPlayersCount() == lobby.getPlayerCount()) {
                             System.out.println("starting game");
+                            // TODO start game
                         } else {
                             showAlert("Not enough players", "The lobby does not have enough players to start.");
                         }
@@ -280,8 +290,11 @@ public class AppController implements Observer {
                         System.out.println("Refreshing");
                         break;
 
+                    case RIGHT:
+                        client.removePlayerFromLobby(lobby.getId(), lobbyPlayer.getId());
+                        return;
+
                     case CANCEL_CLOSE:
-                        System.out.println("Deleting game");
                         client.deleteLobby(lobby.getId());
                         return;
 
@@ -291,10 +304,6 @@ public class AppController implements Observer {
 
             }
         }
-    }
-
-    private void waitingRoomNonHost() {
-
     }
 
     /**
