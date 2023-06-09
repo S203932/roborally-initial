@@ -21,7 +21,6 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
-import com.google.gson.annotations.Expose;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
@@ -41,8 +40,8 @@ import java.util.Arrays;
  * @version $Id: $Id
  */
 public class GameController {
-    @Expose
-    public Board board;
+
+    final public Board board;
 
     /**
      * <p>Constructor for GameController.</p>
@@ -79,6 +78,7 @@ public class GameController {
 
     }
 
+    // XXX: V2
     /**
      * <p>startProgrammingPhase.</p>
      */
@@ -104,15 +104,14 @@ public class GameController {
         }
     }
 
-    /** 
-     * @return CommandCard
-     */
+    // XXX: V2
     private CommandCard generateRandomCommandCard() {
         Command[] commands = Command.values();
         int random = (int) (Math.random() * commands.length);
         return new CommandCard(commands[random]);
     }
 
+    // XXX: V2
     /**
      * <p>finishProgrammingPhase.</p>
      */
@@ -165,6 +164,7 @@ public class GameController {
 
     }
 
+    // XXX: V2
     private void makeProgramFieldsVisible(int register) {
         if (register >= 0 && register < Player.NO_REGISTERS) {
             for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -175,6 +175,7 @@ public class GameController {
         }
     }
 
+    // XXX: V2
     private void makeProgramFieldsInvisible() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -185,6 +186,7 @@ public class GameController {
         }
     }
 
+    // XXX: V2
     /**
      * <p>executePrograms.</p>
      */
@@ -193,6 +195,7 @@ public class GameController {
         continuePrograms();
     }
 
+    // XXX: V2
     /**
      * <p>executeStep.</p>
      */
@@ -208,106 +211,7 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
-    /**
-     * Check if a player should get a checkpoint and if a player has reached all checkpoints
-     */
-    private void checkCheckpoint() {
-        // Check if a player should get checkpoint
-        for (int i = 0; i < board.getPlayersNumber(); i++) {
-            Player tempPlayer = board.getPlayer(i);
-            if (tempPlayer.getSpace() instanceof Checkpoint) {
-                Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
-                if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
-                    tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
-                }
-            }
-        }
-
-        // Check if any of the players have reached the last checkpoint
-        for (int i = 0; i < board.getPlayersNumber(); i++) {
-            Player tempPlayer = board.getPlayer(i);
-            if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
-                board.setPhase(Phase.END_GAME);
-                startEndGamePhase(tempPlayer);
-            }
-        }
-
-    }
-
-    /** 
-     * Check if any players are on a conveyor and move them accordingly.
-     * @param player
-     */
-    private void checkConveyor(Player player) {
-        // Check if a player should be moved on a conveyor
-        if (player.getSpace() instanceof Conveyor) {
-            Conveyor conveyor = (Conveyor) player.getSpace();
-            Conveyor previousConveyor = null;
-
-            for (int i = 0; i < conveyor.getSpeed(); i++) {
-                // Move player to the neighbor
-                Space newSpace = board.getNeighbour(conveyor, conveyor.getFacing());
-                player.setSpace(newSpace);
-
-                // Check if the tile is still a conveyor and should still move the player
-                if (player.getSpace() instanceof Conveyor) {
-                    previousConveyor = conveyor;
-                    conveyor = (Conveyor) player.getSpace();
-
-                } else {
-                    break;
-                }
-            }
-            // Check if the player should be rotated 90 degrees in the direction of the conveyor's turn
-            if (conveyor.shouldTurn() && conveyor.getFacing() != previousConveyor.getFacing()) {
-
-                // Check which direction the player should be rotated 
-                // This could probably be done more efficiently but is left as is for now
-                int rotatePrev = 0;
-                int rotateNext = 0;
-                Heading tempFacing = previousConveyor.getFacing();
-
-                while (tempFacing != conveyor.getFacing()) {
-                    tempFacing = tempFacing.next();
-                    rotateNext++;
-                }
-
-                tempFacing = previousConveyor.getFacing();
-
-                while (tempFacing != conveyor.getFacing()) {
-                    tempFacing = tempFacing.prev();
-                    rotatePrev++;
-                }
-
-                // Rotate next direction
-                if (rotateNext < rotatePrev) {
-                    player.setHeading(player.getHeading().next());
-
-                }
-                // Rotate prev direction
-                else {
-                    player.setHeading(player.getHeading().prev());
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if a player is on a gear and should be rotated.
-     */
-    private void checkGear() {
-        for (int i = 0; i < board.getPlayersNumber(); i++) {
-            if (board.getPlayer(i).getSpace() instanceof Gear) {
-                Gear gear = (Gear) board.getPlayer(i).getSpace();
-                gear.getClockwise();
-                if (gear.getClockwise() == true) {
-                    board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
-                } else {
-                    board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().prev());
-                }
-            }
-        }
-    }
+    // XXX: V2
 
     /**
      * A method used for executing the cards in the activation phase. The method goes through a given card
@@ -330,11 +234,77 @@ public class GameController {
                     }
                 }
 
-                if (step == 0) {
-                    checkConveyor(currentPlayer);
+                // Check if a player should be moved on a conveyor
+                if (currentPlayer.getSpace() instanceof Conveyor && step == 0) {
+                    Conveyor conveyor = (Conveyor) currentPlayer.getSpace();
+                    Conveyor previousConveyor = null;
+
+                    for (int i = 0; i < conveyor.getSpeed(); i++) {
+                        // Move player to the neighbor
+                        Space newSpace = board.getNeighbour(conveyor, conveyor.getFacing());
+                        currentPlayer.setSpace(newSpace);
+
+                        // Check if the tile is still a conveyor and should still move the player
+                        if (currentPlayer.getSpace() instanceof Conveyor) {
+                            previousConveyor = conveyor;
+                            conveyor = (Conveyor) currentPlayer.getSpace();
+                            // if (currentPlayer.getSpace() instanceof Conveyor && )
+                        } else {
+                            break;
+                        }
+                    }
+                    // Check if the player should be rotated 90 degrees in the direction of the conveyor's turn
+                    if (conveyor.shouldTurn() && conveyor.getFacing() != previousConveyor.getFacing()) {
+
+                        // Check which direction the player should be rotated
+                        // This could probably be done more efficiently but is left as is for now
+                        int rotatePrev = 0;
+                        int rotateNext = 0;
+                        Heading tempFacing = previousConveyor.getFacing();
+
+                        while (tempFacing != conveyor.getFacing()) {
+                            tempFacing = tempFacing.next();
+                            rotateNext++;
+                        }
+
+                        tempFacing = previousConveyor.getFacing();
+
+                        while (tempFacing != conveyor.getFacing()) {
+                            tempFacing = tempFacing.prev();
+                            rotatePrev++;
+                        }
+
+                        // Rotate next direction
+                        if (rotateNext < rotatePrev) {
+                            currentPlayer.setHeading(currentPlayer.getHeading().next());
+
+                        }
+                        // Rotate prev direction
+                        else {
+                            currentPlayer.setHeading(currentPlayer.getHeading().prev());
+                        }
+                    }
                 }
 
-                checkCheckpoint();
+                // Check if a player should get checkpoint
+                for (int i = 0; i < board.getPlayersNumber(); i++) {
+                    Player tempPlayer = board.getPlayer(i);
+                    if (tempPlayer.getSpace() instanceof Checkpoint) {
+                        Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
+                        if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
+                            tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
+                        }
+                    }
+                }
+
+                //Check if any of the players have reached the last checkpoint
+                for (int i = 0; i < board.getPlayersNumber(); i++) {
+                    Player tempPlayer = board.getPlayer(i);
+                    if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
+                        board.setPhase(Phase.END_GAME);
+                        startEndGamePhase(tempPlayer);
+                    }
+                }
 
                 if (board.getPhase() != Phase.END_GAME) {
                     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
@@ -351,7 +321,18 @@ public class GameController {
                         }
                     }
                 }
-                checkGear();
+
+                for (int i = 0; i < board.getPlayersNumber(); i++) {
+                    if (board.getPlayer(i).getSpace() instanceof Gear) {
+                        Gear gear = (Gear) board.getPlayer(i).getSpace();
+                        gear.getClockwise();
+                        if (gear.getClockwise() == true) {
+                            board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().next());
+                        } else {
+                            board.getPlayer(i).setHeading(board.getPlayer(i).getHeading().prev());
+                        }
+                    }
+                }
 
             } else {
                 // this should not happen
@@ -383,11 +364,9 @@ public class GameController {
                 case FAST_FORWARD:
                     this.fastForward(player);
                     break;
-                /*case SPAM:
+               /* case SPAM:
                     removeSpam(player);
-                    break;
-
-                 */
+                   break;*/
                 default:
                     // DO NOTHING (for now)
             }
@@ -405,15 +384,16 @@ public class GameController {
 
         if (player != null && player.board == board && space != null) {
             Heading heading = player.getHeading();
-            Heading newWallBlockHeading = heading.next().next();
+            Heading pushDirection = heading.next().next(); // Calculate the push direction
             Space target = board.getNeighbour(space, heading);
+
 
             boolean wallBlock = false;
 
             if (target instanceof Wall) {
                 Wall targetWall = (Wall) target;
 
-                if (Arrays.asList(targetWall.getFacing()).contains(newWallBlockHeading)) {
+                if (Arrays.asList(targetWall.getFacing()).contains(pushDirection)) {
                     wallBlock = true;
                 }
 
@@ -425,14 +405,138 @@ public class GameController {
                 }
             }
 
-            // XXX note that this removes an other player from the space, when there
-            //     is another player on the target. Eventually, this needs to be
-            //     implemented in a way so that other players are pushed away!
             if (!wallBlock) {
-                target.setPlayer(player);
+                if (target != null && target.getPlayer() == null) {
+                    target.setPlayer(player);
+                } else if (target != null && target.getPlayer() != null) {
+                    movenextForward(target.getPlayer(), heading); // Move the player in the target space
+                    if (target.getPlayer() == null) target.setPlayer(player);
+                }
+            }
+             /*   if (target.getPlayer() != null) {
+                // Call the recursive method to handle the case when the target space is occupied
+                moveForward(target.getPlayer());
+            }*/
+
+        }
+    }
+
+    public void movenextForward(@NotNull Player player, Heading direction) {
+        Space space = player.getSpace();
+
+        if (player != null && player.board == board && space != null) {
+            Heading heading = direction;
+            Heading pushDirection = heading.next().next(); // Calculate the push direction
+            Space target = board.getNeighbour(space, heading);
+
+
+            boolean wallBlock = false;
+
+            if (target instanceof Wall) {
+                Wall targetWall = (Wall) target;
+
+                if (Arrays.asList(targetWall.getFacing()).contains(pushDirection)) {
+                    wallBlock = true;
+                }
+
+            } else if (space instanceof Wall) {
+                Wall wall = (Wall) space;
+
+                if (Arrays.asList(wall.getFacing()).contains(heading)) {
+                    wallBlock = true;
+                }
+            }
+
+            if (!wallBlock) {
+                if (target != null && target.getPlayer() == null) {
+                    target.setPlayer(player);
+                } else if (target != null && target.getPlayer() != null) {
+                    movenextForward(target.getPlayer(), heading); // Move the player in the target space
+                    if (target.getPlayer() == null) target.setPlayer(player);
+
+                }
             }
         }
     }
+
+    private void moveOccupiedPlayer(Space space, Heading heading) {
+        Player currentPlayer = space.getPlayer();
+        Space target = board.getNeighbour(space, heading);
+        Space current = board.getNeighbour(space, heading);
+        Heading newWallBlockHeading = heading.next().next();
+/*
+        while (target != null && !(target instanceof Wall) && target.getPlayer() != null) {
+            space = target;
+            target = board.getNeighbour(space, heading);
+
+            if (target instanceof Wall) {
+                break; // Break out of the loop if the target space is a wall
+            }
+        }
+*/
+        while (current != null && !(current instanceof Wall) && current.getPlayer() != null) {
+            space = current;
+            current = board.getNeighbour(space, heading);
+
+            if (current instanceof Wall) {
+                break; // Break out of the loop if the target space is a wall
+            }
+        }
+
+        if(board.getNeighbour(current, heading).getPlayer() == null && !(board.getNeighbour(current, heading) instanceof Wall) && !(current instanceof Wall)) {
+            if (!(target instanceof Wall)) {
+                // Check if the target space is available
+               /* if (target != null && target.getPlayer() == null) {
+                    boolean wallBlock = false;
+
+                    if (target instanceof Wall) {
+                        Wall targetWall = (Wall) target;
+
+                        if (Arrays.asList(targetWall.getFacing()).contains(newWallBlockHeading)) {
+                            wallBlock = true;
+                        }
+
+                    } else if (space instanceof Wall) {
+                        Wall wall = (Wall) space;
+
+                        if (Arrays.asList(wall.getFacing()).contains(heading)) {
+                            wallBlock = true;
+                        }
+                    }
+                    if (!wallBlock) {
+
+                    }
+                    */// Move the current player to the target space
+                currentPlayer.setSpace(target);
+                target.setPlayer(currentPlayer);
+            } else {
+                boolean wallBlock = false;
+
+                if (target instanceof Wall) {
+                    Wall targetWall = (Wall) target;
+
+                    if (Arrays.asList(targetWall.getFacing()).contains(newWallBlockHeading)) {
+                        wallBlock = true;
+                    }
+
+                } else if (space instanceof Wall) {
+                    Wall wall = (Wall) space;
+
+                    if (Arrays.asList(wall.getFacing()).contains(heading)) {
+                        wallBlock = true;
+                    }
+                }
+                if (!wallBlock) {
+                    // Move the current player recursively
+                    moveOccupiedPlayer(target, heading);
+                    if (!(target instanceof Wall)) {
+                        currentPlayer.setSpace(target);
+                    }
+                }
+            }
+        }
+    }
+
 
     // TODO: V2
     /**
@@ -540,13 +644,10 @@ public class GameController {
 
     }
 
-    public Board getBoard(){
-        return this.board;
+    public Board getBoard() {
+        return board;
     }
-    /*
-    private void removeSpam(Player player) {
+/* private void removeSpam(Player player) {
         player.getDmgcards().remove(Command.SPAM);
-    }
-
-     */
+    }*/
 }
