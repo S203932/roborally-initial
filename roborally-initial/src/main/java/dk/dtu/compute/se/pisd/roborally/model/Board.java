@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
 
@@ -80,13 +79,13 @@ public class Board extends Subject {
 
     public Board(Course course) {
 
-        this.boardName = course.game_name;
+        this.boardName = course.getGameName();
 
         // Find width from number of elements in the first arraylist inside the main arraylist
-        width = course.board.get(0).size();
+        width = course.getBoard().get(0).size();
 
         // Find height from number of arraylists
-        height = course.board.size();
+        height = course.getBoard().size();
 
         spaces = new Space[width][height];
         Space space = null;
@@ -97,7 +96,7 @@ public class Board extends Subject {
         // Generate the correct spaces:
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                Tile tile = course.board.get(y).get(x);
+                Tile tile = course.getBoard().get(y).get(x);
 
                 // Replace null attributes value with empty Heading array
                 if (tile.attributes == null) {
@@ -164,7 +163,8 @@ public class Board extends Subject {
         this.stepMode = false;
     }
 
-    public void recreateBoardstate(Player currentPlayer, Phase phase, List<Player> players, int step, boolean stepMode){
+    public void recreateBoardstate(Player currentPlayer, Phase phase, List<Player> players, int step,
+            boolean stepMode) {
 
         //Setting phase
         this.phase = phase;
@@ -178,10 +178,9 @@ public class Board extends Subject {
         //Setting stepmode
         this.stepMode = stepMode;
 
-
-
-        for(int i = 0; i < players.size(); i++){
-            Player player = new Player(this,players.get(i).getColor(), players.get(i).getName(), players.get(i).getId());
+        for (int i = 0; i < players.size(); i++) {
+            Player player = new Player(this, players.get(i).getColor(), players.get(i).getName(),
+                    players.get(i).getId());
             player.setCheckpointCount(players.get(i).getCheckpointCount());
             player.setHeading(players.get(i).getHeading());
             player.setProgram(players.get(i).getPrograms());
@@ -191,25 +190,22 @@ public class Board extends Subject {
 
         }
 
-        for(int i = 0; i < players.size(); i++){
-            if(this.players.get(i).getName().equals(currentPlayer.getName())){
+        for (int i = 0; i < players.size(); i++) {
+            if (this.players.get(i).getName().equals(currentPlayer.getName())) {
                 this.current = this.players.get(i);
             }
         }
 
         setPlayersOnSpaces(players);
 
-
     }
 
-
-
-    public void setPlayersOnSpaces(List<Player> oldPlayers){
-        for(int i = 0; i < players.size(); i++){
+    public void setPlayersOnSpaces(List<Player> oldPlayers) {
+        for (int i = 0; i < players.size(); i++) {
             players.get(i).setBoard(this);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    if(oldPlayers.get(i).getSpace().x == x && oldPlayers.get(i).getSpace().y == y){
+                    if (oldPlayers.get(i).getSpace().x == x && oldPlayers.get(i).getSpace().y == y) {
                         players.get(i).setSpace(spaces[x][y]);
                         //spaces[x][y].setPlayer(players.get(i));
                     }
@@ -218,12 +214,12 @@ public class Board extends Subject {
         }
     }
 
-    public List<Player> getPlayers(){
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public boolean getStepmode(){
-        return  this.stepMode;
+    public boolean getStepmode() {
+        return this.stepMode;
     }
 
     /**

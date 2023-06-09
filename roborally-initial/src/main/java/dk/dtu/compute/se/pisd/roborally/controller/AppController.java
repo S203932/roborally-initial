@@ -80,7 +80,12 @@ public class AppController implements Observer {
     private GameController gameController;
     private ServerClient client;
 
-    private final String createLobby = "Create a lobby";
+    // Used for server lobbies
+    private LobbyPlayer lobbyPlayer;
+    private Lobby lobby;
+
+    final private String CREATE_LOBBY = "Create a lobby";
+    final private int LOBBY_HOST = 0;
 
     /**
      * <p>Constructor for AppController.</p>
@@ -105,11 +110,7 @@ public class AppController implements Observer {
             String pingResult = null;
             client = new ServerClient(result.get());
 
-            try {
-                pingResult = client.getPong();
-            } catch (Exception e) {
-                // Show error dialog
-            }
+            pingResult = client.getPong();
 
             // Check if the result is as expected
             if (pingResult != null && pingResult.equals("pong")) {
@@ -128,53 +129,172 @@ public class AppController implements Observer {
 
         // Create player object
         // Get player name
-        LobbyPlayer player = new LobbyPlayer();
+        lobbyPlayer = new LobbyPlayer();
         Optional<String> result = null;
 
         TextInputDialog nameDialog = new TextInputDialog();
         nameDialog.setTitle("Set name");
         nameDialog.setHeaderText("Enter your username (1-32 characters long)");
-        do {
-            result = nameDialog.showAndWait();
-        } while (result.isEmpty() || !result.isEmpty() && (result.get().length() == 0 || result.get().length() > 32));
 
-        player.setName(result.get());
+        result = nameDialog.showAndWait();
+        if (result.isEmpty() || !result.isEmpty() && (result.get().length() == 0 || result.get().length() > 32)) {
+            showAlert("Invalid name", "Try again with a valid name");
+            return;
+        }
+
+        lobbyPlayer.setName(result.get());
 
         // Show lobbies
         HashMap<String, Lobby> lobbies = refreshLobbies();
-        ChoiceDialog<String> lobbyDialog = new ChoiceDialog<String>(createLobby,
+        ChoiceDialog<String> lobbyDialog = new ChoiceDialog<String>(CREATE_LOBBY,
                 new ArrayList<String>(lobbies.keySet()));
         lobbyDialog.setTitle("Lobby browser");
         lobbyDialog.setHeaderText("Select or start a new lobby");
         result = lobbyDialog.showAndWait();
 
         if (!result.isEmpty()) {
-            Lobby lobby = null;
-            // Check if a new game should be made
-            if (result.get().equals(createLobby)) {
-                try {
-                    do {
-                        lobby = createLobby();
-                    } while (lobby == null);
 
-                    client.createLobby(lobby);
-                } catch (Exception e) {
-                    // TODO: handle exception
+            // Check if a new game should be made
+            if (result.get().equals(CREATE_LOBBY)) {
+
+                lobby = createLobby();
+                if (lobby == null) {
+                    return;
                 }
+
+                // Leave player ID to set to lobby host (0)
+                client.createLobby(lobby);
+
             }
+
             // Try to join the selected game
-            else {
-                lobby = lobbies.get(result.get());
-                System.out.println("Joining game");
-                System.out.println(lobby);
-            }
-            try {
-                System.out.println(client.playerJoinLobby(lobby.getId(), player));
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
+            // Join the server with a valid unique player ID
+            do {
+                if (lobby == null) {
+                    lobby = lobbies.get(result.get());
+                }
+
+                // Refresh server information
+                lobby = client.getLobby(lobby.getId());
+
+                // Check that the server is not full
+                if (lobby.isFull()) {
+                    showAlert("Game lobby is full", "Join another lobby");
+                    break;
+                }
+
+                // Should be a unique ID
+                lobbyPlayer.setId(lobby.getPlayersCount());
+
+            } while (!client.playerJoinLobby(lobby.getId(), lobbyPlayer));
+
+            waitingRoom();
 
         }
+    }
+
+    /**
+     * Create a waiting room for a lobby. Host has the ability to start game and choose map.
+     */
+    private void waitingRoom() {
+        if (lobbyPlayer.getId() == LOBBY_HOST) {
+            waitingRoomHost();
+        } else {
+            waitingRoomNonHost();
+        }
+
+        // Start the game here upon button
+
+    }
+
+    private void waitingRoomHost() {
+        Course course = null;
+        while (true) {
+            // Create a custom Dialog that will return a string and an int
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle(lobby.getName() + " lobby");
+            dialog.setHeaderText("Configure your game");
+
+            ButtonType startGameButton = new ButtonType("Start game", ButtonData.OK_DONE);
+            ButtonType deleteLobbyButton = new ButtonType("Delete lobby", ButtonData.CANCEL_CLOSE);
+            ButtonType selectCourseButton = new ButtonType("Select course", ButtonData.OTHER);
+            ButtonType refreshLobbyButton = new ButtonType("Refresh lobby", ButtonData.LEFT);
+            dialog.getDialogPane().getButtonTypes().addAll(startGameButton, deleteLobbyButton, selectCourseButton,
+                    refreshLobbyButton);
+
+            selectCourseButton.getButtonData();
+
+            // Create grid for placing text fields
+            GridPane gridPane = new GridPane();
+            gridPane.setHgap(10);
+            gridPane.setVgap(10);
+            gridPane.setPadding(new Insets(20, 150, 10, 10));
+
+            // Update lobby
+            lobby = client.getLobby(lobby.getId());
+
+            // Add lobbyLabel
+            String lobbyLabelString = "Currently joined players: " + lobby.getPlayersCount() + "/"
+                    + lobby.getPlayerCount();
+            if (course != null) {
+                lobbyLabelString = lobbyLabelString
+                        .concat("\nSelected course: " + course.getGameName() + "\nLength: " + course.getGameLength());
+            }
+            Label lobbyLabel = new Label(lobbyLabelString);
+            lobbyLabel.setStyle("-fx-font-weight: bold");
+            gridPane.add(lobbyLabel, 0, 0);
+
+            // Add playerLabel
+            String playerStrings = "";
+            for (LobbyPlayer lobbyPlayer : lobby.getPlayers()) {
+                playerStrings = playerStrings.concat(lobbyPlayer.getId() + " - " + lobbyPlayer.getName()
+                        + (lobbyPlayer.getId() == LOBBY_HOST ? " (host)" : "(non-host)")
+                        + (lobbyPlayer.getId() != lobby.getPlayerCount() - 1 ? "\n" : ""));
+            }
+            gridPane.add(new Label(playerStrings), 0, 1);
+
+            // Add content to dialog
+            dialog.getDialogPane().setContent(gridPane);
+
+            Optional<ButtonType> result = dialog.showAndWait();
+            System.out.println(result);
+
+            if (!result.isEmpty()) {
+                switch (result.get().getButtonData()) {
+                    case OK_DONE:
+                        if (course == null) {
+                            showAlert("Select course", "Game cannot be started without a selecting a course");
+                        } else if (lobby.getPlayersCount() == lobby.getPlayerCount()) {
+                            System.out.println("starting game");
+                        } else {
+                            showAlert("Not enough players", "The lobby does not have enough players to start.");
+                        }
+                        break;
+
+                    case OTHER:
+                        System.out.println("Selecting course");
+                        course = selectCourse();
+                        break;
+
+                    case LEFT:
+                        System.out.println("Refreshing");
+                        break;
+
+                    case CANCEL_CLOSE:
+                        System.out.println("Deleting game");
+                        client.deleteLobby(lobby.getId());
+                        return;
+
+                    default:
+                        break;
+                }
+
+            }
+        }
+    }
+
+    private void waitingRoomNonHost() {
+
     }
 
     /**
@@ -182,8 +302,7 @@ public class AppController implements Observer {
      * @return 
      */
     private Lobby createLobby() {
-        // Create a custom Dialog that will return two strings
-
+        // Create a custom Dialog that will return a string and an int
         Dialog<Pair<String, Integer>> dialog = new Dialog<>();
         dialog.setTitle("Create a lobby");
         dialog.setHeaderText("Customize your lobby");
@@ -199,6 +318,7 @@ public class AppController implements Observer {
 
         // Add text field, choice box and labels
         TextField lobbyName = new TextField();
+
         ChoiceBox<Integer> lobbyPlayerCount = new ChoiceBox<Integer>();
         lobbyPlayerCount.getItems().addAll(PLAYER_NUMBER_OPTIONS);
         lobbyPlayerCount.setValue(PLAYER_NUMBER_OPTIONS.get(0));
@@ -206,13 +326,13 @@ public class AppController implements Observer {
         gridPane.add(new Label("Lobby name:"), 0, 0);
         gridPane.add(lobbyName, 1, 0);
 
-        gridPane.add(new Label("Max player count:"), 0, 1);
+        gridPane.add(new Label("Player count:"), 0, 1);
         gridPane.add(lobbyPlayerCount, 1, 1);
 
         // Add content to dialog
         dialog.getDialogPane().setContent(gridPane);
 
-        // Ensure that the text fields are returned as a result and not the buttons
+        // Ensure that the text field and choiceBox are returned as a result and not the buttons
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == okButton) {
                 return new Pair<>(lobbyName.getText(), lobbyPlayerCount.getValue());
@@ -240,17 +360,13 @@ public class AppController implements Observer {
     }
 
     /**
-     * Get the first available and unique ID from list of lobbies
+     * Get the first available unique ID from list of lobbies
      */
     private int getLobbyId() {
         ArrayList<Lobby> lobbies = new ArrayList<Lobby>();
         int lobbyId = 0;
 
-        try {
-            lobbies.addAll(client.getLobbies());
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        lobbies.addAll(client.getLobbies());
 
         for (int index = 0; index < lobbies.size(); index++) {
             if (lobbies.get(index).getId() == lobbyId) {
@@ -265,18 +381,14 @@ public class AppController implements Observer {
 
         HashMap<String, Lobby> lobbiesHashMap = new HashMap<String, Lobby>();
 
-        try {
-            ArrayList<Lobby> lobbies = client.getLobbies();
+        ArrayList<Lobby> lobbies = client.getLobbies();
 
-            // Add an empty option for creating a lobby
-            lobbiesHashMap.put(createLobby, null);
+        // Add an empty option for creating a lobby
+        lobbiesHashMap.put(CREATE_LOBBY, null);
 
-            for (Lobby lobby : lobbies) {
-                lobbiesHashMap.put("Lobby: " + lobby.getId() + " - " + lobby.getName() + " " + lobby.getPlayerCount()
-                        + "/" + lobby.getMaxPlayerCount() + " players", lobby);
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
+        for (Lobby lobby : lobbies) {
+            lobbiesHashMap.put("Lobby: " + lobby.getId() + " - " + lobby.getName() + " " + lobby.getPlayersCount()
+                    + "/" + lobby.getPlayerCount() + " players", lobby);
         }
 
         return lobbiesHashMap;
@@ -292,11 +404,10 @@ public class AppController implements Observer {
         Optional<Integer> result = dialog.showAndWait();
 
         // Select a course
-        Course course = null;
-        do {
-            course = selectCourse();
-
-        } while (course == null);
+        Course course = selectCourse();
+        if (course == null) {
+            return;
+        }
 
         Board board = new Board(course);
         gameController = new GameController(board);
@@ -328,8 +439,9 @@ public class AppController implements Observer {
 
             for (File course : courses.listFiles()) {
                 jsonCourse = gson.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
-                courseNames.add(jsonCourse.game_name);
+                courseNames.add(jsonCourse.getGameName());
                 jsonCourses.add(jsonCourse);
+
             }
 
         } catch (Exception e) {
@@ -467,7 +579,7 @@ public class AppController implements Observer {
 
                 for (File course : courses.listFiles()) {
                     jsonCourse = gson1.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
-                    courseNames.add(jsonCourse.game_name);
+                    courseNames.add(jsonCourse.getGameName());
                     jsonCourses.add(jsonCourse);
                 }
 

@@ -32,59 +32,113 @@ public class ServerClient {
 
         private Gson gson = new GsonBuilder().create();
 
-        public String getPong() throws Exception {
+        public String getPong() {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .GET()
                                 .uri(URI.create("http://" + address + ":8080/ping"))
                                 .header("Content-Type", "application/json")
                                 .build();
 
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                String result = gson.fromJson(response.body(), String.class);
-                return result;
+                        String result = gson.fromJson(response.body(), String.class);
+                        return result;
+                } catch (Exception e) {
+                        return null;
+                }
         }
 
-        public ArrayList<Lobby> getLobbies() throws Exception {
+        public ArrayList<Lobby> getLobbies() {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .GET()
                                 .uri(URI.create("http://" + address + ":8080/lobbies"))
                                 .header("Content-Type", "application/json")
                                 .build();
 
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                ArrayList<Lobby> result = gson.fromJson(response.body(), new TypeToken<ArrayList<Lobby>>() {
-                }.getType());
-                return result;
+                        ArrayList<Lobby> result = gson.fromJson(response.body(), new TypeToken<ArrayList<Lobby>>() {
+                        }.getType());
+                        return result;
+                } catch (Exception e) {
+                        return null;
+                }
         }
 
-        public boolean createLobby(Lobby lobby) throws Exception {
+        public Lobby getLobby(int id) {
+                HttpRequest request = HttpRequest.newBuilder()
+                                .GET()
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + id))
+                                .header("Content-Type", "application/json")
+                                .build();
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+                        Lobby result = gson.fromJson(response.body(), Lobby.class);
+                        return result;
+                } catch (Exception e) {
+                        return null;
+                }
+
+        }
+
+        public boolean createLobby(Lobby lobby) {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create("http://" + address + ":8080/lobby"))
                                 .headers("Accept", "application/json", "Content-Type", "application/json")
                                 .PUT(BodyPublishers.ofString(gson.toJson(lobby)))
                                 .build();
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                if (response.body().equals(successful)) {
-                        return true;
+                        if (response.body().equals(successful)) {
+                                return true;
+                        }
+                        return false;
+                } catch (Exception e) {
+                        return false;
                 }
-                return false;
+
         }
 
-        public boolean playerJoinLobby(int id, LobbyPlayer lobbyPlayer) throws Exception {
+        public boolean playerJoinLobby(int id, LobbyPlayer lobbyPlayer) {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create("http://" + address + ":8080/lobby/" + id))
                                 .headers("Accept", "application/json", "Content-Type", "application/json")
                                 .POST(BodyPublishers.ofString(gson.toJson(lobbyPlayer)))
                                 .build();
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                if (response.body().equals(successful)) {
-                        return true;
+                        if (response.body().equals(successful)) {
+                                return true;
+                        }
+                        return false;
+                } catch (Exception e) {
+                        return false;
                 }
-                return false;
+
+        }
+
+        public boolean deleteLobby(int id) {
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + id))
+                                .headers("Accept", "application/json", "Content-Type", "application/json")
+                                .DELETE()
+                                .build();
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+                        if (response.body().equals(successful)) {
+                                return true;
+                        }
+                        return false;
+                } catch (Exception e) {
+                        return false;
+                }
+
         }
 
 }

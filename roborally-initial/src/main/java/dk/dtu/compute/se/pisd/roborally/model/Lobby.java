@@ -6,17 +6,17 @@ public class Lobby {
 
     private String name;
     private int id;
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private int maxPlayerCount = 6;
+    private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
+    private int playerCount = 6;
 
     public Lobby() {
 
     }
 
-    public Lobby(String name, int id, int maxPlayerCount) {
+    public Lobby(String name, int id, int playerCount) {
         this.name = name;
         this.id = id;
-        this.maxPlayerCount = maxPlayerCount;
+        this.playerCount = playerCount;
     }
 
     public int getId() {
@@ -35,24 +35,30 @@ public class Lobby {
         this.name = name;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public ArrayList<LobbyPlayer> getPlayers() {
         return players;
     }
 
-    public int getPlayerCount() {
+    public int getPlayersCount() {
         return players.size();
     }
 
-    public boolean addPlayer(Player player) {
-        if (players.size() >= maxPlayerCount) {
+    public boolean addPlayer(LobbyPlayer player) {
+        // Ensure that not too many players get into the lobby
+        if (players.size() == playerCount) {
             return false;
         }
+        // Check if 
         players.add(player);
         return true;
     }
 
-    public int getMaxPlayerCount() {
-        return maxPlayerCount;
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    public boolean isFull() {
+        return players.size() == playerCount;
     }
 
 }
