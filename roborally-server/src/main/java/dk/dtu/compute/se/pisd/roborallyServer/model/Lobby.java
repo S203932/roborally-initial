@@ -9,6 +9,8 @@ public class Lobby {
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
     private int playerCount = 6;
 
+    private String board;
+
     public Lobby() {
 
     }
@@ -83,6 +85,14 @@ public class Lobby {
 
     public boolean isFull() {
         return players.size() == playerCount;
+    }
+
+    public void setBoard(String board){
+        this.board = board;
+    }
+
+    public String getBoard(){
+        return this.board;
     }
 
 }

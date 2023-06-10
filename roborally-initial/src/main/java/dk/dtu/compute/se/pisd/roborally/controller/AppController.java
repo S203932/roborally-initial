@@ -280,8 +280,51 @@ public class AppController implements Observer {
                         } else if (lobby.getPlayersCount() == lobby.getPlayerCount()) {
                             System.out.println("starting game");
                             // TODO start game
+
+                            //Creating the new board for the game
+                            Board board = new Board(course);
+
+                            //Stating that the game is online
+                            board.setGameOnline(true);
+
+
+                            // Adding the players from the lobby to the current board with names and id
+                            int counter = 0;
+                            for(LobbyPlayer lobbyPlayer : lobby.getPlayers()){
+                                Player player = new Player(board,PLAYER_COLORS.get(counter),lobbyPlayer.getName(), lobbyPlayer.getId());
+                                board.addPlayer(player);
+                                counter++;
+                            }
+
+                            //Setting the first player as current player in game
+                            board.setCurrentPlayer(board.getPlayer(0));
+
+
+                            //Converting the board to a Json String
+                            String boardString = boardToJson(board);
+
+                            //Sending the board to the server
+                            System.out.println("Status on sending to board to server:" + client.updateBoard(lobby.getId(), boardString));
+
+                            //Receiving the board from the server as a JsonString
+                            String receivedBoard = client.receiveBoard(lobby.getId());
+
+                            //Loading the received boardString to a board and
+                            // then initializing it the gamecontroller
+                            loadBoard(receivedBoard);
+
+                            roboRally.createBoardView(gameController);
+
+
+
+
                         } else {
                             showAlert("Not enough players", "The lobby does not have enough players to start.");
+
+
+
+
+
                         }
                         break;
 
@@ -310,6 +353,15 @@ public class AppController implements Observer {
 
             }
         }
+    }
+
+    private String boardToJson(Board board){
+        GsonBuilder gb = new GsonBuilder();
+        Gson gson = gb
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+        String boardString = gson.toJson(board);
+        return boardString;
     }
 
     /**
@@ -519,6 +571,44 @@ public class AppController implements Observer {
         } else {
             showAlert("Invalid name", "Choose a valid name to save the game");
         }
+
+    }
+    public void loadBoard(String board){
+        GsonBuilder gb = new GsonBuilder();
+        Gson gson = gb
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+
+        Board oldBoard = gson.fromJson(board, Board.class);
+
+        String courseName = oldBoard.boardName;
+        courseName = courseName.replace(" ", "_").toLowerCase();
+        Course jsonCourse = null;
+
+
+        try {
+            File course = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses/"+courseName+".json");
+
+            Gson gson1 = new Gson();
+
+            jsonCourse = gson1.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
+
+
+        } catch (JsonIOException e) {
+            // TODO: handle exception
+
+        } catch (FileNotFoundException e) {
+            // TODO: handle exception
+        }
+        Board newBoard = new Board(jsonCourse);
+
+        gameController = new GameController(newBoard);
+
+        gameController.board.recreateBoardstate(oldBoard.getCurrentPlayer(),oldBoard.getPhase(),oldBoard.getPlayers(), oldBoard.getStep(),oldBoard.getStepmode());
+
+
+
+
 
     }
 

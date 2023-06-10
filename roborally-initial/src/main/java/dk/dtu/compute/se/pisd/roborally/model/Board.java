@@ -52,6 +52,10 @@ import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
  * @version $Id: $Id
  */
 public class Board extends Subject {
+
+    @Expose
+    private Boolean gameOnline = false;
+
     @Expose
     public final int width;
     @Expose
@@ -205,7 +209,7 @@ public class Board extends Subject {
             players.get(i).setBoard(this);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    if (oldPlayers.get(i).getSpace().x == x && oldPlayers.get(i).getSpace().y == y) {
+                    if (oldPlayers.get(i).getSpace() != null &&oldPlayers.get(i).getSpace().x == x && oldPlayers.get(i).getSpace().y == y) {
                         players.get(i).setSpace(spaces[x][y]);
                         //spaces[x][y].setPlayer(players.get(i));
                     }
@@ -453,5 +457,13 @@ public class Board extends Subject {
 
     public void setBoardCheckpoints(int boardCheckpoints) {
         this.boardCheckpoints = boardCheckpoints;
+    }
+
+    public void setGameOnline(boolean value){
+        this.gameOnline = value;
+    }
+
+    public Boolean getGameOnline(){
+        return this.gameOnline;
     }
 }

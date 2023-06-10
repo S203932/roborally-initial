@@ -50,6 +50,16 @@ public class ServerService implements IServerService {
     }
 
     @Override
+    public Boolean updateBoard(int id, String board){
+        lobbies.get(id).setBoard(board);
+        if(lobbies.get(id).getBoard() != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
     public boolean createLobby(Lobby lobby) {
         // Ensure that lobbies have a unique ID and reasonable name
         if (lobbies.containsKey(lobby.getId()) || lobby.getName().length() == 0 || lobby.getName().length() > 32) {

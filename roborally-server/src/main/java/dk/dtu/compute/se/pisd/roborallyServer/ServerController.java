@@ -59,6 +59,16 @@ public class ServerController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping(value = "/lobby/{id}/sync")
+    public ResponseEntity<String> updateBoard(@PathVariable int id, @RequestBody String board){
+        if(gameService.updateBoard(id,board)){
+            response = successful;
+        }else{
+            response = unsuccessful;
+        }
+        return ResponseEntity.ok().body(response);
+    }
+
     @PutMapping(value = "/lobby")
     public ResponseEntity<String> createLobby(@RequestBody Lobby lobby) {
         if (gameService.createLobby(lobby)) {
@@ -103,5 +113,11 @@ public class ServerController {
     public ResponseEntity<ArrayList<Lobby>> getLobbies() {
         ArrayList<Lobby> lobbies = gameService.getLobbies();
         return ResponseEntity.ok().body(lobbies);
+    }
+
+    @GetMapping(value = "/lobby/{id}/sync")
+    public ResponseEntity<String> receiveBoard(@PathVariable int id){
+        String board = gameService.getLobby(id).getBoard();
+        return ResponseEntity.ok().body(board);
     }
 }
