@@ -134,6 +134,28 @@ public class GameController {
             lobby.removePlayerNeedInput(lobbyPlayer.getId());
             System.out.println("After " + lobby.getPlayersNeedInput());
 
+            GsonBuilder gb = new GsonBuilder();
+            Gson gson = gb
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .create();
+
+            Board newBoard = gson.fromJson(lobby.getBoardString(), Board.class);
+
+            // Update programs from other players to avoid overwriting them
+            for (Player newPlayer : newBoard.getPlayers()) {
+                if (newPlayer.getId() != lobbyPlayer.getId()) {
+                    CommandCardField[] newCommandCardFields = new CommandCardField[5];
+                    for (int i = 0; i < newCommandCardFields.length; i++) {
+                        CommandCard commandCard = new CommandCard(newPlayer.getProgramField(i).getCard().command);
+                        newCommandCardFields[i].setCard(commandCard);
+                    }
+                    board.getPlayer(newPlayer.getId()).setProgram(newCommandCardFields);
+                }
+            }
+
+            // Update program from lobby
+            lobby.setBoardString(gson.toJson(board));
+
             //Update online lobby
             client.updateLobby(lobby);
         }
