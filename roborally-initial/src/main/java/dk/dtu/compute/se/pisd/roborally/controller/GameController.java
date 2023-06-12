@@ -166,6 +166,8 @@ public class GameController {
 
             //Update online lobby
             client.updateLobby(lobby);
+
+            board.setPhase(Phase.WAIT);
         }
         // Offline
         else {

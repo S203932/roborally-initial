@@ -191,30 +191,46 @@ public class PlayerView extends Tab implements ViewObserver {
                         //     from the initialization phase to the programming phase somehow!
                         executeButton.setDisable(false);
                         stepButton.setDisable(true);
+                        refreshButton.setDisable(false);
+                        break;
+
+                    case WAIT:
+                        finishButton.setDisable(true);
+                        stepButton.setDisable(true);
+                        refreshButton.setDisable(false);
+
                         break;
 
                     case PROGRAMMING:
                         finishButton.setDisable(false);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
+                        refreshButton.setDisable(false);
+
                         break;
 
                     case ACTIVATION:
                         finishButton.setDisable(true);
                         executeButton.setDisable(false);
                         stepButton.setDisable(false);
+                        refreshButton.setDisable(false);
+
                         break;
 
                     case END_GAME:
                         finishButton.setDisable(true);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
+                        refreshButton.setDisable(false);
+
                         break;
 
                     default:
                         finishButton.setDisable(true);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
+                        refreshButton.setDisable(false);
+
                 }
 
             } else {
