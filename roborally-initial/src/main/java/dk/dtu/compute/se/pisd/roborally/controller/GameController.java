@@ -127,7 +127,8 @@ public class GameController {
 
         if (board.getGameOnline()) {
             Lobby lobby = client.getLobby(board.getGameId());
-            Player player = board.getCurrentPlayer();
+            Player player = board.getPlayer(lobbyPlayer.getId());
+
             System.out.println("Phase " + player.getPhase());
             System.out.println("playerturn " + lobby.getPlayerTurn());
             System.out.println("player " + player.getId());
