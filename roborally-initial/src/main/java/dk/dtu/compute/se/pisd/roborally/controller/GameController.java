@@ -668,6 +668,7 @@ public class GameController {
             Lobby lobby = client.getLobby(board.getGameId());
 
             Board newBoard = gson.fromJson(lobby.getBoardString(), Board.class);
+            board.setPhase(Phase.WAIT);
 
             // Update programs from other players to avoid overwriting them
             for (Player newPlayer : newBoard.getPlayers()) {
@@ -694,7 +695,7 @@ public class GameController {
                         // } 
                         else {
                             board.getPlayer(newPlayer.getId()).getProgramField(i).getCard().setCommand(command);
-
+                            board.setPhase(Phase.ACTIVATION);
                             // board.getPlayer(newPlayer.getId()).getProgramField(i).getCard()
                             //         .setCommand(newPlayer.getProgramField(i).getCard().getCommand());
                         }
@@ -703,9 +704,16 @@ public class GameController {
                 }
 
             }
-        }
+            // board.setPhase(Phase.ACTIVATION);
 
-        board.setPhase(Phase.ACTIVATION);
+            if (board.getGameOnline()) {
+                lobby.setBoardString(gson.toJson(newBoard, Board.class));
+                client.updateLobby(lobby);
+            }
+
+        } else {
+            board.setPhase(Phase.ACTIVATION);
+        }
 
         Player currentPlayer = board.getCurrentPlayer();
 
