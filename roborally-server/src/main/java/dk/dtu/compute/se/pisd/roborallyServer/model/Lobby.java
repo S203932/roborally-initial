@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Lobby {
 
+    private boolean gameRunning = false;
+
     private String name;
     private int id;
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();

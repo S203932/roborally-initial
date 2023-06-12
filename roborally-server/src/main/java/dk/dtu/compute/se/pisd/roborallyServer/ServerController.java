@@ -60,8 +60,8 @@ public class ServerController {
     }
 
     @PostMapping(value = "/lobby/{id}/sync")
-    public ResponseEntity<String> updateBoard(@PathVariable int id, @RequestBody String board) {
-        if (gameService.updateBoard(id, board)) {
+    public ResponseEntity<String> updateLobby(@PathVariable int id, @RequestBody Lobby lobby) {
+        if (gameService.updateLobby(lobby)) {
             response = successful;
         } else {
             response = unsuccessful;

@@ -135,4 +135,13 @@ public class ServerService implements IServerService {
         }
     }
 
+    public Boolean updateLobby( Lobby lobby){
+        lobbies.put(lobby.getId(),lobby);
+        if(lobbies.containsKey(lobby.getId())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

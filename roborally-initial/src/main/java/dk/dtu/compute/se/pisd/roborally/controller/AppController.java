@@ -325,9 +325,8 @@ public class AppController implements Observer {
                             lobby.setBoard(boardString);
                             lobby.setGameRunning(true);
 
-                            //Sending the board to the server
-                            System.out.println("Status on sending to board to server:"
-                                    + client.updateBoard(lobby.getId(), boardString));
+
+                            client.updateLobby(lobby);
 
                             //Saving board
                             // client.saveLobbyGame(lobby);
@@ -655,7 +654,14 @@ public class AppController implements Observer {
     }
 
     public void loadBoard(int id) {
-        Board board = client.getBoard(id);
+        lobby = client.getLobby(lobby.getId());
+
+        GsonBuilder gb = new GsonBuilder();
+        Gson gson = gb
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+
+        Board board = gson.fromJson(lobby.getBoard(), Board.class);
         String courseName = board.boardName;
         courseName = courseName.replace(" ", "_").toLowerCase();
         Course jsonCourse = null;
