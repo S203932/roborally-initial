@@ -17,6 +17,7 @@ import dk.dtu.compute.se.pisd.roborally.model.Lobby;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyPlayer;
 
 public class ServerClient {
+        public final String pong = "pong";
         private final String successful = "Successful!";
         private final String unsuccessful = "Unsuccessful!";
 

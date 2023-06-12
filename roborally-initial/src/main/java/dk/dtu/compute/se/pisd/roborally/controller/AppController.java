@@ -115,7 +115,7 @@ public class AppController implements Observer {
                 pingResult = client.getPong();
 
                 // Check if the result is as expected
-                if (pingResult.equals("pong")) {
+                if (pingResult.equals(client.pong)) {
                     lobbyBrowser();
                 }
 
