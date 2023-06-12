@@ -320,12 +320,15 @@ public class AppController implements Observer {
                             board.setGameOnline(true);
 
                             // Adding the players from the lobby to the current board with names and id
+                            // Also adding player programming check
                             int counter = 0;
                             for (LobbyPlayer lobbyPlayer : lobby.getPlayers()) {
                                 Player player = new Player(board, PLAYER_COLORS.get(counter), lobbyPlayer.getName(),
                                         lobbyPlayer.getId());
+                                lobby.addPlayerNeedInput(lobbyPlayer.getId());
                                 board.addPlayer(player);
                                 player.setSpace(board.getStartGear(counter));
+
                                 counter++;
                             }
 

@@ -128,6 +128,11 @@ public class GameController {
 
         // Network connected
         if (board.getGameOnline()) {
+            Lobby lobby = client.getLobby(board.getGameId());
+            System.out.println("BEfore " + lobby.getPlayersNeedInput());
+
+            lobby.removePlayerNeedInput(lobbyPlayer.getId());
+            System.out.println("After " + lobby.getPlayersNeedInput());
 
         }
         // Offline
@@ -752,6 +757,14 @@ public class GameController {
     public void updateBoard() {
         Lobby lobby = client.getLobby(board.getGameId());
         Board newBoard = new Gson().fromJson(lobby.getBoardString(), Board.class);
+
+        // Update if all players have finished programming
+        if (lobby.getPlayersNeedInput().size() == 0) {
+            System.out.println("SETTING PHASE");
+            board.setPhase(Phase.ACTIVATION);
+
+        }
+        System.out.println("PHASE " + board.getPhase());
 
         // Update phase
         System.out.println("new board phase" + newBoard.getPhase());

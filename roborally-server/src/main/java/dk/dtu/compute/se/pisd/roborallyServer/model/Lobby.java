@@ -12,6 +12,7 @@ public class Lobby {
     private int playerCount = 6;
     private int saveId = -1;
     private int playerTurn = 0;
+    private ArrayList<Integer> playersNeedInput = new ArrayList<Integer>();
 
     private String boardString;
 
@@ -125,5 +126,21 @@ public class Lobby {
 
     public void setPlayerTurn(int playerTurn) {
         this.playerTurn = playerTurn;
+    }
+
+    public ArrayList<Integer> getPlayersNeedInput() {
+        return playersNeedInput;
+    }
+
+    public void setPlayersNeedInput(ArrayList<Integer> playersProgrammed) {
+        this.playersNeedInput = playersProgrammed;
+    }
+
+    public void removePlayerNeedInput(int id) {
+        this.playersNeedInput.remove(id);
+    }
+
+    public void addPlayerNeedInput(int id) {
+        this.playersNeedInput.add(id);
     }
 }
