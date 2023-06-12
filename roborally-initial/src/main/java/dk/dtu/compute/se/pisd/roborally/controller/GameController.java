@@ -125,6 +125,7 @@ public class GameController {
      */
     public void finishProgrammingPhase() {
 
+        // Network connected
         if (board.getGameOnline()) {
             Lobby lobby = client.getLobby(board.getGameId());
             Player player = board.getPlayer(lobbyPlayer.getId());
@@ -146,13 +147,16 @@ public class GameController {
                 makeProgramFieldsInvisible();
                 makeProgramFieldsVisible(0);
 
-                player.setPhase(Phase.ACTIVATION);
+                board.getPlayer(player.getId()).setPhase(Phase.ACTIVATION);
 
                 // Make sure that player Ids "loop" when incrementing
                 lobby.setPlayerTurn(
                         lobby.getPlayerTurn() == lobby.getPlayersCount() - 1 ? 0 : lobby.getPlayerTurn() + 1);
 
-                if (lobby.getPlayersCount() == lobby.getId() - 1 && player.getPhase() == Phase.ACTIVATION) {
+                // The last player sets the board phase and the current player.
+                if (lobby.getPlayersCount() == lobby.getId() - 1
+                        && board.getPlayer(player.getId()).getPhase() == Phase.ACTIVATION) {
+                    System.out.println("Entering if");
 
                     board.setPhase(Phase.ACTIVATION);
                     board.setCurrentPlayer(board.getPlayer(0));
