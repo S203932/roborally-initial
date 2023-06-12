@@ -146,8 +146,11 @@ public class GameController {
                 if (newPlayer.getId() != lobbyPlayer.getId()) {
                     for (int i = 0; i < newPlayer.getPrograms().length; i++) {
                         if (newPlayer.getProgramField(i).getCard() != null) {
-                            if(board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null){
+                            if(board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null && newPlayer.getProgramField(i).getCard() == null){
                                 board.getPlayer(newPlayer.getId()).getProgramField(i).setCard(null);
+                            }else if(board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null && newPlayer.getProgramField(i).getCard() != null) {
+                                board.getPlayer(newPlayer.getId()).getProgramField(i).setCard(newPlayer.getProgramField(i).getCard());
+
                             }else{
                                 board.getPlayer(newPlayer.getId()).getProgramField(i).getCard()
                                         .setCommand(newPlayer.getProgramField(i).getCard().getCommand());
