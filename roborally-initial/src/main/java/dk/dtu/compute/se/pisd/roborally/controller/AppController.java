@@ -318,20 +318,19 @@ public class AppController implements Observer {
                             //Setting the first player as current player in game
                             board.setCurrentPlayer(board.getPlayer(0));
 
-
-
                             //Converting the board to a Json String
                             String boardString = boardToJson(board);
 
                             //Setting board on lobby object
                             lobby.setBoard(boardString);
+                            lobby.setGameRunning(true);
 
                             //Sending the board to the server
                             System.out.println("Status on sending to board to server:"
                                     + client.updateBoard(lobby.getId(), boardString));
-                            lobby.setGameRunning(true);
+
                             //Saving board
-                            client.saveLobbyGame(lobby);
+                            // client.saveLobbyGame(lobby);
 
                             loadBoard(lobby.getId());
 
@@ -339,15 +338,11 @@ public class AppController implements Observer {
 
                             Phase phase = gameController.board.getPhase();
 
-
-
-                            if(phase == Phase.INITIALISATION){
+                            if (phase == Phase.INITIALISATION) {
                                 gameController.startProgrammingPhase();
                             }
 
-
                             roboRally.createBoardView(gameController);
-
 
                             return;
 
@@ -364,39 +359,22 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
-                        System.out.println("Saving game to server");
-                        if (lobby.getSaveId() == -1) {
-                            lobby.removePlayers();
-                            lobby.setSaveId(getLobbyId(true));
-                        }
 
-                        Lobby newlobby = client.getLobby(lobby.getId());
-
-                        if(newlobby.getGameRunning()){
+                        if (lobby.getGameRunning()) {
                             loadBoard(lobby.getId());
 
                             gameController.setLobbyPlayer(lobbyPlayer);
 
                             Phase phase = gameController.board.getPhase();
 
-                            if(phase == Phase.INITIALISATION){
+                            if (phase == Phase.INITIALISATION) {
                                 gameController.startProgrammingPhase();
                             }
 
                             roboRally.createBoardView(gameController);
 
-                            roboRally.createBoardView(gameController);
-                        }else{
-                            System.out.println(client.saveLobbyGame(lobby));
+                            // roboRally.createBoardView(gameController);
                         }
-
-
-
-
-
-
-
-
 
                         break;
 
@@ -677,12 +655,6 @@ public class AppController implements Observer {
     }
 
     public void loadBoard(int id) {
-        // GsonBuilder gb = new GsonBuilder();
-        // Gson gson = gb
-        //         .excludeFieldsWithoutExposeAnnotation()
-        //         .create();
-
-        // Board oldBoard = gson.fromJson(board, Board.class);
         Board board = client.getBoard(id);
         String courseName = board.boardName;
         courseName = courseName.replace(" ", "_").toLowerCase();
