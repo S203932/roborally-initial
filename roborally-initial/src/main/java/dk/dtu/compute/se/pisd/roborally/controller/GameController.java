@@ -33,6 +33,7 @@ import javafx.scene.control.Alert;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.Arrays;
 
@@ -123,11 +124,57 @@ public class GameController {
      * <p>finishProgrammingPhase.</p>
      */
     public void finishProgrammingPhase() {
-        makeProgramFieldsInvisible();
-        makeProgramFieldsVisible(0);
-        board.setPhase(Phase.ACTIVATION);
-        board.setCurrentPlayer(board.getPlayer(0));
-        board.setStep(0);
+
+        if (board.getGameOnline()) {
+            Lobby lobby = client.getLobby(board.getGameId());
+            Player player = board.getCurrentPlayer();
+            System.out.println("Phase " + player.getPhase());
+            System.out.println("playerturn " + lobby.getPlayerTurn());
+            System.out.println("player " + player.getId());
+
+            // Synchronize the Lobby object 
+            if (lobby.getPlayerTurn() == player.getId()
+                    && board.getCurrentPlayer().getPhase() != Phase.ACTIVATION) {
+                System.out.println("Entering playerturn " + lobby.getPlayerTurn());
+                GsonBuilder gb = new GsonBuilder();
+                Gson gson = gb
+                        .excludeFieldsWithoutExposeAnnotation()
+                        .create();
+                String boardString = gson.toJson(board);
+
+                makeProgramFieldsInvisible();
+                makeProgramFieldsVisible(0);
+
+                player.setPhase(Phase.ACTIVATION);
+
+                // Make sure that player Ids "loop" when incrementing
+                lobby.setPlayerTurn(
+                        lobby.getPlayerTurn() == lobby.getPlayersCount() - 1 ? 0 : lobby.getPlayerTurn() + 1);
+
+                if (lobby.getPlayersCount() == lobby.getId() - 1 && player.getPhase() == Phase.ACTIVATION) {
+
+                    board.setPhase(Phase.ACTIVATION);
+                    board.setCurrentPlayer(board.getPlayer(0));
+                    board.setStep(0);
+                }
+
+                // Update programs
+                lobby.setBoardString(boardString);
+
+                // Update server lobby
+                client.updateLobby(lobby);
+            }
+
+        }
+        // Offline
+        else {
+            makeProgramFieldsInvisible();
+            makeProgramFieldsVisible(0);
+            board.setPhase(Phase.ACTIVATION);
+            board.setCurrentPlayer(board.getPlayer(0));
+            board.setStep(0);
+        }
+
     }
 
     public void startEndGamePhase(Player playerWon) {
@@ -690,7 +737,20 @@ public class GameController {
             // Set new player checkpoints reached
             player.setCheckpointCount(newPlayer.getCheckpointCount());
 
+            // Set program command cards
+            player.setProgram(newBoard.getPlayer(player.getId()).getPrograms());
+
+            // Set player phase
+            player.setPhase(newPlayer.getPhase());
         }
+
+        // for (Player player : board.getPlayers()) {
+        //     if(player.getP]){
+
+        //     }
+
+        // }
+
     }
 
     /* private void removeSpam(Player player) {

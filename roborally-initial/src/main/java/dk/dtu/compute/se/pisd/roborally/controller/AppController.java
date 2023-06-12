@@ -650,13 +650,8 @@ public class AppController implements Observer {
 
     public void loadBoard() {
         lobby = client.getLobby(lobby.getId());
-
-        // GsonBuilder gb = new GsonBuilder();
-        // Gson gson = gb
-        //         .excludeFieldsWithoutExposeAnnotation()
-        //         .create();
         Board board = new Gson().fromJson(lobby.getBoardString(), Board.class);
-        // Board board = gson.fromJson(lobby.getBoardString(), Board.class);
+
         String courseName = board.boardName;
         courseName = courseName.replace(" ", "_").toLowerCase();
         Course jsonCourse = null;

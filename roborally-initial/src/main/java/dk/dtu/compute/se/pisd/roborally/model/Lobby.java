@@ -11,6 +11,7 @@ public class Lobby {
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
     private int playerCount = 6;
     private int saveId = -1;
+    private int playerTurn = 0;
 
     private String boardString;
 
@@ -118,4 +119,11 @@ public class Lobby {
         this.gameRunning = value;
     }
 
+    public int getPlayerTurn() {
+        return playerTurn;
+    }
+
+    public void setPlayerTurn(int playerTurn) {
+        this.playerTurn = playerTurn;
+    }
 }

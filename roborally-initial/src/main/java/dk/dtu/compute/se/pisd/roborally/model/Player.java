@@ -66,6 +66,8 @@ public class Player extends Subject {
     private final ArrayList<Command> damagecards;
     @Expose
     private int checkpointCount = 0;
+    @Expose
+    private Phase phase;
 
     /**
      * <p>Constructor for Player.</p>
@@ -95,10 +97,10 @@ public class Player extends Subject {
         }
     }
 
-    public void setCards(CommandCardField[] cards){
+    public void setCards(CommandCardField[] cards) {
         for (int i = 0; i < cards.length; i++) {
             CommandCardField cardField = new CommandCardField(this);
-            if(cards[i].getCard() != null){
+            if (cards[i].getCard() != null) {
                 CommandCard commandCard = new CommandCard(cards[i].getCard().command);
                 cardField.setCard(commandCard);
             }
@@ -107,10 +109,10 @@ public class Player extends Subject {
         }
     }
 
-    public void setProgram(CommandCardField[] program){
+    public void setProgram(CommandCardField[] program) {
         for (int i = 0; i < program.length; i++) {
             CommandCardField cardField = new CommandCardField(this);
-            if(program[i].getCard() != null){
+            if (program[i].getCard() != null) {
                 CommandCard commandCard = new CommandCard(program[i].getCard().command);
                 cardField.setCard(commandCard);
             }
@@ -119,11 +121,11 @@ public class Player extends Subject {
         }
     }
 
-    public CommandCardField[] getPrograms(){
+    public CommandCardField[] getPrograms() {
         return this.program;
     }
 
-    public CommandCardField[] getCards(){
+    public CommandCardField[] getCards() {
         return this.cards;
     }
 
@@ -206,7 +208,7 @@ public class Player extends Subject {
         }
     }
 
-    public void setBoard(Board board){
+    public void setBoard(Board board) {
         this.board = board;
     }
 
@@ -268,5 +270,13 @@ public class Player extends Subject {
 
     public void setCheckpointCount(int checkpointCount) {
         this.checkpointCount = checkpointCount;
+    }
+
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(Phase phase) {
+        this.phase = phase;
     }
 }

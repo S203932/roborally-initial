@@ -203,23 +203,23 @@ public class ServerClient {
 
         }
 
-        public boolean updateBoard(int id, String board) {
-                HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/sync"))
-                                .headers("Accept", "application/json", "Content-Type", "application/json")
-                                .POST(BodyPublishers.ofString(board))
-                                .build();
-                try {
-                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        // public boolean updateBoard(int id, String board) {
+        //         HttpRequest request = HttpRequest.newBuilder()
+        //                         .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/sync"))
+        //                         .headers("Accept", "application/json", "Content-Type", "application/json")
+        //                         .POST(BodyPublishers.ofString(board))
+        //                         .build();
+        //         try {
+        //                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                        if (response.body().equals(successful)) {
-                                return true;
-                        }
-                        return false;
-                } catch (Exception e) {
-                        return false;
-                }
-        }
+        //                 if (response.body().equals(successful)) {
+        //                         return true;
+        //                 }
+        //                 return false;
+        //         } catch (Exception e) {
+        //                 return false;
+        //         }
+        // }
         /*
         public Board getBoard(int id) {
                 HttpRequest request = HttpRequest.newBuilder()

@@ -112,9 +112,9 @@ public class PlayerView extends Tab implements ViewObserver {
         refreshButton.setOnAction(e -> gameController.updateBoard());
 
         if (gameController.getBoard().getGameOnline()) {
-            buttonPanel = new VBox(finishButton, executeButton, refreshButton);
+            buttonPanel = new VBox(finishButton, stepButton, refreshButton);
         } else {
-            buttonPanel = new VBox(finishButton, executeButton, stepButton);
+            buttonPanel = new VBox(finishButton, stepButton, executeButton);
         }
 
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
