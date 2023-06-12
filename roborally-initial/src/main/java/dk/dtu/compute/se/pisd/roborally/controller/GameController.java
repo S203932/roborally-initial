@@ -91,6 +91,7 @@ public class GameController {
      * <p>startProgrammingPhase.</p>
      */
     public void startProgrammingPhase() {
+        System.out.println("Entering startProgrammingPhase");
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
@@ -125,9 +126,20 @@ public class GameController {
      */
     public void finishProgrammingPhase() {
 
+        System.out.println(board.getPhase());
+
         // Network connected
         if (board.getGameOnline()) {
+
             Lobby lobby = client.getLobby(board.getGameId());
+            Board newBoard = new Gson().fromJson(lobby.getBoardString(), Board.class);
+
+            // Check for a phase change and change if different
+            if (board.getPhase() != newBoard.getPhase()) {
+                board.setPhase(newBoard.getPhase());
+            }
+
+            // updateBoard();
             Player player = board.getPlayer(lobbyPlayer.getId());
 
             System.out.println("Phase " + player.getPhase());
@@ -138,11 +150,6 @@ public class GameController {
             if (lobby.getPlayerTurn() == player.getId()
                     && board.getCurrentPlayer().getPhase() != Phase.ACTIVATION) {
                 System.out.println("Entering playerturn " + lobby.getPlayerTurn());
-                GsonBuilder gb = new GsonBuilder();
-                Gson gson = gb
-                        .excludeFieldsWithoutExposeAnnotation()
-                        .create();
-                String boardString = gson.toJson(board);
 
                 makeProgramFieldsInvisible();
                 makeProgramFieldsVisible(0);
@@ -161,13 +168,22 @@ public class GameController {
                     board.setPhase(Phase.ACTIVATION);
                     board.setCurrentPlayer(board.getPlayer(0));
                     board.setStep(0);
+
                 }
+
+                GsonBuilder gb = new GsonBuilder();
+                Gson gson = gb
+                        .excludeFieldsWithoutExposeAnnotation()
+                        .create();
+                String boardString = gson.toJson(board);
 
                 // Update programs
                 lobby.setBoardString(boardString);
 
                 // Update server lobby
                 client.updateLobby(lobby);
+                // updateBoard();
+
             }
 
         }
@@ -727,7 +743,9 @@ public class GameController {
         Board newBoard = new Gson().fromJson(lobby.getBoardString(), Board.class);
 
         // Update phase
-        board.setPhase(newBoard.getPhase());
+        System.out.println("new board phase" + newBoard.getPhase());
+
+        // board.setPhase(newBoard.getPhase());
 
         for (Player player : board.getPlayers()) {
             Player newPlayer = newBoard.getPlayer(player.getId());
