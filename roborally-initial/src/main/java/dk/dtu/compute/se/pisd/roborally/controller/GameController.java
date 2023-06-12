@@ -96,6 +96,7 @@ public class GameController {
      * <p>startProgrammingPhase.</p>
      */
     public void startProgrammingPhase() {
+
         System.out.println("Entering startProgrammingPhase");
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
@@ -115,6 +116,15 @@ public class GameController {
                     field.setVisible(true);
                 }
             }
+        }
+
+        // Reset playerNeedInput 
+        if (board.getGameOnline()) {
+            Lobby lobby = client.getLobby(board.getGameId());
+            for (int i = 0; i < lobby.getPlayersCount(); i++) {
+                lobby.addPlayerNeedInput(i);
+            }
+            client.updateLobby(lobby);
         }
     }
 

@@ -12,7 +12,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Lobby;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyPlayer;
 
