@@ -154,7 +154,7 @@ public class GameController {
                         lobby.getPlayerTurn() == lobby.getPlayersCount() - 1 ? 0 : lobby.getPlayerTurn() + 1);
 
                 // The last player sets the board phase and the current player.
-                if (lobby.getPlayersCount() == lobby.getId() + 1
+                if (lobby.getPlayersCount() == player.getId() + 1
                         && board.getPlayer(player.getId()).getPhase() == Phase.ACTIVATION) {
                     System.out.println("Entering if");
 
