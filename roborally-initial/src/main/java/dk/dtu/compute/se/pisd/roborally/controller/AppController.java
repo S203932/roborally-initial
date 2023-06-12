@@ -525,7 +525,7 @@ public class AppController implements Observer {
         int no = result.get();
 
         for (int i = 0; i < no; i++) {
-            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
+            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + i, i);
             board.addPlayer(player);
             player.setSpace(board.getStartGear(i));
         }
