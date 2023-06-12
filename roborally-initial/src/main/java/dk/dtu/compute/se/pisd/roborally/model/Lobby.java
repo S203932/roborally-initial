@@ -12,7 +12,7 @@ public class Lobby {
     private int playerCount = 6;
     private int saveId = -1;
 
-    private String board;
+    private String boardString;
 
     public Lobby() {
 
@@ -102,19 +102,19 @@ public class Lobby {
         this.saveId = saveId;
     }
 
-    public void setBoard(String board){
-        this.board = board;
+    public void setBoardString(String board) {
+        this.boardString = board;
     }
 
-    public String getBoard(){
-        return this.board;
+    public String getBoardString() {
+        return this.boardString;
     }
 
-    public Boolean getGameRunning(){
+    public Boolean getGameRunning() {
         return gameRunning;
     }
 
-    public void setGameRunning(Boolean value){
+    public void setGameRunning(Boolean value) {
         this.gameRunning = value;
     }
 

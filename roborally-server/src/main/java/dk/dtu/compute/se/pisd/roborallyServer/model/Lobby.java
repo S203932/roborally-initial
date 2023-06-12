@@ -10,9 +10,9 @@ public class Lobby {
     private int id;
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
     private int playerCount = 6;
-    private int saveId;
+    private int saveId = -1;
 
-    private String board;
+    private String boardString;
 
     public Lobby() {
 
@@ -90,14 +90,6 @@ public class Lobby {
         return players.size() == playerCount;
     }
 
-    public void setBoard(String board) {
-        this.board = board;
-    }
-
-    public String getBoard() {
-        return this.board;
-    }
-
     public void removePlayers() {
         players.removeAll(players);
     }
@@ -108,6 +100,22 @@ public class Lobby {
 
     public void setSaveId(int saveId) {
         this.saveId = saveId;
+    }
+
+    public void setBoardString(String board) {
+        this.boardString = board;
+    }
+
+    public String getBoardString() {
+        return this.boardString;
+    }
+
+    public Boolean getGameRunning() {
+        return gameRunning;
+    }
+
+    public void setGameRunning(Boolean value) {
+        this.gameRunning = value;
     }
 
 }

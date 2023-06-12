@@ -301,6 +301,7 @@ public class AppController implements Observer {
 
                             //Creating the new board for the game
                             Board board = new Board(course);
+                            board.setGameId(lobby.getId());
 
                             //Stating that the game is online
                             board.setGameOnline(true);
@@ -322,9 +323,8 @@ public class AppController implements Observer {
                             String boardString = boardToJson(board);
 
                             //Setting board on lobby object
-                            lobby.setBoard(boardString);
+                            lobby.setBoardString(boardString);
                             lobby.setGameRunning(true);
-
 
                             client.updateLobby(lobby);
 
@@ -656,12 +656,12 @@ public class AppController implements Observer {
     public void loadBoard(int id) {
         lobby = client.getLobby(lobby.getId());
 
-        GsonBuilder gb = new GsonBuilder();
-        Gson gson = gb
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-
-        Board board = gson.fromJson(lobby.getBoard(), Board.class);
+        // GsonBuilder gb = new GsonBuilder();
+        // Gson gson = gb
+        //         .excludeFieldsWithoutExposeAnnotation()
+        //         .create();
+        Board board = new Gson().fromJson(lobby.getBoardString(), Board.class);
+        // Board board = gson.fromJson(lobby.getBoardString(), Board.class);
         String courseName = board.boardName;
         courseName = courseName.replace(" ", "_").toLowerCase();
         Course jsonCourse = null;

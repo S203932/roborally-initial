@@ -28,9 +28,7 @@ public interface IServerService {
 
     public ArrayList<Lobby> getLobbies();
 
-    public Boolean updateBoard(int id, String board);
-
-    public Boolean updateLobby( Lobby lobby);
+    public Boolean updateLobby(Lobby lobby);
 
     public ArrayList<Lobby> getSavedLobbies();
 

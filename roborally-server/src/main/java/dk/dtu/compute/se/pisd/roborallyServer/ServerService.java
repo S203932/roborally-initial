@@ -125,21 +125,11 @@ public class ServerService implements IServerService {
         return false;
     }
 
-    @Override
-    public Boolean updateBoard(int id, String board) {
-        lobbies.get(id).setBoard(board);
-        if (lobbies.get(id).getBoard() != null) {
+    public Boolean updateLobby(Lobby lobby) {
+        if (lobbies.containsKey(lobby.getId())) {
+            lobbies.put(lobby.getId(), lobby);
             return true;
         } else {
-            return false;
-        }
-    }
-
-    public Boolean updateLobby( Lobby lobby){
-        lobbies.put(lobby.getId(),lobby);
-        if(lobbies.containsKey(lobby.getId())){
-            return true;
-        }else{
             return false;
         }
     }

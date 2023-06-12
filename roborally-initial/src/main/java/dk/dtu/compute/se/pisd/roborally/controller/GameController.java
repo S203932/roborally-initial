@@ -23,7 +23,6 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.ServerClient;
 import dk.dtu.compute.se.pisd.roborally.model.*;
-import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Tile;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
@@ -32,6 +31,8 @@ import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
 
 import javafx.scene.control.Alert;
 import org.jetbrains.annotations.NotNull;
+
+import com.google.gson.Gson;
 
 import java.util.Arrays;
 
@@ -666,7 +667,8 @@ public class GameController {
      * Update Board space and player values from server
      */
     public void updateBoard() {
-        Board newBoard = client.getBoard(board.getGameId());
+        Lobby lobby = client.getLobby(board.getGameId());
+        Board newBoard = new Gson().fromJson(lobby.getBoardString(), Board.class);
 
         // Update phase
         board.setPhase(newBoard.getPhase());
