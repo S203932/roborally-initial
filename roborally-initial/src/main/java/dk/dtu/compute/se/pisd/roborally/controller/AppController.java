@@ -29,10 +29,7 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.ServerClient;
-import dk.dtu.compute.se.pisd.roborally.model.Board;
-import dk.dtu.compute.se.pisd.roborally.model.Lobby;
-import dk.dtu.compute.se.pisd.roborally.model.LobbyPlayer;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Course;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -313,18 +310,35 @@ public class AppController implements Observer {
                                 Player player = new Player(board, PLAYER_COLORS.get(counter), lobbyPlayer.getName(),
                                         lobbyPlayer.getId());
                                 board.addPlayer(player);
+                                player.setSpace(board.getStartGear(counter));
                                 counter++;
                             }
 
                             //Setting the first player as current player in game
                             board.setCurrentPlayer(board.getPlayer(0));
 
+                            /*for (int i = 0; i <board.getPlayers().size(); i++) {
+                                board.getPlayer(i).setSpace(board.getStartGear(i));
+                                //Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
+                                //board.addPlayer(player);
+                                //player.setSpace(board.getStartGear(i));
+                            }
+
+                             */
+
+
                             //Converting the board to a Json String
                             String boardString = boardToJson(board);
+
+                            //Setting board on lobby object
+                            lobby.setBoard(boardString);
 
                             //Sending the board to the server
                             System.out.println("Status on sending to board to server:"
                                     + client.updateBoard(lobby.getId(), boardString));
+
+                            //Saving board
+                            client.saveLobbyGame(lobby);
 
                             //Receiving the board from the server as a JsonString
                             String receivedBoard = client.receiveBoard(lobby.getId());
@@ -333,7 +347,33 @@ public class AppController implements Observer {
                             // then initializing it the gamecontroller
                             loadBoard(receivedBoard);
 
+                            gameController.setLobbyPlayer(lobbyPlayer);
+
+                            gameController.startProgrammingPhase();
+
+                            int something = 0;
+
+
                             roboRally.createBoardView(gameController);
+
+
+
+                            Phase phase = gameController.board.getPhase();
+
+
+                            //if(phase == Phase.INITIALISATION){
+                            //    gameController.startProgrammingPhase();
+                            //}
+                            //gameController.startProgrammingPhase();
+                            //roboRally.createBoardView(gameController);
+                            //gameController.startProgrammingPhase();
+                            return;
+
+
+
+
+
+
 
                         } else {
                             showAlert("Not enough players", "The lobby does not have enough players to start.");
@@ -485,7 +525,7 @@ public class AppController implements Observer {
         HashMap<String, Lobby> lobbiesHashMap = new HashMap<String, Lobby>();
         ArrayList<Lobby> lobbies = null;
 
-        // Get lobbies that have been saved on the server or lobbies that are currently active 
+        // Get lobbies that have been saved on the server or lobbies that are currently active
         if (saved) {
             lobbies = client.getSavedLobbies();
         } else {
@@ -643,6 +683,7 @@ public class AppController implements Observer {
         Board newBoard = new Board(jsonCourse);
 
         gameController = new GameController(newBoard);
+        gameController.board.setGameOnline(oldBoard.getGameOnline());
 
         gameController.board.recreateBoardstate(oldBoard.getCurrentPlayer(), oldBoard.getPhase(), oldBoard.getPlayers(),
                 oldBoard.getStep(), oldBoard.getStepmode());

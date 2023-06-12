@@ -43,6 +43,8 @@ public class GameController {
 
     final public Board board;
 
+    private LobbyPlayer lobbyPlayer;
+
     /**
      * <p>Constructor for GameController.</p>
      *
@@ -647,6 +649,16 @@ public class GameController {
     public Board getBoard() {
         return board;
     }
+
+    public LobbyPlayer getLobbyPlayer(){
+        return this.lobbyPlayer;
+    }
+
+    public void setLobbyPlayer(LobbyPlayer lobbyPlayer){
+        this.lobbyPlayer = lobbyPlayer;
+    }
+
+
 /* private void removeSpam(Player player) {
         player.getDmgcards().remove(Command.SPAM);
     }*/

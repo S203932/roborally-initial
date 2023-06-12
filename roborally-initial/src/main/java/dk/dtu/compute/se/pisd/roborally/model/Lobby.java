@@ -10,6 +10,8 @@ public class Lobby {
     private int playerCount = 6;
     private int saveId = -1;
 
+    private String board;
+
     public Lobby() {
 
     }
@@ -96,6 +98,14 @@ public class Lobby {
 
     public void setSaveId(int saveId) {
         this.saveId = saveId;
+    }
+
+    public void setBoard(String board){
+        this.board = board;
+    }
+
+    public String getBoard(){
+        return this.board;
     }
 
 }
