@@ -329,7 +329,7 @@ public class AppController implements Observer {
                             //Sending the board to the server
                             System.out.println("Status on sending to board to server:"
                                     + client.updateBoard(lobby.getId(), boardString));
-
+                            lobby.setGameRunning(true);
                             //Saving board
                             client.saveLobbyGame(lobby);
 
@@ -338,6 +338,8 @@ public class AppController implements Observer {
                             gameController.setLobbyPlayer(lobbyPlayer);
 
                             Phase phase = gameController.board.getPhase();
+
+
 
                             if(phase == Phase.INITIALISATION){
                                 gameController.startProgrammingPhase();
@@ -631,6 +633,7 @@ public class AppController implements Observer {
         // Check if the game is online and should be saved on the server
         if (gameController.getBoard().getGameOnline()) {
             lobby.removePlayers();
+            lobby.setGameRunning(false);
 
             if (lobby.getSaveId() == -1) {
                 lobby.setSaveId(getLobbyId(true));
