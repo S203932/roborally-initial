@@ -114,17 +114,15 @@ public class AppController implements Observer {
 
                 pingResult = client.getPong();
 
+                // Check if the result is as expected
+                if (pingResult.equals("pong")) {
+                    lobbyBrowser();
+                }
+
             } catch (Exception e) {
                 showAlert("Invalid server address", "Try again with a valid address");
             }
-            // Check if the result is as expected
-            if (pingResult != null && pingResult.equals("pong")) {
-                lobbyBrowser();
-                return;
-            }
         }
-        return;
-
     }
 
     /**
@@ -366,14 +364,6 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
-                        System.out.println("Saving game to server");
-                        if (lobby.getSaveId() == -1) {
-                            lobby.removePlayers();
-                            lobby.setSaveId(getLobbyId(true));
-                        }
-
-                        System.out.println(client.saveLobbyGame(lobby));
-
                         break;
 
                     case RIGHT:
@@ -605,29 +595,48 @@ public class AppController implements Observer {
      * <p>saveGame.</p>
      */
     public void saveGame() {
-        // XXX needs to be implemented eventually
-        GsonBuilder gb = new GsonBuilder();
-        Gson gson = gb
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setTitle("Save game");
-        inputDialog.setContentText("Please state the name of the file to save to:");
-        Optional<String> result = inputDialog.showAndWait();
-        if (!(result.isEmpty()) && validName(result.get())) {
-            String tempFilePath = "src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
-            String newFileName = result.get() + ".json";
 
-            try {
-                FileWriter fileWriter = new FileWriter(tempFilePath + newFileName);
-                gson.toJson(this.gameController.getBoard(), fileWriter);
-                fileWriter.flush();
-                fileWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        // Check if the game is online and should be saved on the server
+        if (gameController.getBoard().getGameOnline()) {
+            lobby.removePlayers();
+
+            if (lobby.getSaveId() == -1) {
+                lobby.setSaveId(getLobbyId(true));
             }
+
+            if (client.saveLobbyGame(lobby)) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Info dialog");
+                alert.setHeaderText("Saved game");
+                alert.setContentText(
+                        "The lobby has been saved on the server as: " + lobby.getSaveId() + " - " + lobby.getName());
+                alert.showAndWait();
+            }
+
         } else {
-            showAlert("Invalid name", "Choose a valid name to save the game");
+            GsonBuilder gb = new GsonBuilder();
+            Gson gson = gb
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .create();
+            TextInputDialog inputDialog = new TextInputDialog();
+            inputDialog.setTitle("Save game");
+            inputDialog.setContentText("Please state the name of the file to save to:");
+            Optional<String> result = inputDialog.showAndWait();
+            if (!(result.isEmpty()) && validName(result.get())) {
+                String tempFilePath = "src/main/java/dk/dtu/compute/se/pisd/roborally/savedGames/";
+                String newFileName = result.get() + ".json";
+
+                try {
+                    FileWriter fileWriter = new FileWriter(tempFilePath + newFileName);
+                    gson.toJson(this.gameController.getBoard(), fileWriter);
+                    fileWriter.flush();
+                    fileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                showAlert("Invalid name", "Choose a valid name to save the game");
+            }
         }
 
     }

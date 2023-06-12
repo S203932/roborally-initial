@@ -92,20 +92,13 @@ public class ServerService implements IServerService {
 
         ArrayList<Lobby> savedLobbies = new ArrayList<Lobby>();
         File savedLobbiesFile = new File("src/main/java/dk/dtu/compute/se/pisd/roborallyServer/savedGames");
-        System.out.println(savedLobbiesFile.getName());
-        System.out.println(savedLobbiesFile.exists());
-        System.out.println(savedLobbiesFile.listFiles());
-
         for (File savedLobbyFile : savedLobbiesFile.listFiles()) {
-            System.out.println(savedLobbyFile.getAbsolutePath());
             try {
                 savedLobbies.add(gson.fromJson(new FileReader(savedLobbyFile.getAbsolutePath()), Lobby.class));
             } catch (Exception e) {
                 return null;
             }
         }
-        System.out.println(savedLobbies);
-
         return savedLobbies;
     }
 
