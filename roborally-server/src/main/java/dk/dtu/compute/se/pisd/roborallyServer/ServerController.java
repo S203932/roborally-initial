@@ -60,10 +60,10 @@ public class ServerController {
     }
 
     @PostMapping(value = "/lobby/{id}/sync")
-    public ResponseEntity<String> updateBoard(@PathVariable int id, @RequestBody String board){
-        if(gameService.updateBoard(id,board)){
+    public ResponseEntity<String> updateBoard(@PathVariable int id, @RequestBody String board) {
+        if (gameService.updateBoard(id, board)) {
             response = successful;
-        }else{
+        } else {
             response = unsuccessful;
         }
         return ResponseEntity.ok().body(response);
@@ -116,8 +116,15 @@ public class ServerController {
     }
 
     @GetMapping(value = "/lobby/{id}/sync")
-    public ResponseEntity<String> receiveBoard(@PathVariable int id){
+    public ResponseEntity<String> receiveBoard(@PathVariable int id) {
         String board = gameService.getLobby(id).getBoard();
         return ResponseEntity.ok().body(board);
     }
+
+    @GetMapping(value = "/lobbies/saved")
+    public ResponseEntity<ArrayList<Lobby>> getSavedLobbies() {
+        ArrayList<Lobby> savedLobbies = gameService.getSavedLobbies();
+        return ResponseEntity.ok().body(savedLobbies);
+    }
+
 }

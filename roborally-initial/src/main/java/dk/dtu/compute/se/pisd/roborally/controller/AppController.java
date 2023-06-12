@@ -87,6 +87,7 @@ public class AppController implements Observer {
     private Lobby lobby;
 
     final private String CREATE_LOBBY = "Create a lobby";
+    final private String LOAD_LOBBY = "Load a saved lobby";
     final private int LOBBY_HOST = 0;
 
     /**
@@ -108,18 +109,20 @@ public class AppController implements Observer {
 
         Optional<String> result = dialog.showAndWait();
 
-        if (!result.isEmpty() && result.get().length() > 0) {
-            String pingResult = null;
-            client = new ServerClient(result.get());
+        String pingResult = null;
+        client = new ServerClient(result.get());
 
-            pingResult = client.getPong();
-
+        if (!result.isEmpty()) {
+            try {
+                pingResult = client.getPong();
+            } catch (Exception e) {
+                showAlert("Invalid server address", "Try again with a valid address");
+            }
             // Check if the result is as expected
             if (pingResult != null && pingResult.equals("pong")) {
                 lobbyBrowser();
                 return;
             }
-            showAlert("Invalid server address", "Try again with a valid address");
         }
 
     }
@@ -133,6 +136,7 @@ public class AppController implements Observer {
         // Get player name
         lobbyPlayer = new LobbyPlayer();
         Optional<String> result = null;
+        Optional<String> savedLobbyResult = null;
 
         TextInputDialog nameDialog = new TextInputDialog();
         nameDialog.setTitle("Set name");
@@ -149,7 +153,7 @@ public class AppController implements Observer {
         lobbyPlayer.setName(result.get());
 
         // Show lobbies
-        HashMap<String, Lobby> lobbies = refreshLobbies();
+        HashMap<String, Lobby> lobbies = refreshLobbies(false);
         ChoiceDialog<String> lobbyDialog = new ChoiceDialog<String>(CREATE_LOBBY,
                 new ArrayList<String>(lobbies.keySet()));
         lobbyDialog.setTitle("Lobby browser");
@@ -169,21 +173,49 @@ public class AppController implements Observer {
                 // Leave player ID to set to lobby host (0)
                 client.createLobby(lobby);
             }
+            // Check if an existing game should be restarted from the server
+            else if (result.get().equals(LOAD_LOBBY)) {
+                lobbies = refreshLobbies(true);
+
+                if (lobbies.size() == 0) {
+                    showAlert("No available saved games", "Start a new lobby or join one to start a game");
+                } else {
+                    ArrayList<String> choices = new ArrayList<String>(lobbies.keySet());
+
+                    ChoiceDialog<String> savedLobbyDialog = new ChoiceDialog<String>(choices.get(0), choices);
+                    savedLobbyDialog.setTitle("Saved games lobby browser");
+                    savedLobbyDialog.setHeaderText("Select a saved lobby");
+                    savedLobbyResult = savedLobbyDialog.showAndWait();
+
+                    if (savedLobbyResult.isEmpty()) {
+                        return;
+                    }
+                    lobby = lobbies.get(savedLobbyResult.get());
+
+                    // Set a new ID and remove existing players
+                    lobby.setId(getLobbyId(false));
+                    lobby.removePlayers();
+
+                    client.createLobby(lobby);
+                }
+            }
 
             // Try to join the selected game
             // Join the server with a valid unique player ID
             do {
+                // Will be null if current player is not host
                 if (lobby == null) {
+
                     lobby = lobbies.get(result.get());
-                }
 
-                // Refresh server information
-                lobby = client.getLobby(lobby.getId());
+                    // Refresh server information
+                    lobby = client.getLobby(lobby.getId());
 
-                // Check that the server is not full
-                if (lobby.isFull()) {
-                    showAlert("Game lobby is full", "Join another lobby");
-                    break;
+                    // Check that the server is not full
+                    if (lobby.isFull()) {
+                        showAlert("Game lobby is full", "Join another lobby");
+                        break;
+                    }
                 }
 
                 // Should be a unique ID
@@ -191,31 +223,19 @@ public class AppController implements Observer {
 
             } while (!client.playerJoinLobby(lobby.getId(), lobbyPlayer));
 
-            waitingRoom();
+            waitingRoom(lobbyPlayer.getId() == LOBBY_HOST);
         }
     }
 
     /**
      * Create a waiting room for a lobby. Host has the ability to start game and choose map.
      */
-    private void waitingRoom() {
-        if (lobbyPlayer.getId() == LOBBY_HOST) {
-            waitingRoom(true);
-        } else {
-            waitingRoom(false);
-            // waitingRoomNonHost();
-        }
-
-        // Start the game here upon button
-
-    }
-
     private void waitingRoom(boolean host) {
         Course course = null;
         while (true) {
             // Create a custom Dialog that will return a string and an int
             Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle(lobby.getName() + " lobby");
+            dialog.setTitle(lobby.getName() + " - lobby");
             if (host) {
                 dialog.setHeaderText("Configure your game");
             } else {
@@ -287,11 +307,11 @@ public class AppController implements Observer {
                             //Stating that the game is online
                             board.setGameOnline(true);
 
-
                             // Adding the players from the lobby to the current board with names and id
                             int counter = 0;
-                            for(LobbyPlayer lobbyPlayer : lobby.getPlayers()){
-                                Player player = new Player(board,PLAYER_COLORS.get(counter),lobbyPlayer.getName(), lobbyPlayer.getId());
+                            for (LobbyPlayer lobbyPlayer : lobby.getPlayers()) {
+                                Player player = new Player(board, PLAYER_COLORS.get(counter), lobbyPlayer.getName(),
+                                        lobbyPlayer.getId());
                                 board.addPlayer(player);
                                 counter++;
                             }
@@ -299,12 +319,12 @@ public class AppController implements Observer {
                             //Setting the first player as current player in game
                             board.setCurrentPlayer(board.getPlayer(0));
 
-
                             //Converting the board to a Json String
                             String boardString = boardToJson(board);
 
                             //Sending the board to the server
-                            System.out.println("Status on sending to board to server:" + client.updateBoard(lobby.getId(), boardString));
+                            System.out.println("Status on sending to board to server:"
+                                    + client.updateBoard(lobby.getId(), boardString));
 
                             //Receiving the board from the server as a JsonString
                             String receivedBoard = client.receiveBoard(lobby.getId());
@@ -315,15 +335,8 @@ public class AppController implements Observer {
 
                             roboRally.createBoardView(gameController);
 
-
-
-
                         } else {
                             showAlert("Not enough players", "The lobby does not have enough players to start.");
-
-
-
-
 
                         }
                         break;
@@ -335,6 +348,13 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
+                        System.out.println("Saving game to server");
+
+                        if (lobby.getSaveId() == -1) {
+                            lobby.removePlayers();
+                            lobby.setSaveId(getLobbyId(true));
+                        }
+
                         System.out.println(client.saveLobbyGame(lobby));
 
                         break;
@@ -355,7 +375,7 @@ public class AppController implements Observer {
         }
     }
 
-    private String boardToJson(Board board){
+    private String boardToJson(Board board) {
         GsonBuilder gb = new GsonBuilder();
         Gson gson = gb
                 .excludeFieldsWithoutExposeAnnotation()
@@ -412,7 +432,7 @@ public class AppController implements Observer {
         // Ensure that the input is usable
         if (!result.isEmpty()) {
             if (validName(result.get().getKey())) {
-                return new Lobby(result.get().getKey(), getLobbyId(), result.get().getValue());
+                return new Lobby(result.get().getKey(), getLobbyId(false), result.get().getValue());
             } else {
                 showAlert("Invalid server configuration", "Try again with a valid configuration");
             }
@@ -430,16 +450,29 @@ public class AppController implements Observer {
     }
 
     /**
-     * Get the first available unique ID from list of lobbies
+     * Get the first available unique ID from list of lobbies or saved games
      */
-    private int getLobbyId() {
+    private int getLobbyId(boolean saved) {
         ArrayList<Lobby> lobbies = new ArrayList<Lobby>();
         int lobbyId = 0;
 
-        lobbies.addAll(client.getLobbies());
+        if (saved) {
+            lobbies.addAll(client.getSavedLobbies());
+        } else {
+            lobbies.addAll(client.getLobbies());
+        }
+        int id;
 
         for (int index = 0; index < lobbies.size(); index++) {
-            if (lobbies.get(index).getId() == lobbyId) {
+
+            if (saved) {
+                id = lobbies.get(index).getSaveId();
+            } else {
+                id = lobbies.get(index).getId();
+
+            }
+
+            if (id == lobbyId) {
                 lobbyId++;
                 index = 0;
             }
@@ -447,15 +480,23 @@ public class AppController implements Observer {
         return lobbyId;
     }
 
-    private HashMap<String, Lobby> refreshLobbies() {
+    private HashMap<String, Lobby> refreshLobbies(boolean saved) {
 
         HashMap<String, Lobby> lobbiesHashMap = new HashMap<String, Lobby>();
+        ArrayList<Lobby> lobbies = null;
 
-        ArrayList<Lobby> lobbies = client.getLobbies();
+        // Get lobbies that have been saved on the server or lobbies that are currently active 
+        if (saved) {
+            lobbies = client.getSavedLobbies();
+        } else {
+            // Add an option for creating a lobby
+            lobbiesHashMap.put(CREATE_LOBBY, null);
+            // Add an option for loading a saved game
+            lobbiesHashMap.put(LOAD_LOBBY, null);
 
-        // Add an empty option for creating a lobby
-        lobbiesHashMap.put(CREATE_LOBBY, null);
+            lobbies = client.getLobbies();
 
+        }
         for (Lobby lobby : lobbies) {
             lobbiesHashMap.put("Lobby: " + lobby.getId() + " - " + lobby.getName() + " " + lobby.getPlayersCount()
                     + "/" + lobby.getPlayerCount() + " players", lobby);
@@ -573,7 +614,8 @@ public class AppController implements Observer {
         }
 
     }
-    public void loadBoard(String board){
+
+    public void loadBoard(String board) {
         GsonBuilder gb = new GsonBuilder();
         Gson gson = gb
                 .excludeFieldsWithoutExposeAnnotation()
@@ -585,14 +627,12 @@ public class AppController implements Observer {
         courseName = courseName.replace(" ", "_").toLowerCase();
         Course jsonCourse = null;
 
-
         try {
-            File course = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses/"+courseName+".json");
+            File course = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses/" + courseName + ".json");
 
             Gson gson1 = new Gson();
 
             jsonCourse = gson1.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
-
 
         } catch (JsonIOException e) {
             // TODO: handle exception
@@ -604,11 +644,8 @@ public class AppController implements Observer {
 
         gameController = new GameController(newBoard);
 
-        gameController.board.recreateBoardstate(oldBoard.getCurrentPlayer(),oldBoard.getPhase(),oldBoard.getPlayers(), oldBoard.getStep(),oldBoard.getStepmode());
-
-
-
-
+        gameController.board.recreateBoardstate(oldBoard.getCurrentPlayer(), oldBoard.getPhase(), oldBoard.getPlayers(),
+                oldBoard.getStep(), oldBoard.getStepmode());
 
     }
 

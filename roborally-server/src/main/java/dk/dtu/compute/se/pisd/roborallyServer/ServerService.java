@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborallyServer;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,20 +43,10 @@ public class ServerService implements IServerService {
 
     @Override
     public boolean playerJoinLobby(int id, LobbyPlayer player) {
-        if (lobbies.get(id).getPlayer(id) != null) {
+        if (lobbies.get(id).getPlayer(player.getId()) != null) {
             return false;
         } else {
             return lobbies.get(id).addPlayer(player);
-        }
-    }
-
-    @Override
-    public Boolean updateBoard(int id, String board){
-        lobbies.get(id).setBoard(board);
-        if(lobbies.get(id).getBoard() != null){
-            return true;
-        }else{
-            return false;
         }
     }
 
@@ -97,10 +88,36 @@ public class ServerService implements IServerService {
     }
 
     @Override
-    public boolean saveLobbyGame(Lobby lobby) {
-        if (lobbies.containsKey(lobby.getId())) {
+    public ArrayList<Lobby> getSavedLobbies() {
+
+        ArrayList<Lobby> savedLobbies = new ArrayList<Lobby>();
+        File savedLobbiesFile = new File("src/main/java/dk/dtu/compute/se/pisd/roborallyServer/savedGames");
+        System.out.println(savedLobbiesFile.getName());
+        System.out.println(savedLobbiesFile.exists());
+        System.out.println(savedLobbiesFile.listFiles());
+
+        for (File savedLobbyFile : savedLobbiesFile.listFiles()) {
+            System.out.println(savedLobbyFile.getAbsolutePath());
             try {
-                String lobbyFileName = lobby.getId() + "-" + lobby.getName() + ".json";
+                savedLobbies.add(gson.fromJson(new FileReader(savedLobbyFile.getAbsolutePath()), Lobby.class));
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        System.out.println(savedLobbies);
+
+        return savedLobbies;
+    }
+
+    @Override
+    public boolean saveLobbyGame(Lobby lobby) {
+        // Remove players from save file
+        if (lobbies.containsKey(lobby.getId())) {
+
+            lobby.removePlayers();
+
+            try {
+                String lobbyFileName = lobby.getSaveId() + "-" + lobby.getName() + ".json";
 
                 FileWriter fileWriter = new FileWriter(
                         "src/main/java/dk/dtu/compute/se/pisd/roborallyServer/savedGames/" + lobbyFileName);
@@ -113,6 +130,16 @@ public class ServerService implements IServerService {
             }
         }
         return false;
+    }
+
+    @Override
+    public Boolean updateBoard(int id, String board) {
+        lobbies.get(id).setBoard(board);
+        if (lobbies.get(id).getBoard() != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

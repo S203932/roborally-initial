@@ -67,6 +67,24 @@ public class ServerClient {
                 }
         }
 
+        public ArrayList<Lobby> getSavedLobbies() {
+                HttpRequest request = HttpRequest.newBuilder()
+                                .GET()
+                                .uri(URI.create("http://" + address + ":8080/lobbies/saved"))
+                                .header("Content-Type", "application/json")
+                                .build();
+
+                try {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+                        ArrayList<Lobby> result = gson.fromJson(response.body(), new TypeToken<ArrayList<Lobby>>() {
+                        }.getType());
+                        return result;
+                } catch (Exception e) {
+                        return null;
+                }
+        }
+
         public Lobby getLobby(int id) {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .GET()

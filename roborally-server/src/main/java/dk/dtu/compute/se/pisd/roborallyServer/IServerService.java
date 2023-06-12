@@ -30,4 +30,6 @@ public interface IServerService {
 
     public Boolean updateBoard(int id, String board);
 
+    public ArrayList<Lobby> getSavedLobbies();
+
 }

@@ -8,6 +8,7 @@ public class Lobby {
     private int id;
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
     private int playerCount = 6;
+    private int saveId = -1;
 
     public Lobby() {
 
@@ -83,6 +84,18 @@ public class Lobby {
 
     public boolean isFull() {
         return players.size() == playerCount;
+    }
+
+    public void removePlayers() {
+        players.removeAll(players);
+    }
+
+    public int getSaveId() {
+        return saveId;
+    }
+
+    public void setSaveId(int saveId) {
+        this.saveId = saveId;
     }
 
 }
