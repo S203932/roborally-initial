@@ -53,6 +53,7 @@ import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
  */
 public class Board extends Subject {
 
+
     @Expose
     private Boolean gameOnline = false;
 

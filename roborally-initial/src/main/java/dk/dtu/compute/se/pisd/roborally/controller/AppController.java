@@ -318,6 +318,8 @@ public class AppController implements Observer {
                             //Setting the first player as current player in game
                             board.setCurrentPlayer(board.getPlayer(0));
 
+
+
                             //Converting the board to a Json String
                             String boardString = boardToJson(board);
 
@@ -335,20 +337,16 @@ public class AppController implements Observer {
 
                             gameController.setLobbyPlayer(lobbyPlayer);
 
-                            gameController.startProgrammingPhase();
+                            Phase phase = gameController.board.getPhase();
 
-                            int something = 0;
+                            if(phase == Phase.INITIALISATION){
+                                gameController.startProgrammingPhase();
+                            }
+
 
                             roboRally.createBoardView(gameController);
 
-                            Phase phase = gameController.board.getPhase();
 
-                            //if(phase == Phase.INITIALISATION){
-                            //    gameController.startProgrammingPhase();
-                            //}
-                            //gameController.startProgrammingPhase();
-                            //roboRally.createBoardView(gameController);
-                            //gameController.startProgrammingPhase();
                             return;
 
                         } else {
@@ -364,6 +362,40 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
+                        System.out.println("Saving game to server");
+                        if (lobby.getSaveId() == -1) {
+                            lobby.removePlayers();
+                            lobby.setSaveId(getLobbyId(true));
+                        }
+
+                        Lobby newlobby = client.getLobby(lobby.getId());
+
+                        if(newlobby.getGameRunning()){
+                            loadBoard(lobby.getId());
+
+                            gameController.setLobbyPlayer(lobbyPlayer);
+
+                            Phase phase = gameController.board.getPhase();
+
+                            if(phase == Phase.INITIALISATION){
+                                gameController.startProgrammingPhase();
+                            }
+
+                            roboRally.createBoardView(gameController);
+
+                            roboRally.createBoardView(gameController);
+                        }else{
+                            System.out.println(client.saveLobbyGame(lobby));
+                        }
+
+
+
+
+
+
+
+
+
                         break;
 
                     case RIGHT:

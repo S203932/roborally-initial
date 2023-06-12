@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Lobby {
 
+    private boolean gameRunning = false;
+
     private String name;
     private int id;
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
@@ -106,6 +108,14 @@ public class Lobby {
 
     public String getBoard(){
         return this.board;
+    }
+
+    public Boolean getGameRunning(){
+        return gameRunning;
+    }
+
+    public void setGameRunning(Boolean value){
+        this.gameRunning = value;
     }
 
 }
