@@ -116,7 +116,7 @@ public class ServerController {
     }
 
     @GetMapping(value = "/lobby/{id}/sync")
-    public ResponseEntity<String> receiveBoard(@PathVariable int id) {
+    public ResponseEntity<String> getBoard(@PathVariable int id) {
         String board = gameService.getLobby(id).getBoard();
         return ResponseEntity.ok().body(board);
     }

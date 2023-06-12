@@ -107,11 +107,13 @@ public class AppController implements Observer {
         Optional<String> result = dialog.showAndWait();
 
         String pingResult = null;
-        client = new ServerClient(result.get());
 
         if (!result.isEmpty()) {
             try {
+                client = new ServerClient(result.get());
+
                 pingResult = client.getPong();
+
             } catch (Exception e) {
                 showAlert("Invalid server address", "Try again with a valid address");
             }
@@ -121,6 +123,7 @@ public class AppController implements Observer {
                 return;
             }
         }
+        return;
 
     }
 
@@ -317,16 +320,6 @@ public class AppController implements Observer {
                             //Setting the first player as current player in game
                             board.setCurrentPlayer(board.getPlayer(0));
 
-                            /*for (int i = 0; i <board.getPlayers().size(); i++) {
-                                board.getPlayer(i).setSpace(board.getStartGear(i));
-                                //Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i + 1);
-                                //board.addPlayer(player);
-                                //player.setSpace(board.getStartGear(i));
-                            }
-
-                             */
-
-
                             //Converting the board to a Json String
                             String boardString = boardToJson(board);
 
@@ -340,12 +333,7 @@ public class AppController implements Observer {
                             //Saving board
                             client.saveLobbyGame(lobby);
 
-                            //Receiving the board from the server as a JsonString
-                            String receivedBoard = client.receiveBoard(lobby.getId());
-
-                            //Loading the received boardString to a board and
-                            // then initializing it the gamecontroller
-                            loadBoard(receivedBoard);
+                            loadBoard(lobby.getId());
 
                             gameController.setLobbyPlayer(lobbyPlayer);
 
@@ -353,13 +341,9 @@ public class AppController implements Observer {
 
                             int something = 0;
 
-
                             roboRally.createBoardView(gameController);
 
-
-
                             Phase phase = gameController.board.getPhase();
-
 
                             //if(phase == Phase.INITIALISATION){
                             //    gameController.startProgrammingPhase();
@@ -368,12 +352,6 @@ public class AppController implements Observer {
                             //roboRally.createBoardView(gameController);
                             //gameController.startProgrammingPhase();
                             return;
-
-
-
-
-
-
 
                         } else {
                             showAlert("Not enough players", "The lobby does not have enough players to start.");
@@ -389,7 +367,6 @@ public class AppController implements Observer {
                     case LEFT:
                         System.out.println("Refreshing");
                         System.out.println("Saving game to server");
-
                         if (lobby.getSaveId() == -1) {
                             lobby.removePlayers();
                             lobby.setSaveId(getLobbyId(true));
@@ -655,15 +632,15 @@ public class AppController implements Observer {
 
     }
 
-    public void loadBoard(String board) {
-        GsonBuilder gb = new GsonBuilder();
-        Gson gson = gb
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
+    public void loadBoard(int id) {
+        // GsonBuilder gb = new GsonBuilder();
+        // Gson gson = gb
+        //         .excludeFieldsWithoutExposeAnnotation()
+        //         .create();
 
-        Board oldBoard = gson.fromJson(board, Board.class);
-
-        String courseName = oldBoard.boardName;
+        // Board oldBoard = gson.fromJson(board, Board.class);
+        Board board = client.getBoard(id);
+        String courseName = board.boardName;
         courseName = courseName.replace(" ", "_").toLowerCase();
         Course jsonCourse = null;
 
@@ -683,10 +660,10 @@ public class AppController implements Observer {
         Board newBoard = new Board(jsonCourse);
 
         gameController = new GameController(newBoard);
-        gameController.board.setGameOnline(oldBoard.getGameOnline());
+        gameController.board.setGameOnline(board.getGameOnline());
 
-        gameController.board.recreateBoardstate(oldBoard.getCurrentPlayer(), oldBoard.getPhase(), oldBoard.getPlayers(),
-                oldBoard.getStep(), oldBoard.getStepmode());
+        gameController.board.recreateBoardstate(board.getCurrentPlayer(), board.getPhase(), board.getPlayers(),
+                board.getStep(), board.getStepmode());
 
     }
 

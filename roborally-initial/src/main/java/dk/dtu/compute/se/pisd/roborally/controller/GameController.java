@@ -21,7 +21,9 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.ServerClient;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.CourseModel.Tile;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
@@ -42,6 +44,8 @@ import java.util.Arrays;
 public class GameController {
 
     final public Board board;
+
+    private ServerClient client;
 
     private LobbyPlayer lobbyPlayer;
 
@@ -366,7 +370,7 @@ public class GameController {
                 case FAST_FORWARD:
                     this.fastForward(player);
                     break;
-               /* case SPAM:
+                /* case SPAM:
                     removeSpam(player);
                    break;*/
                 default:
@@ -389,7 +393,6 @@ public class GameController {
             Heading pushDirection = heading.next().next(); // Calculate the push direction
             Space target = board.getNeighbour(space, heading);
 
-
             boolean wallBlock = false;
 
             if (target instanceof Wall) {
@@ -412,12 +415,13 @@ public class GameController {
                     target.setPlayer(player);
                 } else if (target != null && target.getPlayer() != null) {
                     movenextForward(target.getPlayer(), heading); // Move the player in the target space
-                    if (target.getPlayer() == null) target.setPlayer(player);
+                    if (target.getPlayer() == null)
+                        target.setPlayer(player);
                 }
             }
-             /*   if (target.getPlayer() != null) {
-                // Call the recursive method to handle the case when the target space is occupied
-                moveForward(target.getPlayer());
+            /*   if (target.getPlayer() != null) {
+               // Call the recursive method to handle the case when the target space is occupied
+               moveForward(target.getPlayer());
             }*/
 
         }
@@ -431,7 +435,6 @@ public class GameController {
             Heading pushDirection = heading.next().next(); // Calculate the push direction
             Space target = board.getNeighbour(space, heading);
 
-
             boolean wallBlock = false;
 
             if (target instanceof Wall) {
@@ -454,7 +457,8 @@ public class GameController {
                     target.setPlayer(player);
                 } else if (target != null && target.getPlayer() != null) {
                     movenextForward(target.getPlayer(), heading); // Move the player in the target space
-                    if (target.getPlayer() == null) target.setPlayer(player);
+                    if (target.getPlayer() == null)
+                        target.setPlayer(player);
 
                 }
             }
@@ -466,16 +470,16 @@ public class GameController {
         Space target = board.getNeighbour(space, heading);
         Space current = board.getNeighbour(space, heading);
         Heading newWallBlockHeading = heading.next().next();
-/*
+        /*
         while (target != null && !(target instanceof Wall) && target.getPlayer() != null) {
             space = target;
             target = board.getNeighbour(space, heading);
-
+        
             if (target instanceof Wall) {
                 break; // Break out of the loop if the target space is a wall
             }
         }
-*/
+        */
         while (current != null && !(current instanceof Wall) && current.getPlayer() != null) {
             space = current;
             current = board.getNeighbour(space, heading);
@@ -485,28 +489,29 @@ public class GameController {
             }
         }
 
-        if(board.getNeighbour(current, heading).getPlayer() == null && !(board.getNeighbour(current, heading) instanceof Wall) && !(current instanceof Wall)) {
+        if (board.getNeighbour(current, heading).getPlayer() == null
+                && !(board.getNeighbour(current, heading) instanceof Wall) && !(current instanceof Wall)) {
             if (!(target instanceof Wall)) {
                 // Check if the target space is available
-               /* if (target != null && target.getPlayer() == null) {
+                /* if (target != null && target.getPlayer() == null) {
                     boolean wallBlock = false;
-
+                
                     if (target instanceof Wall) {
                         Wall targetWall = (Wall) target;
-
+                
                         if (Arrays.asList(targetWall.getFacing()).contains(newWallBlockHeading)) {
                             wallBlock = true;
                         }
-
+                
                     } else if (space instanceof Wall) {
                         Wall wall = (Wall) space;
-
+                
                         if (Arrays.asList(wall.getFacing()).contains(heading)) {
                             wallBlock = true;
                         }
                     }
                     if (!wallBlock) {
-
+                
                     }
                     */// Move the current player to the target space
                 currentPlayer.setSpace(target);
@@ -538,7 +543,6 @@ public class GameController {
             }
         }
     }
-
 
     // TODO: V2
     /**
@@ -650,16 +654,40 @@ public class GameController {
         return board;
     }
 
-    public LobbyPlayer getLobbyPlayer(){
+    public LobbyPlayer getLobbyPlayer() {
         return this.lobbyPlayer;
     }
 
-    public void setLobbyPlayer(LobbyPlayer lobbyPlayer){
+    public void setLobbyPlayer(LobbyPlayer lobbyPlayer) {
         this.lobbyPlayer = lobbyPlayer;
     }
 
+    /**
+     * Update Board space and player values from server
+     */
+    public void updateBoard() {
+        Board newBoard = client.getBoard(board.getGameId());
 
-/* private void removeSpam(Player player) {
+        // Update phase
+        board.setPhase(newBoard.getPhase());
+
+        for (Player player : board.getPlayers()) {
+            Player newPlayer = newBoard.getPlayer(player.getId());
+
+            // Set new player placements. This could be done more efficiently 
+            Space newSpace = newPlayer.getSpace();
+            player.setSpace(board.getSpaces()[newSpace.x][newSpace.y]);
+
+            // Set new player heading
+            player.setHeading(newPlayer.getHeading());
+
+            // Set new player checkpoints reached
+            player.setCheckpointCount(newPlayer.getCheckpointCount());
+
+        }
+    }
+
+    /* private void removeSpam(Player player) {
         player.getDmgcards().remove(Command.SPAM);
     }*/
 }

@@ -12,6 +12,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Lobby;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyPlayer;
 
@@ -197,12 +198,12 @@ public class ServerClient {
 
         }
 
-        public boolean updateBoard(int id, String board){
+        public boolean updateBoard(int id, String board) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + address + ":8080/lobby/" + id+"/sync"))
-                        .headers("Accept", "application/json", "Content-Type", "application/json")
-                        .POST(BodyPublishers.ofString(board))
-                        .build();
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/sync"))
+                                .headers("Accept", "application/json", "Content-Type", "application/json")
+                                .POST(BodyPublishers.ofString(board))
+                                .build();
                 try {
                         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -215,21 +216,20 @@ public class ServerClient {
                 }
         }
 
-        public String receiveBoard (int id){
+        public Board getBoard(int id) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .GET()
-                        .uri(URI.create("http://" + address + ":8080/lobby/" + id+"/sync"))
-                        .header("Content-Type", "application/json")
-                        .build();
+                                .GET()
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/sync"))
+                                .header("Content-Type", "application/json")
+                                .build();
                 try {
                         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                        String result = response.body();
+                        Board result = gson.fromJson(response.body(), Board.class);
                         return result;
                 } catch (Exception e) {
                         return null;
                 }
-
 
         }
 }

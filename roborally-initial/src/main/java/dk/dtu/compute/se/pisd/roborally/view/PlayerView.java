@@ -58,6 +58,8 @@ public class PlayerView extends Tab implements ViewObserver {
     private Button executeButton;
     private Button stepButton;
 
+    private Button refreshButton;
+
     private VBox playerInteractionPanel;
 
     private GameController gameController;
@@ -97,15 +99,24 @@ public class PlayerView extends Tab implements ViewObserver {
         //      refactored.
 
         finishButton = new Button("Finish Programming");
-        finishButton.setOnAction( e -> gameController.finishProgrammingPhase());
+        finishButton.setOnAction(e -> gameController.finishProgrammingPhase());
 
         executeButton = new Button("Execute Program");
-        executeButton.setOnAction( e-> gameController.executePrograms());
+        executeButton.setOnAction(e -> gameController.executePrograms());
 
         stepButton = new Button("Execute Current Register");
-        stepButton.setOnAction( e-> gameController.executeStep());
+        stepButton.setOnAction(e -> gameController.executeStep());
 
-        buttonPanel = new VBox(finishButton, executeButton, stepButton);
+        // Add refresh button and remove step for online play (for ease of programming)
+        refreshButton = new Button("Refresh game state");
+        refreshButton.setOnAction(e -> gameController.updateBoard());
+
+        if (gameController.getBoard().getGameOnline()) {
+            buttonPanel = new VBox(finishButton, executeButton, refreshButton);
+        } else {
+            buttonPanel = new VBox(finishButton, executeButton, stepButton);
+        }
+
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
         buttonPanel.setSpacing(3.0);
         // programPane.add(buttonPanel, Player.NO_REGISTERS, 0); done in update now
@@ -137,6 +148,7 @@ public class PlayerView extends Tab implements ViewObserver {
             update(player.board);
         }
     }
+
     /** A method that updates the players view of the board according to the gamecontroller
      *
      * {@inheritDoc} */
@@ -146,7 +158,7 @@ public class PlayerView extends Tab implements ViewObserver {
             for (int i = 0; i < Player.NO_REGISTERS; i++) {
                 CardFieldView cardFieldView = programCardViews[i];
                 if (cardFieldView != null) {
-                    if (player.board.getPhase() == Phase.PROGRAMMING ) {
+                    if (player.board.getPhase() == Phase.PROGRAMMING) {
                         cardFieldView.setBackground(CardFieldView.BG_DEFAULT);
                     } else {
                         if (i < player.board.getStep()) {
@@ -154,7 +166,8 @@ public class PlayerView extends Tab implements ViewObserver {
                         } else if (i == player.board.getStep()) {
                             if (player.board.getCurrentPlayer() == player) {
                                 cardFieldView.setBackground(CardFieldView.BG_ACTIVE);
-                            } else if (player.board.getPlayerNumber(player.board.getCurrentPlayer()) > player.board.getPlayerNumber(player)) {
+                            } else if (player.board.getPlayerNumber(player.board.getCurrentPlayer()) > player.board
+                                    .getPlayerNumber(player)) {
                                 cardFieldView.setBackground(CardFieldView.BG_DONE);
                             } else {
                                 cardFieldView.setBackground(CardFieldView.BG_DEFAULT);
@@ -204,7 +217,6 @@ public class PlayerView extends Tab implements ViewObserver {
                         stepButton.setDisable(true);
                 }
 
-
             } else {
                 if (!programPane.getChildren().contains(playerInteractionPanel)) {
                     programPane.getChildren().remove(buttonPanel);
@@ -219,15 +231,16 @@ public class PlayerView extends Tab implements ViewObserver {
                     //      following is just a mockup showing two options
 
                     // Adding the while loop for the buttons available to the player
-                    CommandCard card = gameController.board.getCurrentPlayer().getProgramField(gameController.board.getStep()).getCard();
-                    for( int i = 0; card.command.getOptions().size() > i;i++){
+                    CommandCard card = gameController.board.getCurrentPlayer()
+                            .getProgramField(gameController.board.getStep()).getCard();
+                    for (int i = 0; card.command.getOptions().size() > i; i++) {
                         int turn = i;
                         Button optionButton = new Button(card.command.getOptions().get(i).displayName);
-                        optionButton.setOnAction( e -> gameController.executeCommandOptionAndContinue(card.command.getOptions().get(turn)));
+                        optionButton.setOnAction(e -> gameController
+                                .executeCommandOptionAndContinue(card.command.getOptions().get(turn)));
                         optionButton.setDisable(false);
                         playerInteractionPanel.getChildren().add(optionButton);
                     }
-
 
                     // Old buttons that are replaced with the above dynamic buttons
                     /*
@@ -235,12 +248,12 @@ public class PlayerView extends Tab implements ViewObserver {
                     optionButton.setOnAction( e -> gameController.notImplemented());
                     optionButton.setDisable(false);
                     playerInteractionPanel.getChildren().add(optionButton);
-
+                    
                     optionButton = new Button("Option 2");
                     optionButton.setOnAction( e -> gameController.notImplemented());
                     optionButton.setDisable(false);
                     playerInteractionPanel.getChildren().add(optionButton);
-
+                    
                      */
                 }
             }
