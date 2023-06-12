@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CommandCard extends Subject {
     @Expose
-    final public Command command;
+    private Command command;
 
     /**
      * <p>Constructor for CommandCard.</p>
@@ -53,5 +53,12 @@ public class CommandCard extends Subject {
         return command.displayName;
     }
 
+    public Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
 
 }

@@ -101,7 +101,7 @@ public class Player extends Subject {
         for (int i = 0; i < cards.length; i++) {
             CommandCardField cardField = new CommandCardField(this);
             if (cards[i].getCard() != null) {
-                CommandCard commandCard = new CommandCard(cards[i].getCard().command);
+                CommandCard commandCard = new CommandCard(cards[i].getCard().getCommand());
                 cardField.setCard(commandCard);
             }
             cardField.setVisible(cards[i].isVisible());
@@ -113,7 +113,7 @@ public class Player extends Subject {
         for (int i = 0; i < program.length; i++) {
             CommandCardField cardField = new CommandCardField(this);
             if (program[i].getCard() != null) {
-                CommandCard commandCard = new CommandCard(program[i].getCard().command);
+                CommandCard commandCard = new CommandCard(program[i].getCard().getCommand());
                 cardField.setCard(commandCard);
             }
             cardField.setVisible(program[i].isVisible());

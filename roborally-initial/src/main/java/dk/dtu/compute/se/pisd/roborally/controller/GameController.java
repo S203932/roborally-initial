@@ -144,12 +144,14 @@ public class GameController {
             // Update programs from other players to avoid overwriting them
             for (Player newPlayer : newBoard.getPlayers()) {
                 if (newPlayer.getId() != lobbyPlayer.getId()) {
-                    CommandCardField[] newCommandCardFields = new CommandCardField[5];
-                    for (int i = 0; i < newCommandCardFields.length; i++) {
-                        CommandCard commandCard = new CommandCard(newPlayer.getProgramField(i).getCard().command);
-                        newCommandCardFields[i].setCard(commandCard);
+                    for (int i = 0; i < newPlayer.getPrograms().length; i++) {
+                        if (newPlayer.getProgramField(i).getCard() != null) {
+                            board.getPlayer(newPlayer.getId()).getProgramField(i).getCard()
+                                    .setCommand(newPlayer.getProgramField(i).getCard().getCommand());
+                        }
+
                     }
-                    board.getPlayer(newPlayer.getId()).setProgram(newCommandCardFields);
+                    // board.getPlayer(newPlayer.getId()).setProgram(newCommandCardFields);
                 }
             }
 
@@ -340,11 +342,11 @@ public class GameController {
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                    if (card.command.isInteractive()) {
+                    if (card.getCommand().isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return;
                     } else {
-                        Command command = card.command;
+                        Command command = card.getCommand();
                         executeCommand(currentPlayer, command);
                     }
                 }
