@@ -240,7 +240,7 @@ public class PlayerView extends Tab implements ViewObserver {
                 }
                 playerInteractionPanel.getChildren().clear();
 
-                // Always add refresh button if onlibe
+                // Always add refresh button if online
                 if (player.board.getGameOnline()) {
                     playerInteractionPanel.getChildren().add(refreshButton);
                 }

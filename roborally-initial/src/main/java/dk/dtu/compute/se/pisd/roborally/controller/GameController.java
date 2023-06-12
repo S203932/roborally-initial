@@ -283,7 +283,7 @@ public class GameController {
                 if (card != null) {
                     if (card.getCommand().isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
-                        executeCommandOptionAndContinue(card.getCommand());
+                        return;
                     } else {
                         Command command = card.getCommand();
                         executeCommand(currentPlayer, command);
@@ -707,7 +707,7 @@ public class GameController {
             // board.setPhase(Phase.ACTIVATION);
 
             if (board.getGameOnline()) {
-                lobby.setBoardString(gson.toJson(newBoard, Board.class));
+                lobby.setBoardString(gson.toJson(board, Board.class));
                 client.updateLobby(lobby);
             }
 
