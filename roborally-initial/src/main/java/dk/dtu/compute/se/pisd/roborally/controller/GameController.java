@@ -121,10 +121,12 @@ public class GameController {
         // Reset playerNeedInput 
         if (board.getGameOnline()) {
             Lobby lobby = client.getLobby(board.getGameId());
-            for (int i = 0; i < lobby.getPlayersCount(); i++) {
-                lobby.addPlayerNeedInput(i);
+            if (lobby.getPlayersNeedInput().size() == 0) {
+                for (int i = 0; i < lobby.getPlayersCount(); i++) {
+                    lobby.addPlayerNeedInput(i);
+                }
+                client.updateLobby(lobby);
             }
-            client.updateLobby(lobby);
         }
     }
 
