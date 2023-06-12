@@ -240,6 +240,11 @@ public class PlayerView extends Tab implements ViewObserver {
                 }
                 playerInteractionPanel.getChildren().clear();
 
+                // Always add refresh button if onlibe
+                if (player.board.getGameOnline()) {
+                    playerInteractionPanel.getChildren().add(refreshButton);
+                }
+
                 if (player.board.getCurrentPlayer() == player) {
                     // TODO Assignment P3: these buttons should be shown only when there is
                     //      an interactive command card, and the buttons should represent

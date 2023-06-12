@@ -283,7 +283,7 @@ public class GameController {
                 if (card != null) {
                     if (card.getCommand().isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
-                        return;
+                        executeCommandOptionAndContinue(card.getCommand());
                     } else {
                         Command command = card.getCommand();
                         executeCommand(currentPlayer, command);
