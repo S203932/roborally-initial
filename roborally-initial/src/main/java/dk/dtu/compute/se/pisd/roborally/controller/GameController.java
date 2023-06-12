@@ -134,6 +134,8 @@ public class GameController {
             lobby.removePlayerNeedInput(lobbyPlayer.getId());
             System.out.println("After " + lobby.getPlayersNeedInput());
 
+            //Update online lobby
+            client.updateLobby(lobby);
         }
         // Offline
         else {

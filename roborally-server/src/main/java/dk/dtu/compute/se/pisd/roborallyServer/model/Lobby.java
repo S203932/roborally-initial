@@ -137,7 +137,7 @@ public class Lobby {
     }
 
     public void removePlayerNeedInput(int id) {
-        this.playersNeedInput.remove(id);
+        this.playersNeedInput.remove(this.playersNeedInput.indexOf(id));
     }
 
     public void addPlayerNeedInput(int id) {
