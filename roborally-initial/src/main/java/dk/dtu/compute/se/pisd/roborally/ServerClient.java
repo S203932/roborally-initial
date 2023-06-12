@@ -27,6 +27,10 @@ public class ServerClient {
                 this.address = address;
         }
 
+        public String getAddress() {
+                return address;
+        }
+
         private static final HttpClient httpClient = HttpClient.newBuilder()
                         .version(HttpClient.Version.HTTP_2)
                         .connectTimeout(Duration.ofSeconds(10))
@@ -216,7 +220,7 @@ public class ServerClient {
                         return false;
                 }
         }
-/*
+        /*
         public Board getBoard(int id) {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .GET()
@@ -225,24 +229,23 @@ public class ServerClient {
                                 .build();
                 try {
                         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
+        
                         Board result = gson.fromJson(response.body(), Board.class);
                         return result;
                 } catch (Exception e) {
                         return null;
                 }
-
+        
         }
-
- */
-
+        
+         */
 
         public boolean updateLobby(Lobby lobby) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + address + ":8080/lobby/" + lobby.getId()+"/sync"))
-                        .headers("Accept", "application/json", "Content-Type", "application/json")
-                        .POST(BodyPublishers.ofString(gson.toJson(lobby)))
-                        .build();
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + lobby.getId() + "/sync"))
+                                .headers("Accept", "application/json", "Content-Type", "application/json")
+                                .POST(BodyPublishers.ofString(gson.toJson(lobby)))
+                                .build();
                 try {
                         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -254,6 +257,5 @@ public class ServerClient {
                         return false;
                 }
         }
-
 
 }

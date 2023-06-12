@@ -263,6 +263,19 @@ public class AppController implements Observer {
             if (lobby == null) {
                 showAlert("Invalid lobby", "The server host has closed the server");
                 return;
+            } else if (lobby.getGameRunning()) {
+                loadBoard();
+
+                gameController.setLobbyPlayer(lobbyPlayer);
+
+                Phase phase = gameController.board.getPhase();
+
+                if (phase == Phase.INITIALISATION) {
+                    gameController.startProgrammingPhase();
+                }
+
+                roboRally.createBoardView(gameController);
+                return;
             }
 
             // Add lobbyLabel
@@ -328,10 +341,7 @@ public class AppController implements Observer {
 
                             client.updateLobby(lobby);
 
-                            //Saving board
-                            // client.saveLobbyGame(lobby);
-
-                            loadBoard(lobby.getId());
+                            loadBoard();
 
                             gameController.setLobbyPlayer(lobbyPlayer);
 
@@ -358,22 +368,7 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
-
-                        if (lobby.getGameRunning()) {
-                            loadBoard(lobby.getId());
-
-                            gameController.setLobbyPlayer(lobbyPlayer);
-
-                            Phase phase = gameController.board.getPhase();
-
-                            if (phase == Phase.INITIALISATION) {
-                                gameController.startProgrammingPhase();
-                            }
-
-                            roboRally.createBoardView(gameController);
-
-                            // roboRally.createBoardView(gameController);
-                        }
+                        // System.out.println("Game running " + lobby.getGameRunning());
 
                         break;
 
@@ -653,7 +648,7 @@ public class AppController implements Observer {
 
     }
 
-    public void loadBoard(int id) {
+    public void loadBoard() {
         lobby = client.getLobby(lobby.getId());
 
         // GsonBuilder gb = new GsonBuilder();
@@ -680,9 +675,14 @@ public class AppController implements Observer {
             // TODO: handle exception
         }
         Board newBoard = new Board(jsonCourse);
+        newBoard.setGameId(lobby.getId());
 
         gameController = new GameController(newBoard);
-        gameController.board.setGameOnline(board.getGameOnline());
+        // Initialize client and set the game controller to an online state
+        if (board.getGameOnline()) {
+            gameController.board.setGameOnline(true);
+            gameController.setClient(new ServerClient(client.getAddress()));
+        }
 
         gameController.board.recreateBoardstate(board.getCurrentPlayer(), board.getPhase(), board.getPlayers(),
                 board.getStep(), board.getStepmode());

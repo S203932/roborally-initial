@@ -663,6 +663,10 @@ public class GameController {
         this.lobbyPlayer = lobbyPlayer;
     }
 
+    public void setClient(ServerClient client) {
+        this.client = client;
+    }
+
     /**
      * Update Board space and player values from server
      */
