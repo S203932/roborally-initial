@@ -126,65 +126,8 @@ public class GameController {
      */
     public void finishProgrammingPhase() {
 
-        System.out.println(board.getPhase());
-
         // Network connected
         if (board.getGameOnline()) {
-
-            Lobby lobby = client.getLobby(board.getGameId());
-            Board newBoard = new Gson().fromJson(lobby.getBoardString(), Board.class);
-
-            // Check for a phase change and change if different
-            if (board.getPhase() != newBoard.getPhase()) {
-                board.setPhase(newBoard.getPhase());
-            }
-
-            // updateBoard();
-            Player player = board.getPlayer(lobbyPlayer.getId());
-
-            System.out.println("Phase " + player.getPhase());
-            System.out.println("playerturn " + lobby.getPlayerTurn());
-            System.out.println("player " + player.getId());
-
-            // Synchronize the Lobby object 
-            if (lobby.getPlayerTurn() == player.getId()
-                    && board.getCurrentPlayer().getPhase() != Phase.ACTIVATION) {
-                System.out.println("Entering playerturn " + lobby.getPlayerTurn());
-
-                makeProgramFieldsInvisible();
-                makeProgramFieldsVisible(0);
-
-                board.getPlayer(player.getId()).setPhase(Phase.ACTIVATION);
-
-                // Make sure that player Ids "loop" when incrementing
-                lobby.setPlayerTurn(
-                        lobby.getPlayerTurn() == lobby.getPlayersCount() - 1 ? 0 : lobby.getPlayerTurn() + 1);
-
-                // The last player sets the board phase and the current player.
-                if (lobby.getPlayersCount() == player.getId() + 1
-                        && board.getPlayer(player.getId()).getPhase() == Phase.ACTIVATION) {
-                    System.out.println("Entering if");
-
-                    board.setPhase(Phase.ACTIVATION);
-                    board.setCurrentPlayer(board.getPlayer(0));
-                    board.setStep(0);
-
-                }
-
-                GsonBuilder gb = new GsonBuilder();
-                Gson gson = gb
-                        .excludeFieldsWithoutExposeAnnotation()
-                        .create();
-                String boardString = gson.toJson(board);
-
-                // Update programs
-                lobby.setBoardString(boardString);
-
-                // Update server lobby
-                client.updateLobby(lobby);
-                // updateBoard();
-
-            }
 
         }
         // Offline
@@ -195,6 +138,74 @@ public class GameController {
             board.setCurrentPlayer(board.getPlayer(0));
             board.setStep(0);
         }
+
+        // // Network connected
+        // if (board.getGameOnline()) {
+
+        //     Lobby lobby = client.getLobby(board.getGameId());
+        //     Board newBoard = new Gson().fromJson(lobby.getBoardString(), Board.class);
+
+        //     // Check for a phase change and change if different
+        //     if (board.getPhase() != newBoard.getPhase()) {
+        //         board.setPhase(newBoard.getPhase());
+        //     }
+
+        //     // updateBoard();
+        //     Player player = board.getPlayer(lobbyPlayer.getId());
+
+        //     System.out.println("Phase " + player.getPhase());
+        //     System.out.println("playerturn " + lobby.getPlayerTurn());
+        //     System.out.println("player " + player.getId());
+
+        //     // Synchronize the Lobby object 
+        //     if (lobby.getPlayerTurn() == player.getId()
+        //             && board.getCurrentPlayer().getPhase() != Phase.ACTIVATION) {
+        //         System.out.println("Entering playerturn " + lobby.getPlayerTurn());
+
+        //         makeProgramFieldsInvisible();
+        //         makeProgramFieldsVisible(0);
+
+        //         board.getPlayer(player.getId()).setPhase(Phase.ACTIVATION);
+
+        //         // Make sure that player Ids "loop" when incrementing
+        //         lobby.setPlayerTurn(
+        //                 lobby.getPlayerTurn() == lobby.getPlayersCount() - 1 ? 0 : lobby.getPlayerTurn() + 1);
+
+        //         // The last player sets the board phase and the current player.
+        //         if (lobby.getPlayersCount() == player.getId() + 1
+        //                 && board.getPlayer(player.getId()).getPhase() == Phase.ACTIVATION) {
+        //             System.out.println("Entering if");
+
+        //             board.setPhase(Phase.ACTIVATION);
+        //             board.setCurrentPlayer(board.getPlayer(0));
+        //             board.setStep(0);
+
+        //         }
+
+        //         GsonBuilder gb = new GsonBuilder();
+        //         Gson gson = gb
+        //                 .excludeFieldsWithoutExposeAnnotation()
+        //                 .create();
+        //         String boardString = gson.toJson(board);
+
+        //         // Update programs
+        //         lobby.setBoardString(boardString);
+
+        //         // Update server lobby
+        //         client.updateLobby(lobby);
+        //         // updateBoard();
+
+        //     }
+
+        // }
+        // // Offline
+        // else {
+        //     makeProgramFieldsInvisible();
+        //     makeProgramFieldsVisible(0);
+        //     board.setPhase(Phase.ACTIVATION);
+        //     board.setCurrentPlayer(board.getPlayer(0));
+        //     board.setStep(0);
+        // }
 
     }
 
