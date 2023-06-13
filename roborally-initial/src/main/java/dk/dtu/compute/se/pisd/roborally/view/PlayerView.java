@@ -240,10 +240,8 @@ public class PlayerView extends Tab implements ViewObserver {
                 }
                 playerInteractionPanel.getChildren().clear();
 
-                // Always add refresh button if online
-                if (player.board.getGameOnline()) {
-                    playerInteractionPanel.getChildren().add(refreshButton);
-                }
+
+
 
                 if (player.board.getCurrentPlayer() == player) {
                     // TODO Assignment P3: these buttons should be shown only when there is
@@ -254,6 +252,9 @@ public class PlayerView extends Tab implements ViewObserver {
                     // Adding the while loop for the buttons available to the player
                     CommandCard card = gameController.board.getCurrentPlayer()
                             .getProgramField(gameController.board.getStep()).getCard();
+
+
+
                     for (int i = 0; card.getCommand().getOptions().size() > i; i++) {
                         int turn = i;
                         Button optionButton = new Button(card.getCommand().getOptions().get(i).displayName);
@@ -261,6 +262,13 @@ public class PlayerView extends Tab implements ViewObserver {
                                 .executeCommandOptionAndContinue(card.getCommand().getOptions().get(turn)));
                         optionButton.setDisable(false);
                         playerInteractionPanel.getChildren().add(optionButton);
+                    }
+
+                    // Always add refresh button if online
+                    if (player.board.getGameOnline()) {
+                        Button InteractiveRefreshButton = new Button("Refresh game state");
+                        InteractiveRefreshButton.setOnAction(e -> gameController.updateBoard());
+                        playerInteractionPanel.getChildren().add(InteractiveRefreshButton);
                     }
                 }
             }

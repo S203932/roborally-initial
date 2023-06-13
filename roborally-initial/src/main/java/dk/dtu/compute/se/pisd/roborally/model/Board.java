@@ -190,7 +190,7 @@ public class Board extends Subject {
             player.setHeading(players.get(i).getHeading());
             player.setProgram(players.get(i).getPrograms());
             player.setCards(players.get(i).getCards());
-
+            player.setPhase(players.get(i).getPhase());
             this.players.add(player);
 
         }
