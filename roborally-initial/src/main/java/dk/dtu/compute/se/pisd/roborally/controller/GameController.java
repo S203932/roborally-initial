@@ -776,9 +776,19 @@ public class GameController {
             assert false;
         }
 
+        if (board.getGameOnline()) {
+            // Update program from lobby
+            lobby.setBoardString(gson.toJson(board));
+
+            //Update online lobby
+            client.updateLobby(lobby);
+        }
+
+
         if (!board.isStepMode() && board.getStep() < Player.NO_REGISTERS) {
             continuePrograms();
         }
+
 
     }
 

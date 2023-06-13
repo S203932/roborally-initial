@@ -54,6 +54,8 @@ public class PlayerView extends Tab implements ViewObserver {
 
     private VBox buttonPanel;
 
+    private VBox refreshButtonPanel;
+
     private Button finishButton;
     private Button executeButton;
     private Button stepButton;
@@ -107,19 +109,28 @@ public class PlayerView extends Tab implements ViewObserver {
         stepButton = new Button("Execute Current Register");
         stepButton.setOnAction(e -> gameController.executeStep());
 
-        // Add refresh button and remove step for online play (for ease of programming)
-        refreshButton = new Button("Refresh game state");
-        refreshButton.setOnAction(e -> gameController.updateBoard());
+
+
 
         if (gameController.getBoard().getGameOnline()) {
-            buttonPanel = new VBox(finishButton, stepButton, refreshButton);
+            // Add refresh button and remove step for online play (for ease of programming)
+            refreshButton = new Button("Refresh game state");
+            refreshButton.setOnAction(e -> gameController.updateBoard());
+            refreshButton.setAlignment(Pos.CENTER_LEFT);
+
+            buttonPanel = new VBox(finishButton, stepButton);
+            refreshButtonPanel = new VBox(refreshButton);
+            refreshButtonPanel.setAlignment(Pos.CENTER_RIGHT);
+            refreshButtonPanel.setSpacing(3.0);
+            programPane.add(refreshButtonPanel, 8,0);
+
+            //programPane.getChildren().add(refreshButton);
         } else {
             buttonPanel = new VBox(finishButton, stepButton, executeButton);
         }
 
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
         buttonPanel.setSpacing(3.0);
-        // programPane.add(buttonPanel, Player.NO_REGISTERS, 0); done in update now
 
         playerInteractionPanel = new VBox();
         playerInteractionPanel.setAlignment(Pos.CENTER_LEFT);
@@ -191,21 +202,17 @@ public class PlayerView extends Tab implements ViewObserver {
                         //     from the initialization phase to the programming phase somehow!
                         executeButton.setDisable(false);
                         stepButton.setDisable(true);
-                        refreshButton.setDisable(false);
                         break;
 
                     case WAIT:
                         finishButton.setDisable(true);
                         stepButton.setDisable(true);
-                        refreshButton.setDisable(false);
-
                         break;
 
                     case PROGRAMMING:
                         finishButton.setDisable(false);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
-                        refreshButton.setDisable(false);
 
                         break;
 
@@ -213,7 +220,6 @@ public class PlayerView extends Tab implements ViewObserver {
                         finishButton.setDisable(true);
                         executeButton.setDisable(false);
                         stepButton.setDisable(false);
-                        refreshButton.setDisable(false);
 
                         break;
 
@@ -221,7 +227,6 @@ public class PlayerView extends Tab implements ViewObserver {
                         finishButton.setDisable(true);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
-                        refreshButton.setDisable(false);
 
                         break;
 
@@ -229,7 +234,6 @@ public class PlayerView extends Tab implements ViewObserver {
                         finishButton.setDisable(true);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
-                        refreshButton.setDisable(false);
 
                 }
 
@@ -264,12 +268,7 @@ public class PlayerView extends Tab implements ViewObserver {
                         playerInteractionPanel.getChildren().add(optionButton);
                     }
 
-                    // Always add refresh button if online
-                    if (player.board.getGameOnline()) {
-                        Button InteractiveRefreshButton = new Button("Refresh game state");
-                        InteractiveRefreshButton.setOnAction(e -> gameController.updateBoard());
-                        playerInteractionPanel.getChildren().add(InteractiveRefreshButton);
-                    }
+
                 }
             }
         }
