@@ -266,20 +266,24 @@ public class AppController implements Observer {
             gridPane.setPadding(new Insets(20, 150, 10, 10));
 
             // Update lobby
-            lobby = client.getLobby(lobby.getId());
-            if (lobby == null) {
+            this.lobby = client.getLobby(lobby.getId());
+            if (this.lobby == null) {
                 showAlert("Invalid lobby", "The server host has closed the server");
                 return;
             } else if (lobby.getGameRunning()) {
+
+
                 loadBoard();
 
-                gameController.setLobbyPlayer(lobbyPlayer);
+
 
                 Phase phase = gameController.board.getPhase();
 
                 if (phase == Phase.INITIALISATION) {
                     gameController.startProgrammingPhase();
                 }
+
+                gameController.setAppcontroller(this);
 
                 roboRally.createBoardView(gameController);
                 return;
@@ -353,9 +357,14 @@ public class AppController implements Observer {
                             lobby.setGameRunning(true);
                             client.updateLobby(lobby);
 
+
+
                             loadBoard();
 
                             gameController.setLobbyPlayer(lobbyPlayer);
+
+                            gameController.setAppcontroller(this);
+
 
                             Phase phase = gameController.board.getPhase();
 
@@ -396,6 +405,9 @@ public class AppController implements Observer {
             }
         }
     }
+
+
+
 
     private String boardToJson(Board board) {
         GsonBuilder gb = new GsonBuilder();
@@ -682,6 +694,9 @@ public class AppController implements Observer {
 
         gameController = new GameController(newBoard);
 
+        gameController.setLobbyPlayer(lobbyPlayer);
+
+        gameController.setAppcontroller(this);
         // Initialize client and set the game controller to an online state
         if (board.getGameOnline()) {
             gameController.board.setGameOnline(true);
@@ -696,6 +711,60 @@ public class AppController implements Observer {
     /**
      * <p>loadGame.</p>
      */
+
+    public void refreshGame(){
+        lobby = client.getLobby(lobby.getId());
+        Board board = new Gson().fromJson(lobby.getBoardString(), Board.class);
+
+        String courseName = board.boardName;
+        courseName = courseName.replace(" ", "_").toLowerCase();
+        Course jsonCourse = null;
+
+        try {
+            File course = new File("src/main/java/dk/dtu/compute/se/pisd/roborally/courses/" + courseName + ".json");
+
+            Gson gson1 = new Gson();
+
+            jsonCourse = gson1.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
+
+        } catch (JsonIOException e) {
+            // TODO: handle exception
+
+        } catch (FileNotFoundException e) {
+            // TODO: handle exception
+        }
+        Board newBoard = new Board(jsonCourse);
+        newBoard.setGameId(lobby.getId());
+
+        gameController = new GameController(newBoard);
+        // Initialize client and set the game controller to an online state
+        if (board.getGameOnline()) {
+            gameController.board.setGameOnline(true);
+            gameController.setClient(new ServerClient(client.getAddress()));
+        }
+        gameController.setLobbyPlayer(lobbyPlayer);
+
+        gameController.setAppcontroller(this);
+
+        if(lobby.getPlayersNeedInput().indexOf(lobbyPlayer.getId()) == -1 && lobby.getPlayersNeedInput().size() != 0){
+            gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.WAIT, board.getPlayers(),
+                    board.getStep(), board.getStepmode());
+        }else if (lobby.getPlayersNeedInput().size() == 0) {
+            System.out.println("Setting phase to activation since all players are done");
+            gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.ACTIVATION, board.getPlayers(),
+                    board.getStep(), board.getStepmode());
+        }else{
+            gameController.board.recreateBoardstate(board.getCurrentPlayer(), board.getPhase(), board.getPlayers(),
+                    board.getStep(), board.getStepmode());
+        }
+
+
+
+        roboRally.createBoardView(gameController);
+
+    }
+
+
     public void loadGame() {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
@@ -815,7 +884,7 @@ public class AppController implements Observer {
             }
         }
 
-        // Cleanup lobbies 
+        // Cleanup lobbies
         if (lobby != null) {
             // If the lobby host has exited
             if (lobbyPlayer.getId() == LOBBY_HOST) {

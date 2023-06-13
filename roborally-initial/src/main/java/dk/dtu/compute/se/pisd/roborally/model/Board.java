@@ -344,6 +344,7 @@ public class Board extends Subject {
      */
     public void setPhase(Phase phase) {
         if (phase != this.phase) {
+            System.out.println("changing board phase to "+this.phase);
             this.phase = phase;
             notifyChange();
         }
