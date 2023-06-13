@@ -52,8 +52,6 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -120,6 +118,7 @@ public class AppController implements Observer {
                 }
 
             } catch (Exception e) {
+                e.printStackTrace();
                 showAlert("Invalid server address", "Try again with a valid address");
             }
         }
@@ -244,9 +243,17 @@ public class AppController implements Observer {
             if (host) {
                 ButtonType startGameButton = new ButtonType("Start game", ButtonData.OK_DONE);
                 ButtonType deleteLobbyButton = new ButtonType("Delete lobby", ButtonData.CANCEL_CLOSE);
-                ButtonType selectCourseButton = new ButtonType("Select course", ButtonData.OTHER);
-                dialog.getDialogPane().getButtonTypes().addAll(startGameButton, deleteLobbyButton, selectCourseButton,
-                        refreshLobbyButton);
+                // Add course selection when not loading a from the server
+                if (lobby.getBoardString() == null) {
+                    ButtonType selectCourseButton = new ButtonType("Select course", ButtonData.OTHER);
+                    dialog.getDialogPane().getButtonTypes().addAll(startGameButton, deleteLobbyButton,
+                            selectCourseButton,
+                            refreshLobbyButton);
+                } else {
+                    dialog.getDialogPane().getButtonTypes().addAll(startGameButton, deleteLobbyButton,
+                            refreshLobbyButton);
+                }
+
             } else {
                 ButtonType exitLobbyButton = new ButtonType("Exit lobby", ButtonData.RIGHT);
                 dialog.getDialogPane().getButtonTypes().addAll(exitLobbyButton, refreshLobbyButton);
@@ -303,45 +310,47 @@ public class AppController implements Observer {
 
             Optional<ButtonType> result = dialog.showAndWait();
 
+            // React to button press
             if (!result.isEmpty()) {
                 switch (result.get().getButtonData()) {
                     case OK_DONE:
-                        if (course == null) {
+                        if (course == null && lobby.getBoardString() == null) {
                             showAlert("Select course", "Game cannot be started without a selecting a course");
                         } else if (lobby.getPlayersCount() == lobby.getPlayerCount()) {
-                            System.out.println("starting game");
-                            // TODO start game
 
-                            //Creating the new board for the game
-                            Board board = new Board(course);
-                            board.setGameId(lobby.getId());
+                            if (lobby.getBoardString() == null) {
 
-                            //Stating that the game is online
-                            board.setGameOnline(true);
+                                //Creating the new board for the game
+                                Board board = new Board(course);
+                                board.setGameId(lobby.getId());
 
-                            // Adding the players from the lobby to the current board with names and id
-                            // Also adding player programming check
-                            int counter = 0;
-                            for (LobbyPlayer lobbyPlayer : lobby.getPlayers()) {
-                                Player player = new Player(board, PLAYER_COLORS.get(counter), lobbyPlayer.getName(),
-                                        lobbyPlayer.getId());
-                                lobby.addPlayerNeedInput(lobbyPlayer.getId());
-                                board.addPlayer(player);
-                                player.setSpace(board.getStartGear(counter));
+                                // Adding the players from the lobby to the current board with names and id
+                                // Also adding player programming check
+                                int counter = 0;
+                                for (LobbyPlayer lobbyPlayer : lobby.getPlayers()) {
+                                    Player player = new Player(board, PLAYER_COLORS.get(counter), lobbyPlayer.getName(),
+                                            lobbyPlayer.getId());
+                                    lobby.addPlayerNeedInput(lobbyPlayer.getId());
+                                    board.addPlayer(player);
+                                    player.setSpace(board.getStartGear(counter));
 
-                                counter++;
+                                    counter++;
+                                }
+
+                                //Setting the first player as current player in game
+                                board.setCurrentPlayer(board.getPlayer(0));
+
+                                board.setGameOnline(true);
+
+                                //Converting the board to a Json String
+                                String boardString = boardToJson(board);
+
+                                //Setting board on lobby object
+                                lobby.setBoardString(boardString);
+
                             }
 
-                            //Setting the first player as current player in game
-                            board.setCurrentPlayer(board.getPlayer(0));
-
-                            //Converting the board to a Json String
-                            String boardString = boardToJson(board);
-
-                            //Setting board on lobby object
-                            lobby.setBoardString(boardString);
                             lobby.setGameRunning(true);
-
                             client.updateLobby(lobby);
 
                             loadBoard();
@@ -360,7 +369,6 @@ public class AppController implements Observer {
 
                         } else {
                             showAlert("Not enough players", "The lobby does not have enough players to start.");
-
                         }
                         break;
 
@@ -371,8 +379,6 @@ public class AppController implements Observer {
 
                     case LEFT:
                         System.out.println("Refreshing");
-                        // System.out.println("Game running " + lobby.getGameRunning());
-
                         break;
 
                     case RIGHT:
@@ -607,6 +613,7 @@ public class AppController implements Observer {
 
         // Check if the game is online and should be saved on the server
         if (gameController.getBoard().getGameOnline()) {
+            // Reset players in lobby
             lobby.removePlayers();
             lobby.setGameRunning(false);
 
@@ -666,16 +673,15 @@ public class AppController implements Observer {
 
             jsonCourse = gson1.fromJson(new FileReader(course.getAbsolutePath()), Course.class);
 
-        } catch (JsonIOException e) {
-            // TODO: handle exception
-
-        } catch (FileNotFoundException e) {
-            // TODO: handle exception
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         Board newBoard = new Board(jsonCourse);
         newBoard.setGameId(lobby.getId());
 
         gameController = new GameController(newBoard);
+
         // Initialize client and set the game controller to an online state
         if (board.getGameOnline()) {
             gameController.board.setGameOnline(true);
@@ -806,6 +812,18 @@ public class AppController implements Observer {
 
             if (!result.isPresent() || result.get() != ButtonType.OK) {
                 return; // return without exiting the application
+            }
+        }
+
+        // Cleanup lobbies 
+        if (lobby != null) {
+            // If the lobby host has exited
+            if (lobbyPlayer.getId() == LOBBY_HOST) {
+                client.deleteLobby(lobby.getId());
+            }
+            // If a non-host has exited the game
+            else {
+                client.removePlayerFromLobby(lobby.getId(), lobbyPlayer.getId());
             }
         }
 

@@ -120,14 +120,6 @@ public class Lobby {
         this.gameRunning = value;
     }
 
-    public int getPlayerTurn() {
-        return playerTurn;
-    }
-
-    public void setPlayerTurn(int playerTurn) {
-        this.playerTurn = playerTurn;
-    }
-
     public ArrayList<Integer> getPlayersNeedInput() {
         return playersNeedInput;
     }

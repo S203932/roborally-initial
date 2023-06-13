@@ -28,8 +28,10 @@ import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Gear;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Conveyor;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceModels.Wall;
-
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.Gson;
@@ -49,6 +51,7 @@ public class GameController {
 
     private ServerClient client;
 
+    private Lobby lobby;
     private LobbyPlayer lobbyPlayer;
 
     GsonBuilder gb = new GsonBuilder();
@@ -97,6 +100,11 @@ public class GameController {
      */
     public void startProgrammingPhase() {
 
+        // Get Lobby on game start
+        if (lobby == null) {
+            lobby = client.getLobby(board.getGameId());
+        }
+
         System.out.println("Entering startProgrammingPhase");
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
@@ -118,13 +126,15 @@ public class GameController {
             }
         }
 
-        // Reset playerNeedInput 
         if (board.getGameOnline()) {
-            Lobby lobby = client.getLobby(board.getGameId());
+
             if (lobby.getPlayersNeedInput().size() == 0) {
+                // reset playerNeedInput 
                 for (int i = 0; i < lobby.getPlayersCount(); i++) {
                     lobby.addPlayerNeedInput(i);
                 }
+                // Update player position
+                lobby.setBoardString(gson.toJson(board));
                 client.updateLobby(lobby);
             }
         }
@@ -145,7 +155,7 @@ public class GameController {
 
         // Network connected
         if (board.getGameOnline()) {
-            Lobby lobby = client.getLobby(board.getGameId());
+            lobby = client.getLobby(board.getGameId());
 
             lobby.removePlayerNeedInput(lobbyPlayer.getId());
 
@@ -677,7 +687,7 @@ public class GameController {
     public void executeCommandOptionAndContinue(Command command) {
 
         if (board.getGameOnline()) {
-            Lobby lobby = client.getLobby(board.getGameId());
+            lobby = client.getLobby(board.getGameId());
 
             Board newBoard = gson.fromJson(lobby.getBoardString(), Board.class);
             board.setPhase(Phase.WAIT);
@@ -780,11 +790,36 @@ public class GameController {
         this.client = client;
     }
 
+    private void showAlert(String header, String content) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error dialog");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
     /**
      * Update Board space and player values from server
      */
     public void updateBoard() {
-        Lobby lobby = client.getLobby(board.getGameId());
+        lobby = client.getLobby(board.getGameId());
+
+        // Check if the lobby has been closed 
+        if (lobby == null) {
+            showAlert("No lobby detected", "The host has closed the lobby and the game can therefore not continue");
+            Platform.exit();
+            return;
+        }
+
+        // Check if a player has exited the game
+        if (lobby.getPlayerCount() != lobby.getPlayersCount()) {
+            showAlert("Unexpected player amount",
+                    "A player has exited the lobby and the game can therefore not continue");
+            client.deleteLobby(lobby.getId());
+            Platform.exit();
+            return;
+        }
+
         Board newBoard = gson.fromJson(lobby.getBoardString(), Board.class);
 
         // Update if all players have finished programming
