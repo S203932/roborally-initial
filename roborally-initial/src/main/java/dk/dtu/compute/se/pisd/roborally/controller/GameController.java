@@ -279,7 +279,6 @@ public class GameController {
             if (lobby == null) {
                 lobby = client.getLobby(board.getGameId());
             }
-            lobby.setGameOver(true);
             lobby.setBoardString(gson.toJson(board));
             client.updateLobby(lobby);
         }

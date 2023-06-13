@@ -9,7 +9,6 @@ public class Lobby {
     private String name;
     private int id;
 
-    private boolean gameOver = false;
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
     private int playerCount = 6;
     private int saveId = -1;
@@ -135,13 +134,5 @@ public class Lobby {
 
     public void addPlayerNeedInput(int id) {
         this.playersNeedInput.add(id);
-    }
-
-    public void setGameOver(boolean gameOver) {
-        this.gameOver = gameOver;
-    }
-
-    public Boolean getGameOver() {
-        return this.gameOver;
     }
 }

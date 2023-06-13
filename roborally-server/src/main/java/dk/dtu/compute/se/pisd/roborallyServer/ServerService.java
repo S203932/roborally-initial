@@ -133,15 +133,4 @@ public class ServerService implements IServerService {
             return false;
         }
     }
-
-
-    @Override
-    public boolean getGameOver(int id) {
-        return false;
-    }
-
-    @Override
-    public boolean setGameOver(int id, boolean gameOver) {
-        return false;
-    }
 }

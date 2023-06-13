@@ -31,9 +31,4 @@ public interface IServerService {
     public boolean updateLobby(Lobby lobby);
 
     public ArrayList<Lobby> getSavedLobbies();
-
-    public boolean getGameOver(int id);
-
-    public boolean setGameOver(int id, boolean gameOver);
-
 }

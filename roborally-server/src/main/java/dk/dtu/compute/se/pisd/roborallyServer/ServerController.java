@@ -127,23 +127,4 @@ public class ServerController {
         return ResponseEntity.ok().body(savedLobbies);
     }
 
-
-    @GetMapping(value = "/lobby/{id}/gameOver")
-    public  ResponseEntity<Boolean> getGameOver(@PathVariable int id){
-        boolean gameOver = gameService.getGameOver(id);
-        return ResponseEntity.ok().body(gameOver);
-    }
-
-    @PostMapping(value = "/lobby/{id}/gameOver")
-    public ResponseEntity<String> setGameOver(@PathVariable int id, boolean gameOver){
-        gameService.setGameOver(id, gameOver);
-        if(gameService.getGameOver(id) != gameOver){
-            response = unsuccessful;
-        }else{
-            response = successful;
-        }
-
-        return ResponseEntity.ok().body(response);
-    }
-
 }

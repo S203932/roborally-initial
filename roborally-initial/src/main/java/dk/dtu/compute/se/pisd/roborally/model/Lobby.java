@@ -15,8 +15,6 @@ public class Lobby {
 
     private String boardString;
 
-    private boolean gameOver = false;
-
     public Lobby() {
 
     }
@@ -135,13 +133,5 @@ public class Lobby {
 
     public void addPlayerNeedInput(int id) {
         this.playersNeedInput.add(id);
-    }
-
-    public void setGameOver(boolean gameOver) {
-        this.gameOver = gameOver;
-    }
-
-    public Boolean getGameOver() {
-        return this.gameOver;
     }
 }

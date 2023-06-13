@@ -525,7 +525,7 @@ public class AppController implements Observer {
         int id;
         for (Lobby lobby : lobbies) {
             // Filter lobbies that are not joinable
-            if (!lobby.isFull() && !lobby.getGameRunning() && !lobby.getGameOver()) {
+            if (!lobby.isFull() && !lobby.getGameRunning()) {
                 // Select save Id for saved games
                 if (saved) {
                     id = lobby.getSaveId();
