@@ -102,14 +102,21 @@ public class GameController {
      */
     public void startProgrammingPhase() {
 
-        // Get Lobby on game start
-        if (lobby == null) {
-            lobby = client.getLobby(board.getGameId());
+        if(board.getGameOnline()){
+            // Get Lobby on game start
+            if (lobby == null) {
+                lobby = client.getLobby(board.getGameId());
+            }
+            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PROGRAMMING);
+
         }
+
+
+
 
         System.out.println("Entering startProgrammingPhase");
         board.setPhase(Phase.PROGRAMMING);
-        board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PROGRAMMING);
+
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
 
@@ -130,7 +137,6 @@ public class GameController {
         }
 
         if (board.getGameOnline()) {
-
             if (lobby.getPlayersNeedInput().size() == 0) {
                 // reset playerNeedInput
                 for (int i = 0; i < lobby.getPlayersCount(); i++) {
@@ -266,8 +272,17 @@ public class GameController {
             }
 
         }
-        lobby.setBoardString(gson.toJson(board));
-        client.updateLobby(lobby);
+
+        if(board.getGameOnline()){
+            // Get Lobby on game start
+            if (lobby == null) {
+                lobby = client.getLobby(board.getGameId());
+            }
+            lobby.setGameOver(true);
+            lobby.setBoardString(gson.toJson(board));
+            client.updateLobby(lobby);
+        }
+
         alert.setContentText(scores);
         alert.show();
 
@@ -320,6 +335,31 @@ public class GameController {
         do {
             executeNextStep();
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
+    }
+
+
+    public void checkCheckPoint(){
+
+        // Check if a player should get checkpoint
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player tempPlayer = board.getPlayer(i);
+            if (tempPlayer.getSpace() instanceof Checkpoint) {
+                Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
+                if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
+                    tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
+                }
+            }
+        }
+
+        //Check if any of the players have reached the last checkpoint
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player tempPlayer = board.getPlayer(i);
+            if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
+                board.setPhase(Phase.END_GAME);
+                board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.END_GAME);
+                startEndGamePhase(tempPlayer);
+            }
+        }
     }
 
     // XXX: V2
@@ -398,26 +438,7 @@ public class GameController {
                     }
                 }
 
-                // Check if a player should get checkpoint
-                for (int i = 0; i < board.getPlayersNumber(); i++) {
-                    Player tempPlayer = board.getPlayer(i);
-                    if (tempPlayer.getSpace() instanceof Checkpoint) {
-                        Checkpoint checkpoint = (Checkpoint) tempPlayer.getSpace();
-                        if (tempPlayer.getCheckpointCount() == (checkpoint.getNumber() - 1)) {
-                            tempPlayer.setCheckpointCount(tempPlayer.getCheckpointCount() + 1);
-                        }
-                    }
-                }
-
-                //Check if any of the players have reached the last checkpoint
-                for (int i = 0; i < board.getPlayersNumber(); i++) {
-                    Player tempPlayer = board.getPlayer(i);
-                    if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
-                        board.setPhase(Phase.END_GAME);
-                        board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.END_GAME);
-                        startEndGamePhase(tempPlayer);
-                    }
-                }
+                checkCheckPoint();
 
                 if (board.getPhase() != Phase.END_GAME) {
                     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;

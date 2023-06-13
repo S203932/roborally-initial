@@ -125,7 +125,7 @@ public class ServerService implements IServerService {
         return false;
     }
 
-    public Boolean updateLobby(Lobby lobby) {
+    public boolean updateLobby(Lobby lobby) {
         if (lobbies.containsKey(lobby.getId())) {
             lobbies.put(lobby.getId(), lobby);
             return true;
@@ -134,4 +134,14 @@ public class ServerService implements IServerService {
         }
     }
 
+
+    @Override
+    public boolean getGameOver(int id) {
+        return false;
+    }
+
+    @Override
+    public boolean setGameOver(int id, boolean gameOver) {
+        return false;
+    }
 }

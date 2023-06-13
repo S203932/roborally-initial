@@ -6,6 +6,8 @@ import dk.dtu.compute.se.pisd.roborallyServer.model.Lobby;
 import dk.dtu.compute.se.pisd.roborallyServer.model.LobbyPlayer;
 import dk.dtu.compute.se.pisd.roborallyServer.model.State;
 
+import javax.swing.text.StyledEditorKit;
+
 public interface IServerService {
 
     public String getPong();
@@ -28,8 +30,12 @@ public interface IServerService {
 
     public ArrayList<Lobby> getLobbies();
 
-    public Boolean updateLobby(Lobby lobby);
+    public boolean updateLobby(Lobby lobby);
 
     public ArrayList<Lobby> getSavedLobbies();
+
+    public boolean getGameOver(int id);
+
+    public boolean setGameOver(int id, boolean gameOver);
 
 }

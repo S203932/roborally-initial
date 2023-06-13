@@ -768,6 +768,8 @@ public class AppController implements Observer {
 
 
 
+
+
         roboRally.createBoardView(gameController);
 
     }
