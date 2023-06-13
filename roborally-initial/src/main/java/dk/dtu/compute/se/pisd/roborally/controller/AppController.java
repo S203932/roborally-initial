@@ -754,7 +754,7 @@ public class AppController implements Observer {
             System.out.println("Setting phase to activation since all players are done");
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.ACTIVATION, board.getPlayers(),
                     board.getStep(), board.getStepmode());
-        }else if(gameController.board.getPlayer(lobbyPlayer.getId()).getPhase() == Phase.ACTIVATION){
+        }else if(newBoard.getPlayer(lobbyPlayer.getId()).getPhase() == Phase.ACTIVATION){
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.PROGRAMMING, board.getPlayers(),
                     board.getStep(), board.getStepmode());
         }else{
