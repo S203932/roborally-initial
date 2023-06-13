@@ -78,16 +78,6 @@
             <version>5.4.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -114,15 +104,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>libs/</classpathPrefix>
-                            <mainClass>dk.dtu.compute.se.pisd.roborally.RoboRally</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -150,16 +131,6 @@
                 <configuration>
                     <show>public</show>
                     <overview>src/main/java/dk/dtu/compute/se/pisd/overview.html</overview>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>${javafx.maven.plugin.version}</version>
-                <configuration>
-                    <jlinkImageName>roborally</jlinkImageName>
-                    <launcher>launcher</launcher>
-                    <mainClass>roborally/org.openjfx.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>

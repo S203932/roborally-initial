@@ -6,8 +6,6 @@ import dk.dtu.compute.se.pisd.roborallyServer.model.Lobby;
 import dk.dtu.compute.se.pisd.roborallyServer.model.LobbyPlayer;
 import dk.dtu.compute.se.pisd.roborallyServer.model.State;
 
-import javax.swing.text.StyledEditorKit;
-
 public interface IServerService {
 
     public String getPong();
