@@ -48,7 +48,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
     // This data format helps avoiding transfers of e.g. Strings from other
     // programs which can copy/paste Strings.
     /** Constant <code>ROBO_RALLY_CARD</code> */
-    final public static  DataFormat ROBO_RALLY_CARD = new DataFormat("games/roborally/cards");
+    final public static DataFormat ROBO_RALLY_CARD = new DataFormat("games/roborally/cards");
 
     /** Constant <code>CARDFIELD_WIDTH=65</code> */
     final public static int CARDFIELD_WIDTH = 65;
@@ -56,7 +56,8 @@ public class CardFieldView extends GridPane implements ViewObserver {
     final public static int CARDFIELD_HEIGHT = 100;
 
     /** Constant <code>BORDER</code> */
-    final public static Border BORDER = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
+    final public static Border BORDER = new Border(
+            new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
 
     /** Constant <code>BG_DEFAULT</code> */
     final public static Background BG_DEFAULT = new Background(new BackgroundFill(Color.WHITE, null, null));
@@ -68,7 +69,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
     /** Constant <code>BG_ACTIVE</code> */
     final public static Background BG_ACTIVE = new Background(new BackgroundFill(Color.YELLOW, null, null));
     /** Constant <code>BG_DONE</code> */
-    final public static Background BG_DONE = new Background(new BackgroundFill(Color.GREENYELLOW,  null, null));
+    final public static Background BG_DONE = new Background(new BackgroundFill(Color.GREENYELLOW, null, null));
 
     private CommandCardField field;
 
@@ -286,12 +287,8 @@ public class CardFieldView extends GridPane implements ViewObserver {
                         if (object instanceof String) {
                             CommandCardField source = cardFieldFromRepresentation((String) object);
                             if (source != null && gameController.moveCards(source, cardField)) {
-                                // CommandCard card = source.getCard();
-                                // if (card != null) {
-                                // if (gameController.moveCards(source, cardField)) {
-                                    // cardField.setCard(card);
-                                    success = true;
-                                // }
+
+                                success = true;
                             }
                         }
                     }
@@ -319,7 +316,3 @@ public class CardFieldView extends GridPane implements ViewObserver {
     }
 
 }
-
-
-
-

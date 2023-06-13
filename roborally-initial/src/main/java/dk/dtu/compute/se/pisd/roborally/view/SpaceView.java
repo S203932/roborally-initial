@@ -80,8 +80,6 @@ public class SpaceView extends StackPane implements ViewObserver {
             this.setStyle("-fx-background-color: black;");
         }
 
-        // updatePlayer();
-
         // This space view should listen to changes of the space
         space.attach(this);
         update(space);

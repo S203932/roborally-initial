@@ -45,21 +45,9 @@ public enum Command {
     // XXX Assignment P3
     OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT);
 
-    //Damage Cards//
-    //SPAM("SPAM"),
-    //TROJANHORSE("TROJAN HORSE"),
-    //WORM("WORM"),
-    //VIRUS("VIRUS");
-
     @Expose
     final public String displayName;
 
-    // XXX Assignment P3
-    // Command(String displayName) {
-    //     this.displayName = displayName;
-    // }
-    //
-    // replaced by the code below:
     @Expose
     final private List<Command> options;
 

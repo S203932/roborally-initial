@@ -272,10 +272,7 @@ public class AppController implements Observer {
                 return;
             } else if (lobby.getGameRunning()) {
 
-
                 loadBoard();
-
-
 
                 Phase phase = gameController.board.getPhase();
 
@@ -357,14 +354,11 @@ public class AppController implements Observer {
                             lobby.setGameRunning(true);
                             client.updateLobby(lobby);
 
-
-
                             loadBoard();
 
                             gameController.setLobbyPlayer(lobbyPlayer);
 
                             gameController.setAppcontroller(this);
-
 
                             Phase phase = gameController.board.getPhase();
 
@@ -405,9 +399,6 @@ public class AppController implements Observer {
             }
         }
     }
-
-
-
 
     private String boardToJson(Board board) {
         GsonBuilder gb = new GsonBuilder();
@@ -531,9 +522,20 @@ public class AppController implements Observer {
             lobbies = client.getLobbies();
 
         }
+        int id;
         for (Lobby lobby : lobbies) {
-            lobbiesHashMap.put("Lobby: " + lobby.getId() + " - " + lobby.getName() + " " + lobby.getPlayersCount()
-                    + "/" + lobby.getPlayerCount() + " players", lobby);
+            // Filter lobbies that are not joinable
+            if (!lobby.isFull() && !lobby.getGameRunning() && !lobby.getGameOver()) {
+                // Select save Id for saved games
+                if (saved) {
+                    id = lobby.getSaveId();
+                } else {
+                    id = lobby.getId();
+                }
+                lobbiesHashMap.put("Lobby: " + id + " - " + lobby.getName() + " " + lobby.getPlayersCount()
+                        + "/" + lobby.getPlayerCount() + " players", lobby);
+            }
+
         }
 
         return lobbiesHashMap;
@@ -625,6 +627,9 @@ public class AppController implements Observer {
 
         // Check if the game is online and should be saved on the server
         if (gameController.getBoard().getGameOnline()) {
+
+            lobby = client.getLobby(lobby.getId());
+
             // Reset players in lobby
             lobby.removePlayers();
             lobby.setGameRunning(false);
@@ -705,7 +710,14 @@ public class AppController implements Observer {
 
         gameController.board.recreateBoardstate(board.getCurrentPlayer(), board.getPhase(), board.getPlayers(),
                 board.getStep(), board.getStepmode());
+        // Initialize client and set the game controller to an online state
+        if (board.getGameOnline()) {
 
+            // Update player names with new names from lobby
+            for (Player player : gameController.board.getPlayers()) {
+                gameController.board.getPlayer(player.getId()).setName(lobby.getPlayer(player.getId()).getName());
+            }
+        }
     }
 
     /**
@@ -754,26 +766,19 @@ public class AppController implements Observer {
             System.out.println("Setting phase to activation since all players are done");
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.ACTIVATION, board.getPlayers(),
                     board.getStep(), board.getStepmode());
-        }else if(board.getPlayer(lobbyPlayer.getId()).getPhase() == Phase.ACTIVATION){
+        } else if (board.getPlayer(lobbyPlayer.getId()).getPhase() == Phase.ACTIVATION) {
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.PROGRAMMING, board.getPlayers(),
                     board.getStep(), board.getStepmode());
-        }else{
+        } else {
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), board.getPhase(), board.getPlayers(),
                     board.getStep(), board.getStepmode());
 
         }
         gameController.board.getPlayer(lobbyPlayer.getId()).setPhase(board.getPhase());
 
-
-
-
-
-
-
         roboRally.createBoardView(gameController);
 
     }
-
 
     public void loadGame() {
         // XXX needs to be implemented eventually

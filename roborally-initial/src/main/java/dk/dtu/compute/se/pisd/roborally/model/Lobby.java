@@ -11,7 +11,6 @@ public class Lobby {
     private ArrayList<LobbyPlayer> players = new ArrayList<LobbyPlayer>();
     private int playerCount = 6;
     private int saveId = -1;
-    private int playerTurn = 0;
     private ArrayList<Integer> playersNeedInput = new ArrayList<Integer>();
 
     private String boardString;
@@ -138,12 +137,11 @@ public class Lobby {
         this.playersNeedInput.add(id);
     }
 
-
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
 
-    public Boolean getGameOver(){
+    public Boolean getGameOver() {
         return this.gameOver;
     }
 }

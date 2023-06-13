@@ -102,17 +102,13 @@ public class GameController {
      */
     public void startProgrammingPhase() {
 
-        if(board.getGameOnline()){
+        if (board.getGameOnline()) {
             // Get Lobby on game start
             if (lobby == null) {
                 lobby = client.getLobby(board.getGameId());
             }
             board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PROGRAMMING);
-
         }
-
-
-
 
         System.out.println("Entering startProgrammingPhase");
         board.setPhase(Phase.PROGRAMMING);
@@ -176,10 +172,12 @@ public class GameController {
 
             //Setting phase to activation before transmitting lobby to server
             board.setPhase(Phase.ACTIVATION);
-            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
+            if (board.getGameOnline()) {
+                board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
+            }
+
             board.setCurrentPlayer(board.getPlayer(0));
             board.setStep(0);
-
 
             // Update program from lobby
             lobby.setBoardString(gson.toJson(board));
@@ -190,7 +188,6 @@ public class GameController {
             //Updating the board from the server
             updateBoard();
 
-            //board.setPhase(Phase.WAIT);
         }
         // Offline
         else {
@@ -202,7 +199,7 @@ public class GameController {
         }
     }
 
-    public void updatePlayerPrograms(Board newBoard){
+    public void updatePlayerPrograms(Board newBoard) {
 
         //Make new commandcard objects and put them on the relevant players
         for (Player newPlayer : newBoard.getPlayers()) {
@@ -211,7 +208,8 @@ public class GameController {
                     if (newPlayer.getProgramField(i).getCard() != null) {
                         if (board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null
                                 && newPlayer.getProgramField(i).getCard() == null) {
-                            CommandCardField newCommandCardField = new CommandCardField(board.getPlayer(newPlayer.getId()));
+                            CommandCardField newCommandCardField = new CommandCardField(
+                                    board.getPlayer(newPlayer.getId()));
 
                             board.getPlayer(newPlayer.getId()).getPrograms()[i] = newCommandCardField;
 
@@ -219,14 +217,17 @@ public class GameController {
                         } else if (board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null
                                 && newPlayer.getProgramField(i).getCard() != null) {
 
-
-                            CommandCardField newCommandCardField = new CommandCardField(board.getPlayer(newPlayer.getId()));
-                            CommandCard newCommandCard = new CommandCard(newPlayer.getProgramField(i).getCard().getCommand());
+                            CommandCardField newCommandCardField = new CommandCardField(
+                                    board.getPlayer(newPlayer.getId()));
+                            CommandCard newCommandCard = new CommandCard(
+                                    newPlayer.getProgramField(i).getCard().getCommand());
                             newCommandCardField.setCard(newCommandCard);
                             board.getPlayer(newPlayer.getId()).getPrograms()[i] = newCommandCardField;
                         } else {
-                            CommandCardField newCommandCardField = new CommandCardField(board.getPlayer(newPlayer.getId()));
-                            CommandCard newCommandCard = new CommandCard(newPlayer.getProgramField(i).getCard().getCommand());
+                            CommandCardField newCommandCardField = new CommandCardField(
+                                    board.getPlayer(newPlayer.getId()));
+                            CommandCard newCommandCard = new CommandCard(
+                                    newPlayer.getProgramField(i).getCard().getCommand());
                             newCommandCardField.setCard(newCommandCard);
                             board.getPlayer(newPlayer.getId()).getPrograms()[i] = newCommandCardField;
                         }
@@ -273,7 +274,7 @@ public class GameController {
 
         }
 
-        if(board.getGameOnline()){
+        if (board.getGameOnline()) {
             // Get Lobby on game start
             if (lobby == null) {
                 lobby = client.getLobby(board.getGameId());
@@ -285,8 +286,6 @@ public class GameController {
 
         alert.setContentText(scores);
         alert.show();
-
-
 
     }
 
@@ -337,8 +336,7 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
-
-    public void checkCheckPoint(){
+    public void checkCheckPoint() {
 
         // Check if a player should get checkpoint
         for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -356,7 +354,10 @@ public class GameController {
             Player tempPlayer = board.getPlayer(i);
             if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
                 board.setPhase(Phase.END_GAME);
-                board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.END_GAME);
+                if (board.getGameOnline()) {
+                    board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.END_GAME);
+
+                }
                 startEndGamePhase(tempPlayer);
             }
         }
@@ -370,15 +371,24 @@ public class GameController {
      */
 
     private void executeNextStep() {
+
+        // Check checkpoints before a step
+        checkCheckPoint();
+
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
             int step = board.getStep();
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
+
                 if (card != null) {
+
                     if (card.getCommand().isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
-                        board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PLAYER_INTERACTION);
+                        if (board.getGameOnline()) {
+                            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PLAYER_INTERACTION);
+
+                        }
                         return;
                     } else {
                         Command command = card.getCommand();
@@ -386,8 +396,11 @@ public class GameController {
                     }
                 }
 
+                // Check checkpoints after a step
+                checkCheckPoint();
+
                 // Check if a player should be moved on a conveyor
-                if (currentPlayer.getSpace() instanceof Conveyor && step == 0) {
+                if (currentPlayer.getSpace() instanceof Conveyor) {
                     Conveyor conveyor = (Conveyor) currentPlayer.getSpace();
                     Conveyor previousConveyor = null;
 
@@ -437,8 +450,6 @@ public class GameController {
                         }
                     }
                 }
-
-                checkCheckPoint();
 
                 if (board.getPhase() != Phase.END_GAME) {
                     int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
@@ -547,10 +558,6 @@ public class GameController {
                         target.setPlayer(player);
                 }
             }
-            /*   if (target.getPlayer() != null) {
-               // Call the recursive method to handle the case when the target space is occupied
-               moveForward(target.getPlayer());
-            }*/
 
         }
     }
@@ -723,11 +730,7 @@ public class GameController {
             for (Player newPlayer : newBoard.getPlayers()) {
                 if (newPlayer.getId() == lobbyPlayer.getId()) {
 
-                    // newPlayer.getPrograms()
-
                     for (int i = 0; i < newPlayer.getPrograms().length; i++) {
-                        // if (newPlayer.getProgramField(i).getCard().getCommand().isInteractive()) {
-                        //     board.getPlayer(newPlayer.getId()).getProgramField(i).getCard().setCommand(command);
 
                         if (board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null
                                 && newPlayer.getProgramField(i).getCard() == null) {
@@ -735,26 +738,18 @@ public class GameController {
                             board.getPlayer(newPlayer.getId()).getProgramField(i).setCard(null);
 
                         }
-                        // else if (board.getPlayer(newPlayer.getId()).getProgramField(i).getCard() == null
-                        //         && newPlayer.getProgramField(i).getCard() != null) {
 
-                        //     board.getPlayer(newPlayer.getId()).getProgramField(i)
-                        //             .setCard(newPlayer.getProgramField(i).getCard());
-
-                        // } 
                         else {
                             board.getPlayer(newPlayer.getId()).getProgramField(i).getCard().setCommand(command);
                             board.setPhase(Phase.ACTIVATION);
                             board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
-                            // board.getPlayer(newPlayer.getId()).getProgramField(i).getCard()
-                            //         .setCommand(newPlayer.getProgramField(i).getCard().getCommand());
+                            break;
+
                         }
-                        // }
                     }
                 }
 
             }
-            // board.setPhase(Phase.ACTIVATION);
 
             if (board.getGameOnline()) {
                 lobby.setBoardString(gson.toJson(board, Board.class));
@@ -763,7 +758,6 @@ public class GameController {
 
         } else {
             board.setPhase(Phase.ACTIVATION);
-            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
         }
 
         Player currentPlayer = board.getCurrentPlayer();
@@ -805,11 +799,9 @@ public class GameController {
             client.updateLobby(lobby);
         }
 
-
         if (!board.isStepMode() && board.getStep() < Player.NO_REGISTERS) {
             continuePrograms();
         }
-
 
     }
 
@@ -864,22 +856,6 @@ public class GameController {
 
         Board newBoard = gson.fromJson(lobby.getBoardString(), Board.class);
 
-        /*
-        // Update if all players have finished programming
-        if (lobby.getPlayersNeedInput().size() == 0) {
-            System.out.println("SETTING PHASE");
-            board.setPhase(Phase.ACTIVATION);
-
-        }
-
-         */
-        //System.out.println("PHASE " + board.getPhase());
-
-        // Update phase
-        //System.out.println("new board phase" + newBoard.getPhase());
-
-        // board.setPhase(newBoard.getPhase());
-
         for (Player player : board.getPlayers()) {
             Player newPlayer = newBoard.getPlayer(player.getId());
 
@@ -903,27 +879,14 @@ public class GameController {
 
         this.appController.refreshGame();
 
-
-
-        // for (Player player : board.getPlayers()) {
-        //     if(player.getP]){
-
-        //     }
-
-        // }
-
     }
 
-    public void setAppcontroller(AppController appController){
+    public void setAppcontroller(AppController appController) {
         this.appController = appController;
     }
 
-    public AppController getAppController(){
+    public AppController getAppController() {
         return this.appController;
     }
 
-
-    /* private void removeSpam(Player player) {
-        player.getDmgcards().remove(Command.SPAM);
-    }*/
 }

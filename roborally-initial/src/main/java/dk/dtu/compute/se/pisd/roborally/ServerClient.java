@@ -202,43 +202,6 @@ public class ServerClient {
 
         }
 
-        // public boolean updateBoard(int id, String board) {
-        //         HttpRequest request = HttpRequest.newBuilder()
-        //                         .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/sync"))
-        //                         .headers("Accept", "application/json", "Content-Type", "application/json")
-        //                         .POST(BodyPublishers.ofString(board))
-        //                         .build();
-        //         try {
-        //                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        //                 if (response.body().equals(successful)) {
-        //                         return true;
-        //                 }
-        //                 return false;
-        //         } catch (Exception e) {
-        //                 return false;
-        //         }
-        // }
-        /*
-        public Board getBoard(int id) {
-                HttpRequest request = HttpRequest.newBuilder()
-                                .GET()
-                                .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/sync"))
-                                .header("Content-Type", "application/json")
-                                .build();
-                try {
-                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
-                        Board result = gson.fromJson(response.body(), Board.class);
-                        return result;
-                } catch (Exception e) {
-                        return null;
-                }
-        
-        }
-        
-         */
-
         public boolean updateLobby(Lobby lobby) {
                 HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create("http://" + address + ":8080/lobby/" + lobby.getId() + "/sync"))
@@ -257,12 +220,12 @@ public class ServerClient {
                 }
         }
 
-        public boolean getGameOver(int id){
+        public boolean getGameOver(int id) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .GET()
-                        .uri(URI.create("http://" + address + ":8080/lobby/" + id+"/gameOver"))
-                        .header("Content-Type", "application/json")
-                        .build();
+                                .GET()
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/gameOver"))
+                                .header("Content-Type", "application/json")
+                                .build();
                 try {
                         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -274,13 +237,12 @@ public class ServerClient {
 
         }
 
-
         public boolean setGameOver(int id, boolean gameOver) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/gameOver"))
-                        .headers("Accept", "application/json", "Content-Type", "application/json")
-                        .POST(BodyPublishers.ofString(gson.toJson(gameOver)))
-                        .build();
+                                .uri(URI.create("http://" + address + ":8080/lobby/" + id + "/gameOver"))
+                                .headers("Accept", "application/json", "Content-Type", "application/json")
+                                .POST(BodyPublishers.ofString(gson.toJson(gameOver)))
+                                .build();
                 try {
                         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
