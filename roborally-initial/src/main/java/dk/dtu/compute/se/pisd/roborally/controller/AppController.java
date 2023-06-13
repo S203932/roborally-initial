@@ -712,7 +712,7 @@ public class AppController implements Observer {
      * <p>loadGame.</p>
      */
 
-    public void refreshGame(){
+    public void refreshGame() {
         lobby = client.getLobby(lobby.getId());
         Board board = new Gson().fromJson(lobby.getBoardString(), Board.class);
 
@@ -746,17 +746,25 @@ public class AppController implements Observer {
 
         gameController.setAppcontroller(this);
 
-        if(lobby.getPlayersNeedInput().indexOf(lobbyPlayer.getId()) == -1 && lobby.getPlayersNeedInput().size() != 0){
+        if (lobby.getPlayersNeedInput().indexOf(lobbyPlayer.getId()) == -1 && lobby.getPlayersNeedInput().size() != 0) {
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.WAIT, board.getPlayers(),
                     board.getStep(), board.getStepmode());
-        }else if (lobby.getPlayersNeedInput().size() == 0) {
+
+        } else if (lobby.getPlayersNeedInput().size() == 0) {
             System.out.println("Setting phase to activation since all players are done");
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.ACTIVATION, board.getPlayers(),
+                    board.getStep(), board.getStepmode());
+        }else if(gameController.board.getPlayer(lobbyPlayer.getId()).getPhase() == Phase.ACTIVATION){
+            gameController.board.recreateBoardstate(board.getCurrentPlayer(), Phase.PROGRAMMING, board.getPlayers(),
                     board.getStep(), board.getStepmode());
         }else{
             gameController.board.recreateBoardstate(board.getCurrentPlayer(), board.getPhase(), board.getPlayers(),
                     board.getStep(), board.getStepmode());
+
         }
+        gameController.board.getPlayer(lobbyPlayer.getId()).setPhase(board.getPhase());
+
+
 
 
 

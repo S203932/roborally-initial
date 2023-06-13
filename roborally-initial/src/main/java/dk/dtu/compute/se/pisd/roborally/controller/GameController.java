@@ -264,8 +264,12 @@ public class GameController {
             }
 
         }
+        lobby.setBoardString(gson.toJson(board));
+        client.updateLobby(lobby);
         alert.setContentText(scores);
         alert.show();
+
+
 
     }
 
@@ -569,16 +573,7 @@ public class GameController {
         Space target = board.getNeighbour(space, heading);
         Space current = board.getNeighbour(space, heading);
         Heading newWallBlockHeading = heading.next().next();
-        /*
-        while (target != null && !(target instanceof Wall) && target.getPlayer() != null) {
-            space = target;
-            target = board.getNeighbour(space, heading);
-        
-            if (target instanceof Wall) {
-                break; // Break out of the loop if the target space is a wall
-            }
-        }
-        */
+
         while (current != null && !(current instanceof Wall) && current.getPlayer() != null) {
             space = current;
             current = board.getNeighbour(space, heading);
@@ -591,28 +586,7 @@ public class GameController {
         if (board.getNeighbour(current, heading).getPlayer() == null
                 && !(board.getNeighbour(current, heading) instanceof Wall) && !(current instanceof Wall)) {
             if (!(target instanceof Wall)) {
-                // Check if the target space is available
-                /* if (target != null && target.getPlayer() == null) {
-                    boolean wallBlock = false;
-                
-                    if (target instanceof Wall) {
-                        Wall targetWall = (Wall) target;
-                
-                        if (Arrays.asList(targetWall.getFacing()).contains(newWallBlockHeading)) {
-                            wallBlock = true;
-                        }
-                
-                    } else if (space instanceof Wall) {
-                        Wall wall = (Wall) space;
-                
-                        if (Arrays.asList(wall.getFacing()).contains(heading)) {
-                            wallBlock = true;
-                        }
-                    }
-                    if (!wallBlock) {
-                
-                    }
-                    */// Move the current player to the target space
+                // Move the current player to the target space
                 currentPlayer.setSpace(target);
                 target.setPlayer(currentPlayer);
             } else {
