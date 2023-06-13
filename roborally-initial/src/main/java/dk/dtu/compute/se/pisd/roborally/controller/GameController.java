@@ -109,6 +109,7 @@ public class GameController {
 
         System.out.println("Entering startProgrammingPhase");
         board.setPhase(Phase.PROGRAMMING);
+        board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
 
@@ -169,6 +170,7 @@ public class GameController {
 
             //Setting phase to activation before transmitting lobby to server
             board.setPhase(Phase.ACTIVATION);
+            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
             board.setCurrentPlayer(board.getPlayer(0));
             board.setStep(0);
 
@@ -336,6 +338,7 @@ public class GameController {
                 if (card != null) {
                     if (card.getCommand().isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
+                        board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.PLAYER_INTERACTION);
                         return;
                     } else {
                         Command command = card.getCommand();
@@ -411,6 +414,7 @@ public class GameController {
                     Player tempPlayer = board.getPlayer(i);
                     if (tempPlayer.getCheckpointCount() == board.getBoardCheckpoints()) {
                         board.setPhase(Phase.END_GAME);
+                        board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.END_GAME);
                         startEndGamePhase(tempPlayer);
                     }
                 }
@@ -692,6 +696,7 @@ public class GameController {
 
             Board newBoard = gson.fromJson(lobby.getBoardString(), Board.class);
             board.setPhase(Phase.WAIT);
+            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.WAIT);
 
             // Update programs from other players to avoid overwriting them
             for (Player newPlayer : newBoard.getPlayers()) {
@@ -719,6 +724,7 @@ public class GameController {
                         else {
                             board.getPlayer(newPlayer.getId()).getProgramField(i).getCard().setCommand(command);
                             board.setPhase(Phase.ACTIVATION);
+                            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
                             // board.getPlayer(newPlayer.getId()).getProgramField(i).getCard()
                             //         .setCommand(newPlayer.getProgramField(i).getCard().getCommand());
                         }
@@ -736,6 +742,7 @@ public class GameController {
 
         } else {
             board.setPhase(Phase.ACTIVATION);
+            board.getPlayer(lobbyPlayer.getId()).setPhase(Phase.ACTIVATION);
         }
 
         Player currentPlayer = board.getCurrentPlayer();
