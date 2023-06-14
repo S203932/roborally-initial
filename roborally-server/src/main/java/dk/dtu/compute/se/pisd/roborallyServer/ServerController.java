@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dk.dtu.compute.se.pisd.roborallyServer.model.Lobby;
 import dk.dtu.compute.se.pisd.roborallyServer.model.LobbyPlayer;
-import dk.dtu.compute.se.pisd.roborallyServer.model.State;
 
 @RestController
 public class ServerController {
@@ -30,12 +29,6 @@ public class ServerController {
     public ResponseEntity<String> getPong() {
         String result = gameService.getPong();
         return ResponseEntity.ok().body(result);
-    }
-
-    @GetMapping(value = "/state")
-    public ResponseEntity<State> getState() {
-        State state = gameService.getState();
-        return ResponseEntity.ok().body(state);
     }
 
     @PutMapping(value = "/lobby/save")

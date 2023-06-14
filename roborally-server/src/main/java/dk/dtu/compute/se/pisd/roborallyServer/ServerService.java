@@ -14,14 +14,12 @@ import com.google.gson.GsonBuilder;
 
 import dk.dtu.compute.se.pisd.roborallyServer.model.Lobby;
 import dk.dtu.compute.se.pisd.roborallyServer.model.LobbyPlayer;
-import dk.dtu.compute.se.pisd.roborallyServer.model.State;
 
 @Service
 public class ServerService implements IServerService {
 
     private final String pong = "pong";
 
-    public State state = new State("Initial");
     public HashMap<Integer, Lobby> lobbies = new HashMap<Integer, Lobby>();
 
     Gson gson = new GsonBuilder().create();
@@ -29,16 +27,6 @@ public class ServerService implements IServerService {
     @Override
     public String getPong() {
         return pong;
-    }
-
-    @Override
-    public State getState() {
-        return state;
-    }
-
-    @Override
-    public void putState(@RequestBody State state) {
-        this.state = state;
     }
 
     @Override
